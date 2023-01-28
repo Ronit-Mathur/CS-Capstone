@@ -4,12 +4,13 @@
 'use strict';
 
 
-const DatabaseHandler = require("./handlers/databaseHandler.js");
+
 
 module.exports = class Server {
+    
     constructor() {
         //create and initialize the database handlers
-        const databaseHandler = new DatabaseHandler();
+        this.DatabaseHandler = new (require("./handlers/databaseHandler.js"))();
     }
 }
 

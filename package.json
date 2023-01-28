@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/Ronit-Mathur/CS-Capstone/issues"
   },
-  "homepage": "https://github.com/Ronit-Mathur/CS-Capstone#readme"
+  "homepage": "https://github.com/Ronit-Mathur/CS-Capstone#readme",
+  "dependencies": {
+    "sqlite3": "^5.1.4"
+  }
 }
