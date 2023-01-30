@@ -1,0 +1,25 @@
+{
+  "name": "mental-health-tracker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "client.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node client.js",
+    "start-server": "node remoteServer.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ronit-Mathur/CS-Capstone.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ronit-Mathur/CS-Capstone/issues"
+  },
+  "homepage": "https://github.com/Ronit-Mathur/CS-Capstone#readme",
+  "dependencies": {
+    "sqlite": "^4.1.2",
+    "sqlite3": "^5.1.4"
+  }
+}
