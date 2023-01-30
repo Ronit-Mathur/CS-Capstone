@@ -3,5 +3,5 @@
  */
 
 module.exports = {
-    DATABASE_FILE: "db.sqlite"
+    DATABASE_FILE: "test_db.sqlite"
 }

@@ -8,9 +8,22 @@
 
 module.exports = class Server {
     
-    constructor() {
+    /**
+     * 
+     * @param {boolean} isRemote whether or the server is remote
+     */
+    constructor(isRemote) {
         //create and initialize the database handlers
-        this.DatabaseHandler = new (require("./handlers/databaseHandler.js"))();
+        this.DatabaseHandler = new (require("./handlers/databaseHandler.js"))(isRemote);
+     
+    }
+
+
+    /**
+     * starts the server. run after creating object
+     */
+    async start(){
+        await this.DatabaseHandler.init();
     }
 }
 
