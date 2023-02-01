@@ -15,6 +15,8 @@ module.exports = class Server {
     constructor(isRemote) {
         //create and initialize the database handlers
         this.DatabaseHandler = new (require("./handlers/databaseHandler.js"))(isRemote);
+        this.userHandler = new (require("./handlers/userHandler.js"))();
+        
      
     }
 
@@ -24,6 +26,7 @@ module.exports = class Server {
      */
     async start(){
         await this.DatabaseHandler.init();
+
     }
 }
 

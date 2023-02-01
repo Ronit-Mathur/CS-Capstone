@@ -8,12 +8,14 @@ const sqlite = require('sqlite');
 
 module.exports = class DatabaseHandler {
 
+    static current; //current database handler being used by the server
 
     /**
      * 
      * @param {boolean} isRemote whether or not the database is remote
      */
     constructor(isRemote) {
+        DatabaseHandler.current = this;
         this.isRemote = isRemote;
 
 
@@ -88,5 +90,30 @@ module.exports = class DatabaseHandler {
         });
         await db.run("PRAGMA foreign_keys = ON");
         return db;
+    }
+
+
+    /**
+     * executes an sql statement on the datbase with no return
+     * @param {*} statement statement to execute
+     */
+    async exec(statement, params){
+        var db = await this._getDBConnection();
+        await db.run(statement, params);
+        await db.close();
+    }
+
+
+
+    /**
+     * queries the database with a given query
+     * @param {*} statement statement to query db with
+     * @returns response from the database
+     */
+    async query(statement,params){
+        var db = await this._getDBConnection();
+        var response = await db.all(statement,params);
+        await db.close();
+        return response;
     }
 }
