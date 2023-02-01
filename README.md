@@ -15,5 +15,5 @@ npm run start-server
 ```
 
 ## Developement Instructions
-Download, clone or pull the Dev Branch
-Download the support files from the release branch and add them to the root directory of the project
+Download, clone or pull the Dev Branch\
+Download the support files from the release branch and add them to the root directory of the project\
