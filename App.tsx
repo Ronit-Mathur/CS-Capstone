@@ -6,7 +6,7 @@ import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs
 /*
     Home Screen 
 */
-function Home({navigation}) {
+function Home() {
   return (
       <View style ={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <Text>This is the Home Page!</Text>
@@ -18,7 +18,7 @@ function Home({navigation}) {
 /* 
   Calendar Screen 
 */
-function Calendar({navigation}) {
+function Calendar() {
   return (
       <View style ={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <Text>This is the Calendar Page!</Text>
@@ -30,7 +30,7 @@ function Calendar({navigation}) {
 /*
     Stats Screen 
 */
-function Stats({navigation}) {
+function Stats() {
   return (
       <View style ={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <Text>This is the Stats Page!</Text>
@@ -51,7 +51,7 @@ function MaterialTabs () {
     <MaterialTab.Navigator initialRouteName='Home' tabBarPosition='bottom'>
       <MaterialTab.Screen name='Calendar' component={Calendar} />
       <MaterialTab.Screen name='Home' component={Home} />
-      <MaterialTab.Screen name='Stats' component={Calendar} />
+      <MaterialTab.Screen name='Stats' component={Stats} />
     </MaterialTab.Navigator>
   );
 }
