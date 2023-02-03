@@ -53,7 +53,7 @@ module.exports = class DatabaseHandler {
         //date - date of the task in the format mm/dd/yyyy
         //startTime - the start time of the task. in the format hh:mm
         //endTime - the end time of the task. in the format hh:mm
-        //rescursiveId - an id shared by all tasks which are linked
+        //rescursiveId - an id shared by all tasks which are linked or -1 if individual
         await db.run("CREATE TABLE IF NOT EXISTS tasks (taskId INTEGER PRIMARY KEY UNIQUE, username TEXT, date TEXT, startTime TEXT, endTime TEXT, recursiveId INTEGER , FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE)");
 
         //completedTasks

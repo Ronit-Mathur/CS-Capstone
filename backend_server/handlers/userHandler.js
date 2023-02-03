@@ -5,8 +5,10 @@ const bcrypt = require("bcrypt")
  * handles user operations. this includes interacting with the database. initialize database before creating or using
  */
 module.exports = class UserHandler{
-    constructor(){
+    static current;
 
+    constructor(){
+        UserHandler.current = this;
     }
 
 
@@ -29,7 +31,6 @@ module.exports = class UserHandler{
      * @return true if user was added to the database or false if not
      */
     async createUser(username, email, password){
-        //TODO Hash Password
         if(await this.userExists(username)){
             return false; //user already exists, do not add to db
         }
