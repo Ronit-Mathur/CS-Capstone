@@ -2,41 +2,14 @@ import * as React from 'react';
 import {Text, TextInput, View, Image } from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs'; 
-
-/*
-    Home Screen 
-*/
-function Home() {
-  return (
-      <View style ={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <Text>This is the Home Page!</Text>
-      </View>
-  );
-}
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Home from './components/homescreen';
+import CalendarScreen from './components/calendarscreen';
+import Stats from './components/statscreen'; 
 
 
-/* 
-  Calendar Screen 
-*/
-function Calendar() {
-  return (
-      <View style ={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <Text>This is the Calendar Page!</Text>
-      </View>
-  );
-}
 
 
-/*
-    Stats Screen 
-*/
-function Stats() {
-  return (
-      <View style ={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <Text>This is the Stats Page!</Text>
-      </View>
-  );
-}
 
 
 
@@ -48,10 +21,30 @@ const MaterialTab = createMaterialTopTabNavigator();
 
 function MaterialTabs () {
   return (
-    <MaterialTab.Navigator initialRouteName='Home' tabBarPosition='bottom'>
-      <MaterialTab.Screen name='Calendar' component={Calendar} />
-      <MaterialTab.Screen name='Home' component={Home} />
-      <MaterialTab.Screen name='Stats' component={Stats} />
+    <MaterialTab.Navigator initialRouteName='Home' tabBarPosition='bottom' screenOptions={{
+      
+      tabBarStyle:{bottom: 25},
+       
+      
+      
+    }}>
+      <MaterialTab.Screen name='Calendar' component={CalendarScreen} options={{
+          tabBarIcon: ({ color, focused}) => (
+            <MaterialCommunityIcons name="calendar-month" color='black' size={24}  />
+          ),
+          
+          
+        }}/>
+      <MaterialTab.Screen name='Home' component={Home} options={{
+          tabBarIcon: ({ color, focused}) => (
+            <MaterialCommunityIcons name="home" color='black' size={24}  />
+          ),
+        }}/>
+      <MaterialTab.Screen name='Stats' component={Stats} options={{
+          tabBarIcon: ({ color, focused}) => (
+            <MaterialCommunityIcons name="chart-bar" color='black' size={24}  />
+          ),
+        }}/>
     </MaterialTab.Navigator>
   );
 }
@@ -61,9 +54,10 @@ function MaterialTabs () {
 //Main Application Function
 const App = () => {
   return (
-    <NavigationContainer>
+    <NavigationContainer >
       <MaterialTabs />
     </NavigationContainer>
+    
   );
 };
 
