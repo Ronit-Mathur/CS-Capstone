@@ -6,7 +6,7 @@ module.exports = {
      * @return true if the string is in the correct format
      */
     isDateFormat(s) {
-        return s.length == 10 && this.isNumeric(s.substring(0, 2)) && this.isNumeric(s.substring(3, 5)) && this.isNumeric(s.substring(6, 10)) && s.substring(2,3) == "/" && s.substring(5,6);
+        return s.length == 10 && this.isNumeric(s.substring(0, 2)) && this.isNumeric(s.substring(3, 5)) && this.isNumeric(s.substring(6, 10)) && s.substring(2, 3) == "/" && s.substring(5, 6);
     },
 
 
@@ -15,9 +15,9 @@ module.exports = {
      * @param {*} s 
      * @return true if the string is in the correct format
      */
-    isTimeFormat(s){
-        return s.length == 5 && this.isNumeric(s.substring(0,2)) && this.isNumeric(s.substring(3, 5)) && s.substring(2,3) == ":";
-    },   
+    isTimeFormat(s) {
+        return s.length == 5 && this.isNumeric(s.substring(0, 2)) && this.isNumeric(s.substring(3, 5)) && s.substring(2, 3) == ":";
+    },
 
 
 
@@ -29,6 +29,35 @@ module.exports = {
      */
     isNumeric(value) {
         return /^-?\d+$/.test(value);
+    },
+
+
+    /**
+     * checks if two days are on the same day
+     * @param {*} first 
+     * @param {*} second 
+     * @returns true or false
+     * taken from https://flaviocopes.com/how-to-check-dates-same-day-javascript/
+     */
+    datesAreOnSameDay(first, second){
+        return first.getFullYear() === second.getFullYear() && first.getMonth() === second.getMonth() && first.getDate() === second.getDate()
+    },
+
+
+    /**
+     * takes a string with hh:mm or h:m or inbetween and justifies it to hh:mm
+     * @param {*} s 
+     * @returns fixed string
+     */
+    verifyHourMinuteTimeFormat(s){
+        var parts = s.split(":");
+        if(parts[0].length == 1){
+            parts[0] = "0" + parts[0];
+        }
+        if(parts[1].length == 1){
+            parts[1] = "0" + parts[1];
+        }
+        return parts.join(":");
+
     }
-    
 }

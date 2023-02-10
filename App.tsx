@@ -6,6 +6,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Home from './components/homescreen';
 import CalendarScreen from './components/calendarscreen';
 import Stats from './components/statscreen'; 
+import serverHandler from './lib/server/serverHandler';
 
 
 
@@ -18,6 +19,14 @@ import Stats from './components/statscreen';
   Create Tabs to switch between Screens
 */
 const MaterialTab = createMaterialTopTabNavigator();
+
+/**
+ * server setup
+ */
+
+const SERVER_IP = "http://192.168.1.178";
+const SERVER_PORT = 6021;
+const ServerHandler = new serverHandler(SERVER_IP, SERVER_PORT);
 
 function MaterialTabs () {
   return (

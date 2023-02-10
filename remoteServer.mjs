@@ -5,7 +5,7 @@
 
 import Server from "./backend_server/server.js";
 
-const PORT = 6020; //port to run the server on
+const PORT = 6021; //port to run the server on
 
 async function main(){
     const server = new Server(true, PORT);

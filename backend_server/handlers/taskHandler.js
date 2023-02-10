@@ -3,12 +3,12 @@
  */
 
 const DatabaseHandler = require("./databaseHandler");
-const UserHandler = require("./userHandler");
 const helpers = require("../lib/helpers");
+const Server = require("../server");
 
 module.exports = class taskHandler {
-    constructor() {
 
+    constructor() {
     }
 
 
@@ -36,21 +36,29 @@ module.exports = class taskHandler {
      */
     async getAllTaskIds() {
         var result = await DatabaseHandler.current.query("SELECT taskId FROM tasks ORDER BY taskId");
-        return result;
+
+        //convert from objects to a list of ints
+        var idLs = [];
+        for(var i =0; i<result.length; i++){
+            idLs.push(result[i].taskId);
+        }   
+
+        return idLs;
     }
 
 
     /**
      * adds a single task to the database. do not used for recursive tasks. 
      * @param {*} username username of who the task belongs to
+     * @param {*} summary a summary of the task
      * @param {*} date date of the task in the string format mm/dd/yyyy
      * @param {*} startTime start time of the task in the string format hh:mm
      * @param {*} endTime end time of the task in the string format hh:mm
      * @return the new id of the task or -1 if it wasn't added
      */
-    async addTask(username, date, startTime, endTime) {
+    async addTask(username, summary, date, startTime, endTime) {
         //verify that user exists
-        if (!(await UserHandler.current.userExists(username))) {
+        if (!(await Server.current.getUserHandler().userExists(username))) {
             throw new Error("Unable to add task to database. User \"" + username + "\" does not exist.");
 
         }
@@ -60,21 +68,48 @@ module.exports = class taskHandler {
             throw new Error("Unable to add task to database. Date string is invalid");
         }
 
-        if(!helpers.isTimeFormat(startTime)){
+        if (!helpers.isTimeFormat(startTime)) {
             throw new Error("Unable to add task to database. Start time string is invalid");
         }
 
-        if(!helpers.isTimeFormat(endTime)){
+        if (!helpers.isTimeFormat(endTime)) {
             throw new Error("Unable to add task to database. End time string is invalid");
         }
 
 
         //everything is valid, add to database
         var taskId = await this._getNewTaskId();
-        await DatabaseHandler.current.exec("INSERT INTO tasks (taskId, username, date, startTime, endTime, recursiveId) VALUES(?,?,?,?,?,-1)", [taskId, username, date, startTime, endTime]);
+        await DatabaseHandler.current.exec("INSERT INTO tasks (taskId, username, summary, date, startTime, endTime, recursiveId) VALUES(?,?,?,?,?,?,-1)", [taskId, username, summary, date, startTime, endTime]);
 
 
         return taskId;
 
     }
+
+
+    async parseAndImportGoogleEvents(events, username) {
+        for (var i = 0; i < events.length; i++) {
+            const event = events[i];
+            var summary = event.summary;
+            var parsedStartDate = new Date(Date.parse(event.start.dateTime));
+            var date = parsedStartDate.toISOString().split('T')[0];
+
+            //date is given in yyyy-mm-dd. reformat to mm/dd/yyyy
+            var dateParts = date.split("-");
+            date = dateParts[2] + "/" + dateParts[1] + "/" + dateParts[0];
+
+
+            var startTime = helpers.verifyHourMinuteTimeFormat(parsedStartDate.getHours() + ":" + parsedStartDate.getMinutes());
+            var parsedEndDate = new Date(Date.parse(event.end.dateTime));
+
+            if (!helpers.datesAreOnSameDay(parsedStartDate, parsedEndDate)) {
+                continue; //ignore multi day events
+            }
+
+            var endTime = helpers.verifyHourMinuteTimeFormat(parsedEndDate.getHours() + ":" + parsedEndDate.getMinutes());
+            await this.addTask(username, summary, date, startTime, endTime);
+        }
+    }
+
+
 }

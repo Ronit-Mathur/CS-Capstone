@@ -49,12 +49,13 @@ module.exports = class DatabaseHandler {
         //tasks
         //a task is activity with a start and end date specific to a user. these can be recusrive where multiple tasks are linked
         //taskId - id belonging to the individual tasks
+        //summary - a summary of the task
         //username - username belonging to the user who owns the task
         //date - date of the task in the format mm/dd/yyyy
         //startTime - the start time of the task. in the format hh:mm
         //endTime - the end time of the task. in the format hh:mm
         //rescursiveId - an id shared by all tasks which are linked or -1 if individual
-        await db.run("CREATE TABLE IF NOT EXISTS tasks (taskId INTEGER PRIMARY KEY UNIQUE, username TEXT, date TEXT, startTime TEXT, endTime TEXT, recursiveId INTEGER , FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE)");
+        await db.run("CREATE TABLE IF NOT EXISTS tasks (taskId INTEGER PRIMARY KEY UNIQUE, username TEXT, summary TEXT, date TEXT, startTime TEXT, endTime TEXT, recursiveId INTEGER , FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE)");
 
         //completedTasks
         //a completed task is added data for a task. contains data about how the task was performed.
