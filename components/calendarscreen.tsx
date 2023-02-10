@@ -1,11 +1,25 @@
-import { useLinkProps } from '@react-navigation/native';
 import * as React from 'react';
+import { NavigationContainer, useNavigation} from '@react-navigation/native';
 import {Text, TextInput, View, Image, SafeAreaView, StyleSheet } from 'react-native';
 import {Calendar} from 'react-native-calendars'
+import TaskCreation from './tasks';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 
 
+const StackNavigator = createNativeStackNavigator();
 
+function CalendarNav (){
+  return(
+    <StackNavigator.Navigator initialRouteName='CalendarScreen'>
+      <StackNavigator.Screen name='CalendarScreen' component={CalendarScreen} />
+      <StackNavigator.Group screenOptions={{presentation:'modal'}}>
+        <StackNavigator.Screen name='Task' component={TaskCreation} />
+
+      </StackNavigator.Group>
+    </StackNavigator.Navigator>
+  );
+}
 
 
 
@@ -13,18 +27,10 @@ import {Calendar} from 'react-native-calendars'
 
 
 function CreateCalendar () {
-   
-  /* const [{key,theme}, setTheme] = React.useState({key:'dark', theme:{
-    'stylesheet.day.basic':{
-      base:{
-        width: 32,
-        height: 50
-      }
-    }
-  }}) */
+  
+  const navigation = useNavigation();
   return(
     
-
     <Calendar  style={{
       borderTopRightRadius:20,
       borderTopLeftRadius:20, 
@@ -40,7 +46,7 @@ function CreateCalendar () {
          }
        }
      }}
-     
+     onDayPress={ day =>{navigation.navigate('Task')}}
      
     />
   );
@@ -54,10 +60,11 @@ function CreateCalendar () {
 
 function CalendarScreen() {
     return (
-        <SafeAreaView style ={{flex:1, justifyContent:'center'}}>
+      
+        <View style ={{flex:1, justifyContent:'center'}}>
           <CreateCalendar />
-        </SafeAreaView>
+        </View>
     );
   }
 
-  export default CalendarScreen;
+  export default CalendarNav;
