@@ -8,7 +8,12 @@ module.exports = {
         GOOGLE_CALENDAR_IMPORT_ENDPOINT:  "/api/calendar/import/google/id",
         GOOGLE_CALENDAR_OAUTH_BEGIN: "/api/calendar/import/google/oauth/begin",
         GOOGLE_CALENDAR_OAUTH_RESPONSE: "/api/calendar/import/google/oauth/response",
-        GOOGLE_CALENDAR_LIST_CALENDARS:  "/api/calendar/import/google/list"
+        GOOGLE_CALENDAR_LIST_CALENDARS:  "/api/calendar/import/google/list",
+
+        USER_TASKS_BY_DAY: "/api/user/tasks/day",
+        USER_ADD_TASK: "/api/user/tasks/add"
+
+
     },
     /**
      * template html pages used for specific purposes

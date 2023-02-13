@@ -39,9 +39,9 @@ module.exports = class taskHandler {
 
         //convert from objects to a list of ints
         var idLs = [];
-        for(var i =0; i<result.length; i++){
+        for (var i = 0; i < result.length; i++) {
             idLs.push(result[i].taskId);
-        }   
+        }
 
         return idLs;
     }
@@ -112,4 +112,17 @@ module.exports = class taskHandler {
     }
 
 
+    /**
+     * 
+     * @param {*} username username of the user
+     * @param {*} day day of the dasks in mm/dd/yyyy format
+     * @returns a days tasks for a given user
+     */
+    async getDaysTasks(username, day) {
+        var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE date = ? AND username = ?",[day, username]);
+
+        return result;
+    }
 }
+
+

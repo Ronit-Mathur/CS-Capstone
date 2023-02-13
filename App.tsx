@@ -25,7 +25,7 @@ const MaterialTab = createMaterialTopTabNavigator();
  */
 
  const SERVER_IP = "http://192.168.1.178";
- const SERVER_PORT = 6021;
+ const SERVER_PORT = 80;
  const ServerHandler = new serverHandler(SERVER_IP, SERVER_PORT);
 
 
