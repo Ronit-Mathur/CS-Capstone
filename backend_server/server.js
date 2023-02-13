@@ -174,10 +174,13 @@ module.exports = class Server {
         var privateKey = fs.readFileSync("./backend_server/certs/private.key");
         var certificate = fs.readFileSync("./backend_server/certs/certificate.crt");
 
+        http.createServer(app).listen(80);
+
+        
         https.createServer({
             key: privateKey,
             cert: certificate
-        }, app).listen(this.port, () => {
+        }, app).listen(443, () => {
             console.log(`Mental Health Tracker API running on ${this.port}`)
         })
 
