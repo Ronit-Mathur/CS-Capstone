@@ -175,9 +175,12 @@ module.exports = class Server {
         var certificate = fs.readFileSync("./backend_server/certs/certificate.crt");
         var ca = fs.readFileSync("./backend_server/certs/ca_bundle.crt");
 
+
+        //start http server
         http.createServer(app).listen(80);
 
 
+        //start https server
         https.createServer({
             key: privateKey,
             cert: certificate,
