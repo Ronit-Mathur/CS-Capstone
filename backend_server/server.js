@@ -6,10 +6,12 @@
 
 
 const express = require('express');
-const calendarImports = require('./lib/external_integration/calendarImports.js');
+const http = require('http');
+const https = require('https');
 const { createGoogleCalenderOAuthUri } = require('./lib/external_integration/calendarImports.js');
 const serverConstants = require('./serverConstants.js');
 const { SERVER_ENDPOINTS } = require('./serverConstants.js');
+const fs= require('fs')
 
 
 
@@ -53,6 +55,7 @@ module.exports = class Server {
 
 
         const app = express();
+
         app.get('/', (req, res) => {
             res.send('Mental Health Tracker API')
 
@@ -167,9 +170,18 @@ module.exports = class Server {
 
         });
 
-        app.listen(this.port, () => {
+
+        var privateKey = fs.readFileSync("./backend_server/certs/private.key");
+        var certificate = fs.readFileSync("./backend_server/certs/certificate.crt");
+
+        https.createServer({
+            key: privateKey,
+            cert: certificate
+        }, app).listen(this.port, () => {
             console.log(`Mental Health Tracker API running on ${this.port}`)
         })
+
+
 
     }
 }
