@@ -11,7 +11,7 @@ const https = require('https');
 const { createGoogleCalenderOAuthUri } = require('./lib/external_integration/calendarImports.js');
 const serverConstants = require('./serverConstants.js');
 const { SERVER_ENDPOINTS } = require('./serverConstants.js');
-const fs= require('fs')
+const fs = require('fs')
 
 
 
@@ -173,13 +173,15 @@ module.exports = class Server {
 
         var privateKey = fs.readFileSync("./backend_server/certs/private.key");
         var certificate = fs.readFileSync("./backend_server/certs/certificate.crt");
+        var ca = fs.readFileSync("./backend_server/certs/ca_bundle.crt");
 
         http.createServer(app).listen(80);
 
-        
+
         https.createServer({
             key: privateKey,
-            cert: certificate
+            cert: certificate,
+            ca: ca
         }, app).listen(443, () => {
             console.log(`Mental Health Tracker API running on ${this.port}`)
         })
