@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { NavigationContainer, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {Text, TextInput, View, Image, SafeAreaView, StyleSheet } from 'react-native';
 import {Calendar} from 'react-native-calendars'
 import TaskCreation from './tasks';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {createNativeStackNavigator } from '@react-navigation/native-stack';
 
 
 
@@ -20,9 +20,6 @@ function CalendarNav (){
     </StackNavigator.Navigator>
   );
 }
-
-
-
 
 
 
@@ -52,16 +49,10 @@ function CreateCalendar () {
   );
 }
 
-
-
-
-
-
-
 function CalendarScreen() {
     return (
       
-        <View style ={{flex:1, justifyContent:'center'}}>
+        <View style ={{flex:0, position:'relative'}}>
           <CreateCalendar />
         </View>
     );
