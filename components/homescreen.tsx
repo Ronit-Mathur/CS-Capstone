@@ -1,14 +1,50 @@
 import * as React from 'react';
-import {Text, TextInput, View, Image, SafeAreaView } from 'react-native';
+import {Text, TextInput, View, Image, SafeAreaView, ScrollView} from 'react-native';
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import {NavigationContainer, useNavigation} from '@react-navigation/native';
 
+
+
+const CurrentTasksTabs = createMaterialTopTabNavigator();
+
+function InProgress(){
+  return(
+    <ScrollView style= {{borderWidth:3, width:'100%', flexGrow:0, height:430}}>
+      <Text>InProgress</Text>
+    </ScrollView>
+  );
+}
+
+function Completed(){
+  return(
+    <ScrollView>
+      <Text>Completed</Text>
+    </ScrollView>
+  );
+}
+
+function TopTabs () {
+  return(
+    <CurrentTasksTabs.Navigator style={{top:'30%', }} screenOptions={{
+      tabBarStyle:{
+        width:'50%', 
+        alignSelf:'center',
+        borderRadius:100,
+      }
+    }}>
+      <CurrentTasksTabs.Screen name='Inprogress' component={InProgress} />
+      <CurrentTasksTabs.Screen name='Completed' component={Completed} />
+    </CurrentTasksTabs.Navigator>
+  );
+}
 
 
 
 function DailyMood(){
   return(
-    <View>
+    <SafeAreaView>
         <Text>Input Daily Mood Here!</Text>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -19,7 +55,7 @@ function CurrentDayTasks (){
       position:'absolute', 
       top: "50%"
     }}>
-      <Text>Current Day Tasks</Text>
+      <TopTabs />
     </View>
   ); 
 }
@@ -28,10 +64,9 @@ function CurrentDayTasks (){
 
 function Home() {
     return (
-        <SafeAreaView style ={{flex:1, alignItems: 'center', top:50}}>
-          <DailyMood />
-          <CurrentDayTasks />
-        </SafeAreaView>
+      <NavigationContainer independent={true} > 
+        <TopTabs /> 
+      </NavigationContainer>
 
     );
   }

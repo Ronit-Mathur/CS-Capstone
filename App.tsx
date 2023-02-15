@@ -9,7 +9,8 @@ import CalendarNav from './components/calendarscreen'
 import Stats from './components/statscreen';
 import TaskCreation from './components/tasks'; 
 import serverHandler from './lib/server/serverHandler';
-
+import {
+  SafeAreaProvider,useSafeAreaInsets} from 'react-native-safe-area-context';
 
 
 
@@ -61,9 +62,11 @@ function MaterialTabs () {
 //Main Application Function
 const App = () => {
   return (
-    <NavigationContainer >
-      <MaterialTabs />
-    </NavigationContainer>
+    <SafeAreaProvider>
+      <NavigationContainer >
+        <MaterialTabs />
+      </NavigationContainer>
+    </SafeAreaProvider>
     
   );
 };
