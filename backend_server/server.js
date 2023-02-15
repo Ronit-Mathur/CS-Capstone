@@ -32,6 +32,7 @@ module.exports = class Server {
         this.DatabaseHandler = new (require("./handlers/databaseHandler.js"))(isRemote);
         this.userHandler = new (require("./handlers/userHandler.js"))();
         this.taskHandler = new (require("./handlers/taskHandler.js"))();
+        this.dayHandler = new (require("./handlers/dayHandler.js"))();
 
 
 
@@ -88,7 +89,7 @@ module.exports = class Server {
 
 
                 //everything went okay
-                res.status(201).send("User Created");
+                res.status(201).send(JSON.stringify("User Created"));
                 return
             }
             else {
@@ -102,11 +103,11 @@ module.exports = class Server {
 
                 //check if user exists
                 if (await this.userHandler.userExists(req.query.username)) {
-                    res.status(200).send("true");
+                    res.status(200).send(JSON.stringify("true"));
                     return;
                 }
                 else {
-                    res.status(200).send("false");
+                    res.status(200).send(JSON.stringify("false"));
                     return;
                 }
             }
