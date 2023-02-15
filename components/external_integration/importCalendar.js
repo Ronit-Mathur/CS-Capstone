@@ -80,7 +80,7 @@ export default class ImportCalendar extends React.Component {
     }
 
     async listOutlookCalendars() {
-        await createUser("testuser2", "testuser2pass", "testuser2@gmail.com");
+        return;
     }
 }
 

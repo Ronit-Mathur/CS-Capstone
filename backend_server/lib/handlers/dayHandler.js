@@ -15,7 +15,13 @@ module.exports = class dayHandler {
      * @param {*} happiness happiness value from 1-5. 5 being greated
      */
     async rateDay(username, date, happiness){
+        if(!helpers.isDateFormat(date)){
+            //invalid date format
+            return false;
+        }
+
         var rating = -1; //set a rating of -1 TODO
         await DatabaseHandler.current.exec("INSERT INTO daily (date,username,happiness,rating) VALUES (?,?,?,?)", [date,username,happiness, rating]);
+        return true;
     }
 }

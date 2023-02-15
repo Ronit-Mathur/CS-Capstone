@@ -14,7 +14,9 @@ module.exports = {
         USER_ADD_TASK: "/api/user/tasks/add",
 
         USER_CREATE: "/api/user/create",
-        USER_EXISTS: "/api/user/exists"
+        USER_EXISTS: "/api/user/exists",
+
+        USER_RATE_DAY: "/api/user/day/rate"
 
 
     },

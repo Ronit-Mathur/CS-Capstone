@@ -154,6 +154,21 @@ const dayHandler =
             });
 
             /**
+             * daily methods
+             */
+
+            app.get(SERVER_ENDPOINTS.USER_RATE_DAY, async (req, res) => {
+                if (req.query.username, req.query.day, req.query.happiness) {
+                    await this.dayHandler.rateDay(req.query.username, req.query.day, req.query.happiness);
+                    res.status(200).send(JSON.stringify("done"));
+                }
+                else {
+                    res.status(400).send("invalid parameters");
+                    return;
+                }
+            });
+
+            /**
              * google oauth2
              */
 
