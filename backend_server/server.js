@@ -68,6 +68,55 @@ module.exports = class Server {
 
 
         /**
+         * user methods
+         */
+        app.get(SERVER_ENDPOINTS.USER_CREATE, async (req, res) => {
+            if (req.query.username && req.query.password && req.query.email) {
+
+                //check if user exists
+                if (await this.userHandler.userExists(req.query.username)) {
+                    res.status(400).send("user exists");
+                    return;
+                }
+
+                //create user
+                const created = await this.userHandler.createUser(req.query.username, req.query.email, req.query.password);
+                if (!created) {
+                    res.status(400).send("user creation error");
+                    return;
+                }
+
+
+                //everything went okay
+                res.status(201).send("User Created");
+                return
+            }
+            else {
+                res.status(400).send("invalid parameters");
+                return;
+            }
+        });
+
+        app.get(SERVER_ENDPOINTS.USER_EXISTS, async (req, res) => {
+            if (req.query.username) {
+
+                //check if user exists
+                if (await this.userHandler.userExists(req.query.username)) {
+                    res.status(200).send("true");
+                    return;
+                }
+                else {
+                    res.status(200).send("false");
+                    return;
+                }
+            }
+            else {
+                res.status(400).send("invalid parameters");
+                return;
+            }
+        });
+
+        /**
          * task methods
          */
 

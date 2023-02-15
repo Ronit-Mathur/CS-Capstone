@@ -11,7 +11,10 @@ module.exports = {
         GOOGLE_CALENDAR_LIST_CALENDARS:  "/api/calendar/import/google/list",
 
         USER_TASKS_BY_DAY: "/api/user/tasks/day",
-        USER_ADD_TASK: "/api/user/tasks/add"
+        USER_ADD_TASK: "/api/user/tasks/add",
+
+        USER_CREATE: "/api/user/create",
+        USER_EXISTS: "/api/user/exists"
 
 
     },
