@@ -2,14 +2,27 @@ import * as React from 'react';
 import {Text, TextInput, View, Image, SafeAreaView, ScrollView} from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {NavigationContainer, useNavigation} from '@react-navigation/native';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { TabBarIndicator } from 'react-native-tab-view';
 
+const CurrentDayTasksStyle ={
+      borderWidth:3, 
+      width:'90%', 
+      flexGrow:0, 
+      height:'70%', 
+      alignSelf:'center', 
+      top:10,
+}
 
+const user = 'Kyler'
 
 const CurrentTasksTabs = createMaterialTopTabNavigator();
 
 function InProgress(){
   return(
-    <ScrollView style= {{borderWidth:3, width:'100%', flexGrow:0, height:430}}>
+    <ScrollView style= {CurrentDayTasksStyle}>
+      
+      
       <Text>InProgress</Text>
     </ScrollView>
   );
@@ -17,7 +30,7 @@ function InProgress(){
 
 function Completed(){
   return(
-    <ScrollView>
+    <ScrollView style={CurrentDayTasksStyle}>
       <Text>Completed</Text>
     </ScrollView>
   );
@@ -25,15 +38,40 @@ function Completed(){
 
 function TopTabs () {
   return(
-    <CurrentTasksTabs.Navigator style={{top:'30%', }} screenOptions={{
+    <CurrentTasksTabs.Navigator style={{
+        top:'15%',
+      }} 
+      screenOptions={{
+      
       tabBarStyle:{
-        width:'50%', 
+        width:'75%', 
         alignSelf:'center',
         borderRadius:100,
-      }
-    }}>
-      <CurrentTasksTabs.Screen name='Inprogress' component={InProgress} />
-      <CurrentTasksTabs.Screen name='Completed' component={Completed} />
+        shadowOpacity:.50,
+      },
+    
+     }}>
+      <CurrentTasksTabs.Screen name='Inprogress' component={InProgress} options={{
+        tabBarIndicatorStyle:{
+          height:'60%',
+          borderRadius:100,
+          bottom:'20%',
+          left:'2.5%', 
+          backgroundColor:'maroon', 
+          opacity:.5, 
+          
+        }
+      }} />
+      <CurrentTasksTabs.Screen name='Completed' component={Completed} options={{
+        tabBarIndicatorStyle:{
+          height:'60%',
+          borderRadius:100,
+          bottom:'20%',
+          backgroundColor:'maroon', 
+          opacity:.5, 
+          marginRight:'55%'
+        }
+      }} />
     </CurrentTasksTabs.Navigator>
   );
 }
@@ -42,29 +80,23 @@ function TopTabs () {
 
 function DailyMood(){
   return(
-    <SafeAreaView>
-        <Text>Input Daily Mood Here!</Text>
+    <SafeAreaView style={{
+      borderWidth:0,
+      width:'90%',
+      height:'20%',
+      alignSelf:'center',
+      top:'7%'
+    }}>
+        <Text style={{fontSize: 20, textDecorationLine:'underline'}}>Welcome {user}</Text>
     </SafeAreaView>
   );
 }
-
-function CurrentDayTasks (){
-  return(
-    <View style={{
-      flex:1, 
-      position:'absolute', 
-      top: "50%"
-    }}>
-      <TopTabs />
-    </View>
-  ); 
-}
-
 
 
 function Home() {
     return (
       <NavigationContainer independent={true} > 
+        <DailyMood />
         <TopTabs /> 
       </NavigationContainer>
 
