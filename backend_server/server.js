@@ -254,7 +254,6 @@ const dayHandler =
              * gets the response code from the oauth server
              */
             app.get(SERVER_ENDPOINTS.OUTLOOK_CALENDAR_OAUTH_RESPONSE, async (req, res) => {
-                console.log(req.query);
                 if (req.query.code) {
 
 
