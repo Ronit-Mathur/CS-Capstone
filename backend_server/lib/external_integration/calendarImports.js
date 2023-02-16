@@ -132,7 +132,7 @@ async function getOutlookOAuth2Token(key) {
         },
     });
 
-    console.log(result);
+    console.log(result.body);
 
 }
 
