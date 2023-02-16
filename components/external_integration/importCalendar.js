@@ -1,6 +1,6 @@
 import React from "react"
 import { Text, TextInput, View, Image, SafeAreaView, Button, StyleSheet, Pressable } from 'react-native';
-import { getGoogleCalendars, importGoogleCalendar } from '../../lib/external_integration/calendarIntegration';
+import { getGoogleCalendars, importGoogleCalendar, getOutlookCalendars } from '../../lib/external_integration/calendarIntegration';
 import { createUser } from "../../lib/server/users";
 
 

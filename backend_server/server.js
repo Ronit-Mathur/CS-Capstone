@@ -246,6 +246,7 @@ const dayHandler =
              */
 
             app.get(SERVER_ENDPOINTS.OUTLOOK_CALENDAR_OAUTH_BEGIN, async (req, res) => {
+                console.log("here");
                 var url = calendarImports.createOutlookCalendarOAuthUri();
                 res.status(200).send(JSON.stringify(url));
             });
