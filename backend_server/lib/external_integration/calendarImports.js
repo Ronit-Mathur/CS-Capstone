@@ -114,14 +114,14 @@ function createOutlookCalendarOAuthUri() {
  * @returns authorized outlook token
  */
 async function getOutlookOAuth2Token(key) {
-    var uri = "https://login.microsoftonline.com/common/oauth2/token"
-    var result = await fetch(uri, {
+    var uri = "https://login.microsoftonline.com/common/oauth2/token?"
+    var result = await fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
 
         },
-        body: {
+        body: new URLSearchParams({
             client_id: EXTERNAL_KEYS.AZURE_CLIENT_ID,
             scope: 'https://graph.microsoft.com/calendars.read',
             code: key,
@@ -129,10 +129,10 @@ async function getOutlookOAuth2Token(key) {
             grant_type: "authorization_code",
             client_secret: EXTERNAL_KEYS.AZURE_SECRET
 
-        },
+        }),
     });
 
-    console.log(result.body);
+    console.log(await result.data());
 
 }
 
