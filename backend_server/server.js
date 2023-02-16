@@ -12,6 +12,7 @@ const { createGoogleCalenderOAuthUri } = require('./lib/external_integration/cal
 const serverConstants = require('./serverConstants.js');
 const { SERVER_ENDPOINTS } = require('./serverConstants.js');
 const fs = require('fs');
+const calendarImports = require('./lib/external_integration/calendarImports.js');
 const dayHandler =
 
 
@@ -34,6 +35,8 @@ const dayHandler =
             this.userHandler = new (require("./handlers/userHandler.js"))();
             this.taskHandler = new (require("./handlers/taskHandler.js"))();
             this.dayHandler = new (require('./lib/handlers/dayHandler.js'))();
+
+
 
 
 
@@ -172,6 +175,7 @@ const dayHandler =
              * google oauth2
              */
 
+
             /**
              * begins the oauth login process for google calendar
              * sends a google oauth link back to the user to begin login
@@ -235,6 +239,36 @@ const dayHandler =
                 res.status(200).send("ok");
 
             });
+
+
+            /**
+             * outlook oauth2
+             */
+
+            app.get(SERVER_ENDPOINTS.OUTLOOK_CALENDAR_OAUTH_BEGIN, async (req, res) => {
+                var url = calendarImports.createOutlookCalendarOAuthUri();
+                res.status(200).send(JSON.stringify(url));
+            });
+
+            /**
+             * gets the response code from the oauth server
+             */
+            app.get(SERVER_ENDPOINTS.OUTLOOK_CALENDAR_OAUTH_RESPONSE, async (req, res) => {
+                if (req.query.code) {
+
+
+                    res.status(200).send(serverConstants.DUMMY_PAGES.FINISHED_PAGE); //tell the client to close the window
+
+                    //store the data in the user handler
+                    await this.userHandler.completeOutlookAuthentication(req.ip, req.query.code);
+                    return;
+                }
+                else {
+                    res.status(400); //invalid query
+                    return;
+                }
+            });
+
 
 
             var privateKey = fs.readFileSync("./backend_server/certs/private.key");

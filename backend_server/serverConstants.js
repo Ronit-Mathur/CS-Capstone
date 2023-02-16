@@ -10,6 +10,9 @@ module.exports = {
         GOOGLE_CALENDAR_OAUTH_RESPONSE: "/api/calendar/import/google/oauth/response",
         GOOGLE_CALENDAR_LIST_CALENDARS:  "/api/calendar/import/google/list",
 
+        OUTLOOK_CALENDAR_OAUTH_BEGIN: "/api/calendar/import/outlook/begin",
+        OUTLOOK_CALENDAR_OAUTH_RESPONSE: "/api/calendar/import/outlook/response",
+
         USER_TASKS_BY_DAY: "/api/user/tasks/day",
         USER_ADD_TASK: "/api/user/tasks/add",
 

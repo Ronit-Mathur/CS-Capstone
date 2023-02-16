@@ -3,7 +3,6 @@
  */
 const EXTERNAL_KEYS = require("./externalKeys");
 const { google } = require('googleapis');
-const outlook = require("node-outlook");
 const moment = require('moment');
 
 
@@ -94,8 +93,46 @@ async function getGoogleEventsFromClient(client, id) {
  */
 function createOutlookCalendarOAuthUri() {
 
-    //use outlook 2.0 api
-    outlook.base.setApiEndpoint("https://outlook.office.com/api/v2.0");
+    //apend the base uri with the params
+    var uri = "https://login.microsoftonline.com/common/oauth2/authorize?" + new URLSearchParams({
+        client_id: EXTERNAL_KEYS.AZURE_CLIENT_ID,
+        response_type: "code",
+        redirect_uri: EXTERNAL_KEYS.AZURE_OAUTH_REDIRECT_URL,
+        scope: 'https://graph.microsoft.com/calendars.read',
+        response_mode: "query"
+
+    });
+
+    return uri;
+
+}
+
+
+/**
+ * swaps an authorization code from a client with a token from the outlook server 
+ * @param {*} key authorization code from the server
+ * @returns authorized outlook token
+ */
+async function getOutlookOAuth2Token(key) {
+    var uri = "https://login.microsoftonline.com/common/oauth2/token"
+    var result = await fetch(uri, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+
+        },
+        body: {
+            client_id: EXTERNAL_KEYS.AZURE_CLIENT_ID,
+            scope: 'https://graph.microsoft.com/calendars.read',
+            code: key,
+            redirect_uri: EXTERNAL_KEYS.AZURE_OAUTH_REDIRECT_URL,
+            grant_type: "authorization_code",
+            client_secret: EXTERNAL_KEYS.AZURE_SECRET
+
+        },
+    });
+
+    console.log(result);
 
 }
 
@@ -104,6 +141,7 @@ module.exports = {
     getGoogleCalendarsFromClient: getGoogleCalendarsFromClient,
     getAuthorizedGoogleOAuth2Client: getAuthorizedGoogleOAuth2Client,
     createOutlookCalendarOAuthUri: createOutlookCalendarOAuthUri,
-    getGoogleEventsFromClient: getGoogleEventsFromClient
+    getGoogleEventsFromClient: getGoogleEventsFromClient,
+    getOutlookOAuth2Token: getOutlookOAuth2Token
 }
 

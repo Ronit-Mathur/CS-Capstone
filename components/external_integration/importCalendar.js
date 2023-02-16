@@ -80,7 +80,11 @@ export default class ImportCalendar extends React.Component {
     }
 
     async listOutlookCalendars() {
-        return;
+        await getOutlookCalendars((calendars) => {
+
+            //update state infos
+           // this.setState({ calendars: calendars, listCalendars: true, calendarProvider: "google" });
+        });
     }
 }
 
