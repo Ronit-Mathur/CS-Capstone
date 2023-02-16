@@ -36,6 +36,9 @@ function MaterialTabs() {
     <MaterialTab.Navigator initialRouteName='Home' tabBarPosition='bottom' screenOptions={{
 
       tabBarStyle: { bottom: 25 },
+      tabBarIndicatorStyle:{
+        backgroundColor:'maroon'
+      }
     }}>
       <MaterialTab.Screen name='Calendar' component={CalendarNav} options={{
         tabBarIcon: ({ color, focused }) => (
