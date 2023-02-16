@@ -115,7 +115,7 @@ function createOutlookCalendarOAuthUri() {
  */
 async function getOutlookOAuth2Token(key) {
     var uri = "https://login.microsoftonline.com/common/oauth2/token?"
-    var result = await fetch(url, {
+    var result = await fetch(uri, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -132,7 +132,8 @@ async function getOutlookOAuth2Token(key) {
         }),
     });
 
-    console.log(await result.data());
+    var json = JSON.parse(await result.text());
+    return json["access_token"];
 
 }
 
