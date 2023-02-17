@@ -103,7 +103,7 @@ module.exports = class UserHandler {
 
     async getOutlookCalendars(ip){
         const token = this.outlookOAuthCredentials[ip];
-        if (!client) {
+        if (!token) {
             return [];
         }
         const calendarObjs = await getOutlookCalendarsFromToken(token);
