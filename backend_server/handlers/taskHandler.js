@@ -111,6 +111,31 @@ module.exports = class taskHandler {
         }
     }
 
+    async parseAndImportOutlookEvents(events, username) {
+        for (var i = 0; i < events.length; i++) {
+            const event = events[i];
+            var summary = event.subject;
+            var parsedStartDate = new Date(Date.parse(event.start.dateTime + " UTC"));
+            var date = parsedStartDate.toISOString().split('T')[0];
+
+
+            //date is given in yyyy-mm-dd. reformat to mm/dd/yyyy
+            var dateParts = date.split("-");
+            date = dateParts[2] + "/" + dateParts[1] + "/" + dateParts[0];
+
+            var startTime = helpers.verifyHourMinuteTimeFormat(parsedStartDate.getHours() + ":" + parsedStartDate.getMinutes());
+            var parsedEndDate = new Date(Date.parse(event.end.dateTime + " UTC"));
+
+            if (!helpers.datesAreOnSameDay(parsedStartDate, parsedEndDate)) {
+                continue; //ignore multi day events
+            }
+
+            var endTime = helpers.verifyHourMinuteTimeFormat(parsedEndDate.getHours() + ":" + parsedEndDate.getMinutes());
+            await this.addTask(username, summary, date, startTime, endTime);
+        }
+
+    }
+
 
     /**
      * 
@@ -119,7 +144,7 @@ module.exports = class taskHandler {
      * @returns a days tasks for a given user
      */
     async getDaysTasks(username, day) {
-        var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE date = ? AND username = ?",[day, username]);
+        var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE date = ? AND username = ?", [day, username]);
 
         return result;
     }

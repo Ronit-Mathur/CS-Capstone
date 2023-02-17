@@ -189,10 +189,9 @@ module.exports = class UserHandler {
 
 
         const events = await getOutlookEventsFromToken(token, id);
-        console.log(events[0]);
 
         //hand off events to task handler to parse
-       // await Server.current.getTaskHandler().parseAndImportGoogleEvents(events, username);
+        await Server.current.getTaskHandler().parseAndImportOutlookEvents(events, username);
     }
 }
 

@@ -168,7 +168,7 @@ async function getOutlookEventsFromToken(token, id) {
     var result = await fetch(uri, {
         method: 'GET',
         headers: {
-            'Prefer: outlook.timezone': startTime,
+            'outlook.timezone': startTime,
             'Authorization': token
 
         }
