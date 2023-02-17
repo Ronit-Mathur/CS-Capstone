@@ -140,7 +140,7 @@ async function getOutlookOAuth2Token(key) {
 async function getOutlookCalendarsFromToken(token) {
 
 
-    var uri = "https://graph.microsoft.com/me/calendars?"
+    var uri = "https://graph.microsoft.com/v2.0/me/calendars?"
     var result = await fetch(uri, {
         method: 'GET',
         headers: {
