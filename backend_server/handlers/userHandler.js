@@ -1,6 +1,6 @@
 const DatabaseHandler = require("./databaseHandler")
 const bcrypt = require("bcrypt");
-const {getOutlookCalendarsFromToken, getOutlookOAuth2Token, getAuthorizedGoogleOAuth2Client, getGoogleCalendarsFromClient, getGoogleEventsFromClient } = require("../lib/external_integration/calendarImports");
+const { getOutlookEventsFromToken, getOutlookCalendarsFromToken, getOutlookOAuth2Token, getAuthorizedGoogleOAuth2Client, getGoogleCalendarsFromClient, getGoogleEventsFromClient } = require("../lib/external_integration/calendarImports");
 const Server = require("../server");
 
 /**
@@ -97,11 +97,11 @@ module.exports = class UserHandler {
     }
 
 
-    hasOutlookAuthentication(ip){
+    hasOutlookAuthentication(ip) {
         return this.outlookOAuthCredentials[ip] != null;
     }
 
-    async getOutlookCalendars(ip){
+    async getOutlookCalendars(ip) {
         const token = this.outlookOAuthCredentials[ip];
         if (!token) {
             return [];
@@ -172,6 +172,27 @@ module.exports = class UserHandler {
         //hand off events to task handler to parse
         await Server.current.getTaskHandler().parseAndImportGoogleEvents(events, username);
 
+    }
+
+
+
+    /**
+     * imports a users outlook calendar into the database
+     * @param {*} id id of the calendar to import
+     */
+    async importOutlookCalendar(id, ip, username) {
+        const token = this.outlookOAuthCredentials[ip];
+        if (!token || (!await this.userExists(username))) {
+            return [];
+        }
+
+
+
+        const events = await getOutlookEventsFromToken(token, id);
+        console.log(events[0]);
+
+        //hand off events to task handler to parse
+       // await Server.current.getTaskHandler().parseAndImportGoogleEvents(events, username);
     }
 }
 

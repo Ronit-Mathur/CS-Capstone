@@ -155,6 +155,30 @@ async function getOutlookCalendarsFromToken(token) {
     return json["value"];
 }
 
+
+/**
+ * gets an outlook calendars events
+ * @param {*} token api token for the user 
+ * @param {*} id calendar id to grab
+ * @returns list of events
+ */
+async function getOutlookEventsFromToken(token, id) {
+    var startTime = moment().format("YYYY-MM-DDT00:01:00Z");
+    var uri = "https://graph.microsoft.com/v1.0/me/calendars/" + id + "/events?"
+    var result = await fetch(uri, {
+        method: 'GET',
+        headers: {
+            'Prefer: outlook.timezone': startTime,
+            'Authorization': token
+
+        }
+    });
+
+
+    var json = await result.json();
+    return json["value"];
+}
+
 module.exports = {
     createGoogleCalenderOAuthUri: createGoogleCalenderOAuthUri,
     getGoogleCalendarsFromClient: getGoogleCalendarsFromClient,
@@ -162,6 +186,7 @@ module.exports = {
     createOutlookCalendarOAuthUri: createOutlookCalendarOAuthUri,
     getGoogleEventsFromClient: getGoogleEventsFromClient,
     getOutlookOAuth2Token: getOutlookOAuth2Token,
-    getOutlookCalendarsFromToken: getOutlookCalendarsFromToken
+    getOutlookCalendarsFromToken: getOutlookCalendarsFromToken,
+    getOutlookEventsFromToken: getOutlookEventsFromToken
 }
 

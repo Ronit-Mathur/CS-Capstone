@@ -1,6 +1,6 @@
 import React from "react"
 import { Text, TextInput, View, Image, SafeAreaView, Button, StyleSheet, Pressable } from 'react-native';
-import { getGoogleCalendars, importGoogleCalendar, getOutlookCalendars } from '../../lib/external_integration/calendarIntegration';
+import { importOutlookCalendar, getGoogleCalendars, importGoogleCalendar, getOutlookCalendars } from '../../lib/external_integration/calendarIntegration';
 import { createUser } from "../../lib/server/users";
 
 
@@ -78,7 +78,7 @@ export default class ImportCalendar extends React.Component {
             await importGoogleCalendar(id);
         }
         else if(this.state.calendarProvider == "outlook"){
-            console.log(this.state.calendars);
+            await importOutlookCalendar(id);
         }
     }
 

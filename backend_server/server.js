@@ -281,6 +281,21 @@ const dayHandler =
                 return;
             });
 
+            /**
+           * imports a users calendar from outlook given an id
+           */
+            app.get(SERVER_ENDPOINTS.OUTLOOK_CALENDAR_IMPORT_ENDPOINT, async (req, res) => {
+
+                if (!req.query.id || !req.query.username || !this.userHandler.hasOutlookAuthentication(req.ip)) {
+                    res.status(400); //invalid query
+                }
+
+                //import calendar
+                await this.userHandler.importOutlookCalendar(req.query.id, req.ip, req.query.username);
+                res.status(200).send("ok");
+
+            });
+
 
             var privateKey = fs.readFileSync("./backend_server/certs/private.key");
             var certificate = fs.readFileSync("./backend_server/certs/certificate.crt");
