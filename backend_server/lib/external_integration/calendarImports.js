@@ -151,8 +151,8 @@ async function getOutlookCalendarsFromToken(token) {
     });
 
 
-
-    console.log(await result.json());
+    var json = await result.json();
+    console.log(Object.keys(json));
 }
 
 module.exports = {
