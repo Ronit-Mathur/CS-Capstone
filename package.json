@@ -23,6 +23,7 @@
 	"homepage": "https://github.com/Ronit-Mathur/CS-Capstone#readme",
 	"dependencies": {
 		"@google-cloud/local-auth": "^2.1.1",
+		"@react-native-community/datetimepicker": "^6.7.5",
 		"@react-native-community/masked-view": "^0.1.11",
 		"@react-navigation/material-top-tabs": "^6.5.3",
 		"@react-navigation/native": "^6.1.3",
@@ -39,6 +40,7 @@
 		"path": "^0.12.7",
 		"react": "18.2.0",
 		"react-native": "0.71.1",
+		"react-native-action-button": "^2.8.5",
 		"react-native-calendars": "^1.1275.0",
 		"react-native-gesture-handler": "^2.9.0",
 		"react-native-http": "^0.0.3",
