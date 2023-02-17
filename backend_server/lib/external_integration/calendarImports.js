@@ -94,7 +94,7 @@ async function getGoogleEventsFromClient(client, id) {
 function createOutlookCalendarOAuthUri() {
 
     //apend the base uri with the params
-    var uri = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize" + new URLSearchParams({
+    var uri = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize?" + new URLSearchParams({
         client_id: EXTERNAL_KEYS.AZURE_CLIENT_ID,
         response_type: "code",
         redirect_uri: EXTERNAL_KEYS.AZURE_OAUTH_REDIRECT_URL,
@@ -114,7 +114,7 @@ function createOutlookCalendarOAuthUri() {
  * @returns authorized outlook token
  */
 async function getOutlookOAuth2Token(key) {
-    var uri = "https://login.microsoftonline.com/common/oauth2/v2.0/token"
+    var uri = "https://login.microsoftonline.com/common/oauth2/v2.0/token?"
     var result = await fetch(uri, {
         method: 'POST',
         headers: {
@@ -140,7 +140,7 @@ async function getOutlookOAuth2Token(key) {
 async function getOutlookCalendarsFromToken(token) {
 
 
-    var uri = "https://graph.microsoft.com/me/calendars"
+    var uri = "https://graph.microsoft.com/me/calendars?"
     var result = await fetch(uri, {
         method: 'GET',
         headers: {
