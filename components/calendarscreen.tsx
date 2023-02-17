@@ -12,11 +12,9 @@ const StackNavigator = createNativeStackNavigator();
 function CalendarNav (){
   return(
     <StackNavigator.Navigator initialRouteName='CalendarScreen'>
-      <StackNavigator.Screen name='CalendarScreen' component={CalendarScreen} />
-      <StackNavigator.Group screenOptions={{presentation:'modal'}}>
-        <StackNavigator.Screen name='Task' component={TaskCreation} />
-
-      </StackNavigator.Group>
+      <StackNavigator.Screen name='CalendarScreen' component={CalendarScreen} options={{title:'Calendar'}}/>
+      <StackNavigator.Screen name='Task' component={TaskCreation} options={{presentation:'modal'}}/>
+      
     </StackNavigator.Navigator>
   );
 }
@@ -33,7 +31,8 @@ function CreateCalendar () {
       borderTopLeftRadius:20, 
       overflow:'hidden', 
       borderBottomLeftRadius:20, 
-      borderBottomRightRadius:20,  
+      borderBottomRightRadius:20, 
+       
      }} 
      theme={{
        'stylesheet.day.basic':{

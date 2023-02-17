@@ -10,8 +10,18 @@ module.exports = {
         GOOGLE_CALENDAR_OAUTH_RESPONSE: "/api/calendar/import/google/oauth/response",
         GOOGLE_CALENDAR_LIST_CALENDARS:  "/api/calendar/import/google/list",
 
+        OUTLOOK_CALENDAR_OAUTH_BEGIN: "/api/calendar/import/outlook/oauth/begin",
+        OUTLOOK_CALENDAR_OAUTH_RESPONSE: "/api/calendar/import/outlook/oauth/response",
+        OUTLOOK_CALENDAR_LIST_CALENDARS: "/api/calendar/import/outlook/list",
+        OUTLOOK_CALENDAR_IMPORT_ENDPOINT: "/api/calendar/import/outlook/id",
+
         USER_TASKS_BY_DAY: "/api/user/tasks/day",
-        USER_ADD_TASK: "/api/user/tasks/add"
+        USER_ADD_TASK: "/api/user/tasks/add",
+
+        USER_CREATE: "/api/user/create",
+        USER_EXISTS: "/api/user/exists",
+
+        USER_RATE_DAY: "/api/user/day/rate"
 
 
     },

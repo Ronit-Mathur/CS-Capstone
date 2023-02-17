@@ -3,7 +3,6 @@
  */
 const EXTERNAL_KEYS = require("./externalKeys");
 const { google } = require('googleapis');
-const outlook = require("node-outlook");
 const moment = require('moment');
 
 
@@ -94,9 +93,90 @@ async function getGoogleEventsFromClient(client, id) {
  */
 function createOutlookCalendarOAuthUri() {
 
-    //use outlook 2.0 api
-    outlook.base.setApiEndpoint("https://outlook.office.com/api/v2.0");
+    //apend the base uri with the params
+    var uri = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize?" + new URLSearchParams({
+        client_id: EXTERNAL_KEYS.AZURE_CLIENT_ID,
+        response_type: "code",
+        redirect_uri: EXTERNAL_KEYS.AZURE_OAUTH_REDIRECT_URL,
+        scope: 'https://graph.microsoft.com/Calendars.Read',
+        response_mode: "query"
 
+    });
+
+    return uri;
+
+}
+
+
+/**
+ * swaps an authorization code from a client with a token from the outlook server 
+ * @param {*} key authorization code from the server
+ * @returns authorized outlook token
+ */
+async function getOutlookOAuth2Token(key) {
+    var uri = "https://login.microsoftonline.com/common/oauth2/v2.0/token?"
+    var result = await fetch(uri, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+
+        },
+        body: new URLSearchParams({
+            client_id: EXTERNAL_KEYS.AZURE_CLIENT_ID,
+            scope: 'https://graph.microsoft.com/Calendars.Read',
+            code: key,
+            redirect_uri: EXTERNAL_KEYS.AZURE_OAUTH_REDIRECT_URL,
+            grant_type: "authorization_code",
+            client_secret: EXTERNAL_KEYS.AZURE_SECRET
+
+        }),
+    });
+
+    var json = JSON.parse(await result.text());
+    return json["access_token"];
+
+}
+
+async function getOutlookCalendarsFromToken(token) {
+
+
+    var uri = "https://graph.microsoft.com/v1.0/me/calendars?"
+    var result = await fetch(uri, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token
+
+        }
+    });
+
+
+    var json = await result.json();
+    return json["value"];
+}
+
+
+/**
+ * gets an outlook calendars events
+ * @param {*} token api token for the user 
+ * @param {*} id calendar id to grab
+ * @returns list of events
+ */
+async function getOutlookEventsFromToken(token, id) {
+    var startTime = moment().format("YYYY-MM-DDT00:01:00Z");
+    var uri = "https://graph.microsoft.com/v1.0/me/calendars/" + id + "/events?"
+    var result = await fetch(uri, {
+        method: 'GET',
+        headers: {
+            'outlook.timezone': startTime,
+            'Authorization': token
+
+        }
+    });
+
+
+    var json = await result.json();
+    return json["value"];
 }
 
 module.exports = {
@@ -104,6 +184,9 @@ module.exports = {
     getGoogleCalendarsFromClient: getGoogleCalendarsFromClient,
     getAuthorizedGoogleOAuth2Client: getAuthorizedGoogleOAuth2Client,
     createOutlookCalendarOAuthUri: createOutlookCalendarOAuthUri,
-    getGoogleEventsFromClient: getGoogleEventsFromClient
+    getGoogleEventsFromClient: getGoogleEventsFromClient,
+    getOutlookOAuth2Token: getOutlookOAuth2Token,
+    getOutlookCalendarsFromToken: getOutlookCalendarsFromToken,
+    getOutlookEventsFromToken: getOutlookEventsFromToken
 }
 
