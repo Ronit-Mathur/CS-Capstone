@@ -107,15 +107,13 @@ module.exports = class UserHandler {
             return [];
         }
         const calendarObjs = await getOutlookCalendarsFromToken(token);
-        console.log(calendarObjs[0]);
-        /** 
+
         var simpleCalendars = [];
         //return only the calendars summary and id
         calendarObjs.map((obj) => {
-            simpleCalendars.push({ id: obj.id, name: obj.summary });
+            simpleCalendars.push({ id: obj.id, name: obj.name });
         })
         return simpleCalendars;
-        **/
     }
 
 

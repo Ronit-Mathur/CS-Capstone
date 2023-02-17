@@ -152,7 +152,7 @@ async function getOutlookCalendarsFromToken(token) {
 
 
     var json = await result.json();
-    return json[value];
+    return json["value"];
 }
 
 module.exports = {
