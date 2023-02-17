@@ -115,7 +115,7 @@ module.exports = class taskHandler {
         for (var i = 0; i < events.length; i++) {
             const event = events[i];
             var summary = event.subject;
-            var parsedStartDate = new Date(Date.parse(event.start.dateTime + " UTC"));
+            var parsedStartDate = new Date(Date.parse(event.start.dateTime + "Z"));//z on the end parses as utc time
             var date = parsedStartDate.toISOString().split('T')[0];
 
 
@@ -124,7 +124,7 @@ module.exports = class taskHandler {
             date = dateParts[2] + "/" + dateParts[1] + "/" + dateParts[0];
 
             var startTime = helpers.verifyHourMinuteTimeFormat(parsedStartDate.getHours() + ":" + parsedStartDate.getMinutes());
-            var parsedEndDate = new Date(Date.parse(event.end.dateTime + " UTC"));
+            var parsedEndDate = new Date(Date.parse(event.end.dateTime + "Z"));
 
             if (!helpers.datesAreOnSameDay(parsedStartDate, parsedEndDate)) {
                 continue; //ignore multi day events

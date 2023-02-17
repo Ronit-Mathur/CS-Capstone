@@ -236,7 +236,7 @@ const dayHandler =
 
                 //import calendar
                 await this.userHandler.importGoogleCalendar(req.query.id, req.ip, req.query.username);
-                res.status(200).send("ok");
+                res.status(200).send(JSON.stringify("ok"));
 
             });
 
@@ -292,7 +292,7 @@ const dayHandler =
 
                 //import calendar
                 await this.userHandler.importOutlookCalendar(req.query.id, req.ip, req.query.username);
-                res.status(200).send("ok");
+                res.status(200).send(JSON.stringify("ok"));
 
             });
 
