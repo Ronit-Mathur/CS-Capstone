@@ -1,6 +1,6 @@
 const DatabaseHandler = require("./databaseHandler")
 const bcrypt = require("bcrypt");
-const { getOutlookOAuth2Token, getAuthorizedGoogleOAuth2Client, getGoogleCalendarsFromClient, getGoogleEventsFromClient } = require("../lib/external_integration/calendarImports");
+const {getOutlookCalendarsFromToken, getOutlookOAuth2Token, getAuthorizedGoogleOAuth2Client, getGoogleCalendarsFromClient, getGoogleEventsFromClient } = require("../lib/external_integration/calendarImports");
 const Server = require("../server");
 
 /**
@@ -83,7 +83,6 @@ module.exports = class UserHandler {
         //swap for a token and store it in memory for accessing laters
         var token = await getOutlookOAuth2Token(key);
         this.outlookOAuthCredentials[ip] = token;
-        console.log(token);
     }
 
     /**
@@ -97,6 +96,27 @@ module.exports = class UserHandler {
         this.googleOAuthCredentials[ip] = client;
     }
 
+
+    hasOutlookAuthentication(ip){
+        return this.outlookOAuthCredentials[ip] != null;
+    }
+
+    async getOutlookCalendars(ip){
+        const token = this.outlookOAuthCredentials[ip];
+        if (!client) {
+            return [];
+        }
+        const calendarObjs = await getOutlookCalendarsFromToken(token);
+        console.log(calendarObjs[0]);
+        /** 
+        var simpleCalendars = [];
+        //return only the calendars summary and id
+        calendarObjs.map((obj) => {
+            simpleCalendars.push({ id: obj.id, name: obj.summary });
+        })
+        return simpleCalendars;
+        **/
+    }
 
 
     /**

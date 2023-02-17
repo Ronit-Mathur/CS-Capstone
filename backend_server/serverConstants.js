@@ -12,6 +12,7 @@ module.exports = {
 
         OUTLOOK_CALENDAR_OAUTH_BEGIN: "/api/calendar/import/outlook/oauth/begin",
         OUTLOOK_CALENDAR_OAUTH_RESPONSE: "/api/calendar/import/outlook/oauth/response",
+        OUTLOOK_CALENDAR_LIST_CALENDARS: "/api/calendar/import/outlook/list",
 
         USER_TASKS_BY_DAY: "/api/user/tasks/day",
         USER_ADD_TASK: "/api/user/tasks/add",

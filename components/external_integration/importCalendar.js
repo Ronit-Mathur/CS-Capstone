@@ -77,13 +77,16 @@ export default class ImportCalendar extends React.Component {
         if (this.state.calendarProvider == "google") {
             await importGoogleCalendar(id);
         }
+        else if(this.state.calendarProvider == "outlook"){
+            console.log(this.state.calendars);
+        }
     }
 
     async listOutlookCalendars() {
         await getOutlookCalendars((calendars) => {
 
             //update state infos
-           // this.setState({ calendars: calendars, listCalendars: true, calendarProvider: "google" });
+            this.setState({ calendars: calendars, listCalendars: true, calendarProvider: "outlook" });
         });
     }
 }

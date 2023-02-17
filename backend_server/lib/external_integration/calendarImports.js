@@ -137,12 +137,29 @@ async function getOutlookOAuth2Token(key) {
 
 }
 
+async function getOutlookCalendarsFromToken(token) {
+
+
+    var uri = "https://graph.microsoft.com/me/calendars"
+    var result = await fetch(uri, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token
+
+        }
+    });
+
+    console.log(await result.json());
+}
+
 module.exports = {
     createGoogleCalenderOAuthUri: createGoogleCalenderOAuthUri,
     getGoogleCalendarsFromClient: getGoogleCalendarsFromClient,
     getAuthorizedGoogleOAuth2Client: getAuthorizedGoogleOAuth2Client,
     createOutlookCalendarOAuthUri: createOutlookCalendarOAuthUri,
     getGoogleEventsFromClient: getGoogleEventsFromClient,
-    getOutlookOAuth2Token: getOutlookOAuth2Token
+    getOutlookOAuth2Token: getOutlookOAuth2Token,
+    getOutlookCalendarsFromToken: getOutlookCalendarsFromToken
 }
 

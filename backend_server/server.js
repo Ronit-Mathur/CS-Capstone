@@ -269,6 +269,17 @@ const dayHandler =
                 }
             });
 
+            app.get(SERVER_ENDPOINTS.OUTLOOK_CALENDAR_LIST_CALENDARS, async (req, res) => {
+                //check if user is authenticated
+                if (!this.userHandler.hasOutlookAuthentication(req.ip)) {
+                    res.status(400);
+                }
+
+                //get calendars
+                const calendars = await this.userHandler.getOutlookCalendars(req.ip);
+                res.status(200).send(calendars);
+                return;
+            });
 
 
             var privateKey = fs.readFileSync("./backend_server/certs/private.key");
