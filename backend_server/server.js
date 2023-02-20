@@ -34,7 +34,7 @@ const dayHandler =
             this.DatabaseHandler = new (require("./handlers/databaseHandler.js"))(isRemote);
             this.userHandler = new (require("./handlers/userHandler.js"))();
             this.taskHandler = new (require("./handlers/taskHandler.js"))();
-            this.dayHandler = new (require('./lib/handlers/dayHandler.js'))();
+            this.dayHandler = new (require('./handlers/dayHandler.js'))();
 
 
 
