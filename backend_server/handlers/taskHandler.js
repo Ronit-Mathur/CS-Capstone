@@ -8,7 +8,10 @@ const Server = require("../server");
 
 module.exports = class taskHandler {
 
+    static current;
+
     constructor() {
+        taskHandler.current = this;
     }
 
 

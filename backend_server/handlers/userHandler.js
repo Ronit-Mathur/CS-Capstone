@@ -7,7 +7,7 @@ const Server = require("../server");
  * handles user operations. this includes interacting with the database. initialize database before creating or using
  */
 module.exports = class UserHandler {
-
+    static current;
 
 
     constructor() {
