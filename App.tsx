@@ -26,31 +26,32 @@ const MaterialTab = createMaterialTopTabNavigator();
  * server setup
  */
 
-const SERVER_IP = "http://mentalhealth.ra3.us";
-const SERVER_PORT = 80;
+const SERVER_IP = "https://mentalhealth.ra3.us";
+const SERVER_PORT = 443;
 const ServerHandler = new serverHandler(SERVER_IP, SERVER_PORT);
 
 
 function MaterialTabs() {
   return (
     <MaterialTab.Navigator initialRouteName='Home' tabBarPosition='bottom' screenOptions={{
-
+      
       tabBarStyle: { bottom: 25 },
       tabBarIndicatorStyle:{
         backgroundColor:'maroon'
-      }
+      },
     }}>
-      <MaterialTab.Screen name='Calendar' component={CalendarNav} options={{
+      <MaterialTab.Screen name='Calendar' component={CalendarNav}  options={{
         tabBarIcon: ({ color, focused }) => (
           <MaterialCommunityIcons name="calendar-month" color='black' size={24} />
         ),
-
+        
       }} />
 
       <MaterialTab.Screen name='Home' component={Home} options={{
         tabBarIcon: ({ color, focused }) => (
           <MaterialCommunityIcons name="home" color='black' size={24} />
         ),
+      
       }} />
       <MaterialTab.Screen name='Stats' component={Stats} options={{
         tabBarIcon: ({ color, focused }) => (

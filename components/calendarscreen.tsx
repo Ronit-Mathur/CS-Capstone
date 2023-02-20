@@ -14,7 +14,6 @@ function CalendarNav (){
     <StackNavigator.Navigator initialRouteName='CalendarScreen'>
       <StackNavigator.Screen name='CalendarScreen' component={CalendarScreen} options={{title:'Calendar'}}/>
       <StackNavigator.Screen name='Task' component={TaskCreation} options={{presentation:'modal'}}/>
-      
     </StackNavigator.Navigator>
   );
 }
