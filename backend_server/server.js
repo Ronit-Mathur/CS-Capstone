@@ -130,7 +130,7 @@ const helpers = require('./lib/helpers');
              */
             app.get(SERVER_ENDPOINTS.USER_TASKS_BY_DAY, async (req, res) => {
                 if (req.query.username && req.query.day && helpers.isDateFormat(req.query.day)) {
-                    const tasks = await this.taskHandler.current.getDaysTasks(req.query.username, req.query.day);
+                    const tasks = await this.taskHandler.getDaysTasks(req.query.username, req.query.day);
                     res.status(200).send(tasks);
                     return;
                 }
@@ -146,7 +146,7 @@ const helpers = require('./lib/helpers');
              */
             app.get(SERVER_ENDPOINTS.USER_ADD_TASK, async (req, res) => {
                 if (req.query.username && req.query.day && helpers.isDateFormat(req.query.day) && req.query.summary && req.query.startTime && helpers.isTimeFormat(req.query.startTime) && req.query.endTime && helpers.isTimeFormat(req.query.endTime)) {
-                    const taskId = await this.taskHandler.current.addTask(req.query.username, req.query.summary, req.query.day, req.query.startTime, req.query.endTime);
+                    const taskId = await this.taskHandler.addTask(req.query.username, req.query.summary, req.query.day, req.query.startTime, req.query.endTime);
                     res.status(200).send(JSON.stringify(taskId));
                     return;
                 }
