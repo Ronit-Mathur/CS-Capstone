@@ -130,6 +130,31 @@ const helpers = require('./lib/helpers');
              */
             app.get(SERVER_ENDPOINTS.USER_TASKS_BY_DAY, async (req, res) => {
                 if (req.query.username && req.query.day && helpers.isDateFormat(req.query.day)) {
+
+                    if(req.query.before){
+                        if(!helpers.isTimeFormat(req.query.before)){
+                            res.status(400).send("invalid time parameter");
+                            return;
+                        }
+
+                        //query before
+                        var tasks = this.taskHandler.getTodaysFinishedTasks(req.query.username, req.query.day, req.query.before);
+                        res.status(200).send(tasks);
+                        return;
+                    }
+
+                    if(req.query.after){
+                        if(!helpers.isTimeFormat(req.query.after)){
+                            res.status(400).send("invalid time parameter");
+                            return;
+                        }
+
+                        //query after
+                        var tasks = this.taskHandler.getTodaysActiveTasks(req.query.username, req.query.day, req.query.before);
+                        res.status(200).send(tasks);
+                        return;
+                    }
+
                     const tasks = await this.taskHandler.getDaysTasks(req.query.username, req.query.day);
                     res.status(200).send(tasks);
                     return;
@@ -139,6 +164,8 @@ const helpers = require('./lib/helpers');
                     return;
                 }
             });
+
+            
 
 
             /**
