@@ -138,8 +138,8 @@ const helpers = require('./lib/helpers');
                         }
 
                         //query before
-                        var tasks = this.taskHandler.getTodaysFinishedTasks(req.query.username, req.query.day, req.query.before);
-                        res.status(200).send(tasks);
+                        var returnTasks = this.taskHandler.getTodaysFinishedTasks(req.query.username, req.query.day, req.query.before);
+                        res.status(200).send(returnTasks);
                         return;
                     }
 
@@ -150,8 +150,8 @@ const helpers = require('./lib/helpers');
                         }
 
                         //query after
-                        var tasks = this.taskHandler.getTodaysActiveTasks(req.query.username, req.query.day, req.query.before);
-                        res.status(200).send(tasks);
+                        var returnTasks = this.taskHandler.getTodaysActiveTasks(req.query.username, req.query.day, req.query.before);
+                        res.status(200).send(returnTasks);
                         return;
                     }
 
