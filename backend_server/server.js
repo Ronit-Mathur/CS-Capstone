@@ -13,7 +13,7 @@ const serverConstants = require('./serverConstants.js');
 const { SERVER_ENDPOINTS } = require('./serverConstants.js');
 const fs = require('fs');
 const calendarImports = require('./lib/external_integration/calendarImports.js');
-const dayHandler =
+const helpers = require('./lib/helpers');
 
 
 
@@ -34,7 +34,7 @@ const dayHandler =
             this.DatabaseHandler = new (require("./handlers/databaseHandler.js"))(isRemote);
             this.userHandler = new (require("./handlers/userHandler.js"))();
             this.taskHandler = new (require("./handlers/taskHandler.js"))();
-            this.dayHandler = new (require('./lib/handlers/dayHandler.js'))();
+            this.dayHandler = new (require('./handlers/dayHandler.js'))();
 
 
 
@@ -130,7 +130,32 @@ const dayHandler =
              */
             app.get(SERVER_ENDPOINTS.USER_TASKS_BY_DAY, async (req, res) => {
                 if (req.query.username && req.query.day && helpers.isDateFormat(req.query.day)) {
-                    const tasks = await this.taskHandler.current.getDaysTasks(req.query.username, req.query.day);
+
+                    if(req.query.before){
+                        if(!helpers.isTimeFormat(req.query.before)){
+                            res.status(400).send("invalid time parameter");
+                            return;
+                        }
+
+                        //query before
+                        var returnTasks = this.taskHandler.getTodaysFinishedTasks(req.query.username, req.query.day, req.query.before);
+                        res.status(200).send(returnTasks);
+                        return;
+                    }
+
+                    if(req.query.after){
+                        if(!helpers.isTimeFormat(req.query.after)){
+                            res.status(400).send("invalid time parameter");
+                            return;
+                        }
+
+                        //query after
+                        var returnTasks = this.taskHandler.getTodaysActiveTasks(req.query.username, req.query.day, req.query.before);
+                        res.status(200).send(returnTasks);
+                        return;
+                    }
+
+                    const tasks = await this.taskHandler.getDaysTasks(req.query.username, req.query.day);
                     res.status(200).send(tasks);
                     return;
                 }
@@ -140,13 +165,15 @@ const dayHandler =
                 }
             });
 
+            
+
 
             /**
              * add a task for a user
              */
             app.get(SERVER_ENDPOINTS.USER_ADD_TASK, async (req, res) => {
                 if (req.query.username && req.query.day && helpers.isDateFormat(req.query.day) && req.query.summary && req.query.startTime && helpers.isTimeFormat(req.query.startTime) && req.query.endTime && helpers.isTimeFormat(req.query.endTime)) {
-                    const taskId = await this.taskHandler.current.addTask(req.query.username, req.query.summary, req.query.day, req.query.startTime, req.query.endTime);
+                    const taskId = await this.taskHandler.addTask(req.query.username, req.query.summary, req.query.day, req.query.startTime, req.query.endTime);
                     res.status(200).send(JSON.stringify(taskId));
                     return;
                 }

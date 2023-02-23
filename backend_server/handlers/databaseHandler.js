@@ -98,10 +98,17 @@ module.exports = class DatabaseHandler {
      * executes an sql statement on the datbase with no return
      * @param {*} statement statement to execute
      */
-    async exec(statement, params){
-        var db = await this._getDBConnection();
-        await db.run(statement, params);
-        await db.close();
+    async exec(statement, params) {
+        try {
+            var db = await this._getDBConnection();
+            await db.run(statement, params);
+            await db.close();
+        }
+        catch{
+            console.log("database handler unable to execute run \"" + statement + "\"");
+            console.log("Params: " + params);
+            console.log(e);
+        }
     }
 
 
@@ -111,10 +118,19 @@ module.exports = class DatabaseHandler {
      * @param {*} statement statement to query db with
      * @returns response from the database
      */
-    async query(statement,params){
-        var db = await this._getDBConnection();
-        var response = await db.all(statement,params);
-        await db.close();
+    async query(statement, params) {
+        let response;
+        try {
+            var db = await this._getDBConnection();
+            response = await db.all(statement, params);
+            await db.close();
+        }
+        catch (e) {
+            console.log("database handler unable to execute query \"" + statement + "\"");
+            console.log("Params: " + params);
+            console.log(e);
+            response = [];
+        }
         return response;
     }
 }

@@ -8,7 +8,10 @@ const Server = require("../server");
 
 module.exports = class taskHandler {
 
+    static current;
+
     constructor() {
+        taskHandler.current = this;
     }
 
 
@@ -147,6 +150,49 @@ module.exports = class taskHandler {
         var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE date = ? AND username = ?", [day, username]);
 
         return result;
+    }
+
+
+    /**
+     * returns all active tasks for a given data. a.k.a tasks that have not been finished yet
+     * @param {*} username username which the tasks belong to
+     * @param {*} date date to get tasks from
+     * @param {*} time current user time. hh:mm
+     */
+    async getTodaysActiveTasks(username, date, time) {
+        var todaysTasks = await this.getDaysTasks(username, date);
+        var activeTasks = [];
+
+        //go through all tasks and add the ones that are after the given time to the active tasks list
+        for (var i = 0; i < todaysTasks.length; i++) {
+            if (helpers.isHourMinuteBefore(time, todaysTasks.endTime)) {
+                activeTasks.push(todaysTasks[i]);
+            }
+        }
+
+        return activeTasks;
+
+    }
+
+     /**
+     * returns all finished tasks for a given data
+     * @param {*} username username which the tasks belong to
+     * @param {*} date date to get tasks from
+     * @param {*} time current user time. hh:mm
+     */
+    async getTodaysFinishedTasks(username, date, time){
+        var todaysTasks = await this.getDaysTasks(username, date);
+        var finishedTasks = [];
+
+        //go through all tasks and add the ones that are after the given time to the active tasks list
+        for (var i = 0; i < todaysTasks.length; i++) {
+            if (!helpers.isHourMinuteBefore(time, todaysTasks.endTime)) {
+                finishedTasks.push(todaysTasks[i]);
+            }
+        }
+
+        return finishedTasks;
+
     }
 }
 

@@ -1,5 +1,5 @@
 const DatabaseHandler = require("./databaseHandler");
-const helpers = require("../helpers");
+const helpers = require("../lib/helpers");
 
 module.exports = class dayHandler {
     static current
