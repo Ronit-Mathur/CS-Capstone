@@ -1,11 +1,12 @@
 import * as React from 'react';
 import {Text, TextInput, View, Image, SafeAreaView, ScrollView} from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import {NavigationContainer, useNavigation} from '@react-navigation/native';
+import {DefaultTheme, NavigationContainer, useNavigation} from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Daily from '../lib/server/daily';
 import { getDaysTasks } from '../lib/server/tasks';
 import { FlatList } from 'react-native-gesture-handler';
+import ActionButton from 'react-native-action-button';
 /* The Styling for the Current Tasks Component */
 const CurrentDayTasksStyle ={
       borderWidth:0,//delete after design completion 
@@ -70,7 +71,7 @@ function TopTabs () {
     /*General tab styles*/
     <CurrentTasksTabs.Navigator style={{
         top:'10%',
-        position:'relative'
+        position:'relative',
       }} 
       screenOptions={{
       
@@ -184,13 +185,27 @@ function DailyMood(){
   );
 }
 
+const MyTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: 'rgb(255, 45, 85)',
+    background:'white'
+  },
+};
 
 function Home() {
   getList()
+  const navigation = useNavigation();
     return (
-      <NavigationContainer independent={true} > 
-        <DailyMood />
+      <NavigationContainer independent={true} theme={MyTheme}> 
+        <DailyMood/>
         <TopTabs /> 
+        <ActionButton
+            buttonColor="rgba(231,76,60,1)"
+            onPress={() => { navigation.navigate('Task')}}
+            offsetY = {50}
+          />
       </NavigationContainer>
 
     );
