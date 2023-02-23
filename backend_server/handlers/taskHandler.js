@@ -67,7 +67,7 @@ module.exports = class taskHandler {
 
         //everything is valid, add to database
         var taskId = await this._getNewTaskId();
-        await DatabaseHandler.current.exec("INSERT INTO tasks (taskId, username, summary, location, date, startTime, endTime, recursiveId) VALUES(?,?,?,?,?,?,-1)", [taskId, username, summary, location, date, startTime, endTime]);
+        await DatabaseHandler.current.exec("INSERT INTO tasks (taskId, username, summary, location, date, startTime, endTime, recursiveId) VALUES(?,?,?,?,?,?,?,-1)", [taskId, username, summary, location, date, startTime, endTime]);
 
 
         return taskId;
@@ -96,8 +96,6 @@ module.exports = class taskHandler {
 
             var endTime = helpers.verifyHourMinuteTimeFormat(parsedEndDate.getHours() + ":" + parsedEndDate.getMinutes());
             var location = "none";
-            console.log("adding");
-            console.log(summary);
             await this.addTask(username, summary, date, location, startTime, endTime);
         }
     }
@@ -250,7 +248,7 @@ module.exports = class taskHandler {
      */
     async _areTaskParametersValid(username, summary, date, location, startTime, endTime) {
         //verify that user exists. check date, endtime and starttime are all in the correct format. 
-        return (await Server.current.getUserHandler().userExists(username)) && helpers.isDateFormat(date) && helpers.isTimeFormat(startTime) && helpers.isTimeFormat(endTime) && location & summary ;
+        return (await Server.current.getUserHandler().userExists(username)) && helpers.isDateFormat(date) && helpers.isTimeFormat(startTime) && helpers.isTimeFormat(endTime) && location && summary ;
     }
 }
 
