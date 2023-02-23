@@ -104,7 +104,7 @@ module.exports = class DatabaseHandler {
             await db.run(statement, params);
             await db.close();
         }
-        catch{
+        catch(e){
             console.log("database handler unable to execute run \"" + statement + "\"");
             console.log("Params: " + params);
             console.log(e);
