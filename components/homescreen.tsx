@@ -39,7 +39,7 @@ async function getList (){
 const CurrentTasksTabs = createMaterialTopTabNavigator();
 
 const Item = ({title, startTime, endTime}) => (
-  <View style={{borderWidth: 0, flexDirection:'column', backgroundColor:'gray', alignItems:'center', width:'85%', alignSelf:'center', borderRadius:15}} >
+  <View style={{borderWidth: 0, flexDirection:'column', backgroundColor:'gray', alignItems:'center', width:'83%', alignSelf:'center', borderRadius:15}} >
     <Text style={{fontSize: 15, paddingBottom:5, color:'white'}} >Title: {title}</Text>
     <Text style={{fontSize: 15, paddingBottom:5, color:'white'}}>Start Time: {startTime}</Text>
      <Text style={{fontSize: 15, paddingBottom:5, color:'white'}}>End Time: {endTime}</Text>
