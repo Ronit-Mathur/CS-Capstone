@@ -96,6 +96,8 @@ module.exports = class taskHandler {
 
             var endTime = helpers.verifyHourMinuteTimeFormat(parsedEndDate.getHours() + ":" + parsedEndDate.getMinutes());
             var location = "none";
+            console.log("adding");
+            console.log(summary);
             await this.addTask(username, summary, date, location, startTime, endTime);
         }
     }
