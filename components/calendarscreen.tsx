@@ -4,8 +4,7 @@ import {Text, TextInput, View, Image, SafeAreaView, StyleSheet } from 'react-nat
 import {Calendar} from 'react-native-calendars'
 import TaskCreation from './tasks';
 import {createNativeStackNavigator } from '@react-navigation/native-stack';
-
-
+import ActionButton from 'react-native-action-button';
 
 const StackNavigator = createNativeStackNavigator();
 
@@ -14,6 +13,7 @@ function CalendarNav (){
     <StackNavigator.Navigator initialRouteName='CalendarScreen'>
       <StackNavigator.Screen name='CalendarScreen' component={CalendarScreen} options={{title:'Calendar'}}/>
       <StackNavigator.Screen name='Task' component={TaskCreation} options={{presentation:'modal'}}/>
+      
     </StackNavigator.Navigator>
   );
 }
@@ -41,13 +41,14 @@ function CreateCalendar () {
          }
        }
      }}
-     onDayPress={ day =>{navigation.navigate('Task')}}
+    //  onDayPress={ day =>{navigation.navigate('Task')}}
      
     />
   );
 }
 
 function CalendarScreen() {
+  const navigation = useNavigation();
     return (
       
         <View style ={{flex:0, position:'relative'}}>
