@@ -17,11 +17,13 @@ module.exports = {
 
         USER_TASKS_BY_DAY: "/api/user/tasks/day",
         USER_ADD_TASK: "/api/user/tasks/add",
+        USER_UPDATE_TASK: "/api/user/tasks/update",
 
         USER_CREATE: "/api/user/create",
         USER_EXISTS: "/api/user/exists",
 
         USER_RATE_DAY: "/api/user/day/rate"
+       
 
 
     },
