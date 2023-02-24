@@ -59,30 +59,15 @@ module.exports = class taskHandler {
      * @param {*} endTime end time of the task in the string format hh:mm
      * @return the new id of the task or -1 if it wasn't added
      */
-    async addTask(username, summary, date, startTime, endTime) {
-        //verify that user exists
-        if (!(await Server.current.getUserHandler().userExists(username))) {
-            throw new Error("Unable to add task to database. User \"" + username + "\" does not exist.");
-
-        }
-
-        //verify times and date are in the correct format
-        if (!helpers.isDateFormat(date)) {
-            throw new Error("Unable to add task to database. Date string is invalid");
-        }
-
-        if (!helpers.isTimeFormat(startTime)) {
-            throw new Error("Unable to add task to database. Start time string is invalid");
-        }
-
-        if (!helpers.isTimeFormat(endTime)) {
-            throw new Error("Unable to add task to database. End time string is invalid");
+    async addTask(username, summary, date, location, startTime, endTime) {
+        if (!await this._areTaskParametersValid(username, summary, date, location, startTime, endTime)) {
+            return -1;
         }
 
 
         //everything is valid, add to database
         var taskId = await this._getNewTaskId();
-        await DatabaseHandler.current.exec("INSERT INTO tasks (taskId, username, summary, date, startTime, endTime, recursiveId) VALUES(?,?,?,?,?,?,-1)", [taskId, username, summary, date, startTime, endTime]);
+        await DatabaseHandler.current.exec("INSERT INTO tasks (taskId, username, summary, location, date, startTime, endTime, recursiveId) VALUES(?,?,?,?,?,?,?,-1)", [taskId, username, summary, location, date, startTime, endTime]);
 
 
         return taskId;
@@ -110,7 +95,8 @@ module.exports = class taskHandler {
             }
 
             var endTime = helpers.verifyHourMinuteTimeFormat(parsedEndDate.getHours() + ":" + parsedEndDate.getMinutes());
-            await this.addTask(username, summary, date, startTime, endTime);
+            var location = "none";
+            await this.addTask(username, summary, date, location, startTime, endTime);
         }
     }
 
@@ -134,7 +120,8 @@ module.exports = class taskHandler {
             }
 
             var endTime = helpers.verifyHourMinuteTimeFormat(parsedEndDate.getHours() + ":" + parsedEndDate.getMinutes());
-            await this.addTask(username, summary, date, startTime, endTime);
+            var location = "none";
+            await this.addTask(username, summary, date, location, startTime, endTime);
         }
 
     }
@@ -174,13 +161,13 @@ module.exports = class taskHandler {
 
     }
 
-     /**
-     * returns all finished tasks for a given data
-     * @param {*} username username which the tasks belong to
-     * @param {*} date date to get tasks from
-     * @param {*} time current user time. hh:mm
-     */
-    async getTodaysFinishedTasks(username, date, time){
+    /**
+    * returns all finished tasks for a given data
+    * @param {*} username username which the tasks belong to
+    * @param {*} date date to get tasks from
+    * @param {*} time current user time. hh:mm
+    */
+    async getTodaysFinishedTasks(username, date, time) {
         var todaysTasks = await this.getDaysTasks(username, date);
         var finishedTasks = [];
 
@@ -193,6 +180,75 @@ module.exports = class taskHandler {
 
         return finishedTasks;
 
+    }
+
+
+    /**
+     * returns a task based on the id
+     * @param {*} id 
+     */
+    async getTask(id) {
+        var result = DatabaseHandler.current.query("SELECT * FROM tasks WHERE id = ?", [id]);
+        if (result) {
+            return result[0];
+        }
+        return null; //no task found with the id
+    }
+
+
+    /**
+     * 
+     * @param {*} id 
+     * @returns true if a task exists in the database
+     */
+    async taskExists(id) {
+        return this.getTask(id) != null;
+    }
+
+
+    /**
+     * updates a task with the given task id in the database
+     * @param {*} id 
+     * @param {*} username 
+     * @param {*} summary 
+     * @param {*} date 
+     * @param {*} location 
+     * @param {*} startTime 
+     * @param {*} endTime 
+     * @returns true if succesful
+     */
+    async updateTask(id, username, summary, date, location, startTime, endTime) {
+
+        //check if task is in database
+        if (!await this.taskExists(id)) {
+            return false;
+        }
+
+        if (!await this._areTaskParametersValid(username, summary, date, location, startTime, endTime)) {
+            return false;
+        }
+
+        var rescursiveId = -1;
+
+        //perform update to database
+        DatabaseHandler.current.exec("UPDATE tasks SET username = ?, summary = ?, location =?, date=?, startTime =?, endTime =?, recursiveId = ? WHERE id =?", [username, summary, location, date, startTime,endTime, rescursiveId, id]);
+
+        return true;
+    }
+
+
+    /**
+     * checks if the parameters given are correct to add/update a task
+     * @param {*} username 
+     * @param {*} summary 
+     * @param {*} date 
+     * @param {*} location 
+     * @param {*} startTime 
+     * @param {*} endTime 
+     */
+    async _areTaskParametersValid(username, summary, date, location, startTime, endTime) {
+        //verify that user exists. check date, endtime and starttime are all in the correct format. 
+        return (await Server.current.getUserHandler().userExists(username)) && helpers.isDateFormat(date) && helpers.isTimeFormat(startTime) && helpers.isTimeFormat(endTime) && location && summary ;
     }
 }
 

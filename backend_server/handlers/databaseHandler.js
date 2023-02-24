@@ -52,10 +52,11 @@ module.exports = class DatabaseHandler {
         //summary - a summary of the task
         //username - username belonging to the user who owns the task
         //date - date of the task in the format mm/dd/yyyy
+        //location - the location of the task in the worl
         //startTime - the start time of the task. in the format hh:mm
         //endTime - the end time of the task. in the format hh:mm
         //rescursiveId - an id shared by all tasks which are linked or -1 if individual
-        await db.run("CREATE TABLE IF NOT EXISTS tasks (taskId INTEGER PRIMARY KEY UNIQUE, username TEXT, summary TEXT, date TEXT, startTime TEXT, endTime TEXT, recursiveId INTEGER , FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE)");
+        await db.run("CREATE TABLE IF NOT EXISTS tasks (taskId INTEGER PRIMARY KEY UNIQUE,  username TEXT, summary TEXT, location TEXT, date TEXT, startTime TEXT, endTime TEXT, recursiveId INTEGER , FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE)");
 
         //completedTasks
         //a completed task is added data for a task. contains data about how the task was performed.
@@ -104,7 +105,7 @@ module.exports = class DatabaseHandler {
             await db.run(statement, params);
             await db.close();
         }
-        catch{
+        catch(e){
             console.log("database handler unable to execute run \"" + statement + "\"");
             console.log("Params: " + params);
             console.log(e);
