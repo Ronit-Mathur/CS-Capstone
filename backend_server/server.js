@@ -138,7 +138,7 @@ module.exports = class Server {
                     }
 
                     //query before
-                    var returnTasks = this.taskHandler.getTodaysFinishedTasks(req.query.username, req.query.day, req.query.before);
+                    var returnTasks = await this.taskHandler.getTodaysFinishedTasks(req.query.username, req.query.day, req.query.before);
                     res.status(200).send(returnTasks);
                     return;
                 }
@@ -150,7 +150,7 @@ module.exports = class Server {
                     }
 
                     //query after
-                    var returnTasks = this.taskHandler.getTodaysActiveTasks(req.query.username, req.query.day, req.query.before);
+                    var returnTasks = await this.taskHandler.getTodaysActiveTasks(req.query.username, req.query.day, req.query.after);
                     res.status(200).send(returnTasks);
                     return;
                 }
@@ -363,6 +363,8 @@ module.exports = class Server {
             console.log(`Mental Health Tracker API running on ${this.port}`)
         })
 
+
+        this.taskHandler.addTask("testuser1     ")
 
 
 

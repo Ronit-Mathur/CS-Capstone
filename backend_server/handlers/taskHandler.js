@@ -152,7 +152,7 @@ module.exports = class taskHandler {
 
         //go through all tasks and add the ones that are after the given time to the active tasks list
         for (var i = 0; i < todaysTasks.length; i++) {
-            if (helpers.isHourMinuteBefore(time, todaysTasks.endTime)) {
+            if (helpers.isHourMinuteBefore(time, todaysTasks[i].endTime)) {
                 activeTasks.push(todaysTasks[i]);
             }
         }
@@ -173,7 +173,7 @@ module.exports = class taskHandler {
 
         //go through all tasks and add the ones that are after the given time to the active tasks list
         for (var i = 0; i < todaysTasks.length; i++) {
-            if (!helpers.isHourMinuteBefore(time, todaysTasks.endTime)) {
+            if (!helpers.isHourMinuteBefore(time, todaysTasks[i].endTime)) {
                 finishedTasks.push(todaysTasks[i]);
             }
         }
