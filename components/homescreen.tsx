@@ -1,12 +1,20 @@
 import * as React from 'react';
-import {Text, TextInput, View, Image, SafeAreaView, ScrollView} from 'react-native';
+import {Text, View,SafeAreaView, RefreshControl} from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {DefaultTheme, NavigationContainer, useNavigation} from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Daily from '../lib/server/daily';
-import { getDaysTasks } from '../lib/server/tasks';
+import { getDaysTasks, addTask} from '../lib/server/tasks';
 import { FlatList } from 'react-native-gesture-handler';
 import ActionButton from 'react-native-action-button';
+import * as Helpers from '../backend_server/lib/helpers';
+import * as HSH from './homescreenhelpers';
+
+
+
+
+
+
 /* The Styling for the Current Tasks Component */
 const CurrentDayTasksStyle ={
       borderWidth:0,//delete after design completion 
@@ -23,44 +31,102 @@ const user = 'testuser1' //place holder for once we have user functionality
 var testList: readonly any[] | null | undefined = []
 
 
-async function getList (){
-  const tasks = await getDaysTasks(user, '22/02/2023')
-  
+const sTasks = [
+  {summary: 'Work', location: 'Lumen Field', startTime:'14:00', endTime:'16:00'},
+  {summary: 'Capstone Meeting', location: 'CS Lounge', startTime:'16:00', endTime:'18:00'},
+  {summary: 'Dinner', location: 'Home', startTime:'18:30', endTime:'20:00'},
+  {summary: 'Bed', location: 'Home', startTime:'22:00', endTime:'8:00'},
+]
 
-  var tasksConverted = Object.values(tasks)
-  tasksConverted.forEach(function(task){
-    testList.push(task)
-  })
-  
-}
 
 
 
 
 const CurrentTasksTabs = createMaterialTopTabNavigator();
 
-const Item = ({title, startTime, endTime}) => (
+
+async function addNewTask (){
+    const currentDate = Helpers.getTodaysDate()
+    const addNew = await addTask(user, 'KylerTest', currentDate, 'Lumen Field', '14:00', '19:00')
+}
+
+
+
+addNewTask()
+
+const Item = ({title, startTime, endTime, location}) => (
   <View style={{borderWidth: 0, flexDirection:'column', backgroundColor:'gray', alignItems:'center', width:'83%', alignSelf:'center', borderRadius:15}} >
+     <MaterialCommunityIcons name ='star' color='black' size={50} style={{
+        alignSelf:'baseline',
+        top:'37%',
+        borderWidth:1,
+        left:'5%',
+        borderRadius:10
+         
+        }} 
+        onPress = {async () => {await Daily.rateDay(user,date,5);}} />
     <Text style={{fontSize: 15, paddingBottom:5, color:'white'}} >Title: {title}</Text>
     <Text style={{fontSize: 15, paddingBottom:5, color:'white'}}>Start Time: {startTime}</Text>
      <Text style={{fontSize: 15, paddingBottom:5, color:'white'}}>End Time: {endTime}</Text>
+     <Text style={{fontSize: 15, paddingBottom:5, color:'white'}}>Location: {location}</Text>
   </View>
 );
 /*Tasks that have yet to be completed*/
 function InProgress(){
+  const[refreshing, setRefreshing] = React.useState(false)
+  const[list, setList] = React.useState([])
+
+  
+
+  const onRefresh = React.useCallback(async() =>{
+    setRefreshing(true);
+    setList( await HSH.getCurrentTasks(user));
+    //setList(list)
+    setRefreshing(false);
+  }, [refreshing])
+
+  
   return(
     <SafeAreaView >
-      <FlatList  ItemSeparatorComponent={()=> <View style={{height:'5%',}}></View>} data={testList} renderItem={({item})=> <Item title= {item.summary} startTime={item.startTime} endTime={item.endTime} />} style={{borderWidth:0,top:'5%', shadowOpacity:.75, shadowRadius:4}} contentContainerStyle={{borderWidth:0, height:'77%', paddingTop:'2%'}}/>
+      <FlatList  ItemSeparatorComponent={()=> <View style={{height:'5%'}}></View>} 
+      data={list} 
+      renderItem={({item})=> <Item title= {item.summary} startTime={item.startTime} endTime={item.endTime} location={item.location} />} 
+      style={{borderWidth:0,top:'5%', shadowOpacity:.75, shadowRadius:4, }} 
+      contentContainerStyle={{borderWidth:0, height:'77%', paddingTop:'2%'}}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+      />
     </SafeAreaView>
   );
 }
 
 /*Tasks for the current day that have already been completed*/
 function Completed(){
+
+  const[refreshing, setRefreshing] = React.useState(false)
+  const[list, setList] = React.useState([])
+
+  
+
+  const onRefresh = React.useCallback(async() =>{
+    setRefreshing(true);
+    setList( await HSH.getCompletedTasks(user));
+    //setList(list)
+    setRefreshing(false);
+  }, [refreshing])
+
+  
   return(
-    <ScrollView style={CurrentDayTasksStyle}>
-      <Text>Completed</Text>
-    </ScrollView>
+    <SafeAreaView >
+      <FlatList  ItemSeparatorComponent={()=> <View style={{height:'5%',}}></View>} 
+      data={list} 
+      renderItem={({item})=> <Item title= {item.summary} startTime={item.startTime} endTime={item.endTime} location={item.location} />} style={{borderWidth:0,top:'5%', shadowOpacity:.75, shadowRadius:4}} 
+      contentContainerStyle={{borderWidth:0, height:'77%', paddingTop:'2%'}}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }/>
+    </SafeAreaView>
   );
 }
 
@@ -111,22 +177,12 @@ function TopTabs () {
   );
 }
 
-function VerifiyDateFormat (d:String){
-  var parts = d.split("/");
-  if(parts[0].length == 1){
-    parts[0] = "0" + parts[0];
-  }
-  if (parts[1].length == 1){
-    parts[1] = "0" + parts[1];
-  }
-  return parts.join("/"); 
-}
 
 
 function DailyMood(){
 
-  const date = new Date().toLocaleDateString()
-  const dateFormatted = VerifiyDateFormat(date)
+  const date = Helpers.getTodaysDate()
+ 
   
   
   return(
@@ -146,7 +202,7 @@ function DailyMood(){
           position:'absolute',
          
         }} 
-        onPress = {async () => {await Daily.rateDay(user,dateFormatted,5);}} />
+        onPress = {async () => {await Daily.rateDay(user,date,5);}} />
         <MaterialCommunityIcons name ='emoticon-happy-outline' color='#096622' size={55} style={{
           top:'50%',
           right:'23%',
@@ -154,14 +210,14 @@ function DailyMood(){
           
           
         }} 
-        onPress={async()=> {await Daily.rateDay(user,dateFormatted, 4);}} />
+        onPress={async()=> {await Daily.rateDay(user,date, 4);}} />
         <MaterialCommunityIcons  name ='emoticon-neutral-outline' color='#ded52c' size={55} style={{
           top:'50%',
           right:'42%',
           position:'absolute', 
          
         }} 
-        onPress={async() => { await Daily.rateDay(user, dateFormatted, 3);}}
+        onPress={async() => { await Daily.rateDay(user, date, 3);}}
         />
         <MaterialCommunityIcons name ='emoticon-sad-outline' color='#fa7916' size={55} style={{
           top:'50%',
@@ -169,7 +225,7 @@ function DailyMood(){
           position:'absolute',
       
         }} 
-        onPress={async ()=> {await Daily.rateDay(user,dateFormatted,2);}}
+        onPress={async ()=> {await Daily.rateDay(user,date,2);}}
         />
         <MaterialCommunityIcons name ='emoticon-frown-outline' color='red' size={55} style={{
           top:'50%',
@@ -177,7 +233,7 @@ function DailyMood(){
           position:'absolute', 
        
         }} 
-        onPress={async()=> {await Daily.rateDay(user,dateFormatted,1);}}
+        onPress={async()=> {await Daily.rateDay(user,date,1);}}
         />
 
         <Text style={{alignSelf:'center', position:'absolute', bottom:'0%', fontSize:25,}}>Your Day: {date}</Text>
@@ -195,7 +251,7 @@ const MyTheme = {
 };
 
 function Home() {
-  getList()
+ 
   const navigation = useNavigation();
     return (
       <NavigationContainer independent={true} theme={MyTheme}> 
