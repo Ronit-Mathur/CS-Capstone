@@ -229,8 +229,6 @@ module.exports = class Server {
          * sends a google oauth link back to the user to begin login
          */
         app.get(SERVER_ENDPOINTS.GOOGLE_CALENDAR_OAUTH_BEGIN, (req, res) => {
-            this.taskHandler.addTask("testuser1","this is a summary","02/24/2023","work","10:00","14:00");
-
             const uri = createGoogleCalenderOAuthUri();
             res.status(200).send(JSON.stringify(uri));
         });
