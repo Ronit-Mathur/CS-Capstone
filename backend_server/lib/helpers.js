@@ -71,7 +71,7 @@ module.exports = {
     isHourMinuteBefore(a, b) {
         var aSplit = a.split(":");
         var bSplit = b.split(":");
-        return (parseInt(aSplit[0]) < parseInt(bSplit[0])) || (parseInt(aSplit[0]) == parseInt(bSplit[0]) && parseInt(aSplit[1]) < parseInt(bSplit[1]));
+        return (parseInt(aSplit[0]) < parseInt(bSplit[0])) || ((parseInt(aSplit[0]) == parseInt(bSplit[0]) && parseInt(aSplit[1]) < parseInt(bSplit[1])));
     },
 
 
