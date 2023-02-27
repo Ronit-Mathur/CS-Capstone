@@ -52,7 +52,7 @@ async function addNewTask (){
 
 
 
-addNewTask()
+
 
 const Item = ({title, startTime, endTime, location}) => (
   <View style={{borderWidth: 0, flexDirection:'column', backgroundColor:'gray', alignItems:'center', width:'83%', alignSelf:'center', borderRadius:15}} >
