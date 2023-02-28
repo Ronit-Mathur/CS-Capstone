@@ -84,7 +84,7 @@ module.exports = class taskHandler {
 
             //date is given in yyyy-mm-dd. reformat to mm/dd/yyyy
             var dateParts = date.split("-");
-            date = dateParts[2] + "/" + dateParts[1] + "/" + dateParts[0];
+            date = dateParts[1] + "/" + dateParts[2] + "/" + dateParts[0];
 
 
             var startTime = helpers.verifyHourMinuteTimeFormat(parsedStartDate.getHours() + ":" + parsedStartDate.getMinutes());
