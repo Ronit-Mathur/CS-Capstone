@@ -1,5 +1,18 @@
+import {View,Text} from 'react-native';
 import * as Helpers from '../backend_server/lib/helpers';
 import{getTodaysActiveTasks, getTodaysFinishedTasks, getDaysTasks} from '../lib/server/tasks';
+
+
+
+function EditTask (){
+    return(
+        <View>
+            <Text>Edit Task</Text>
+        </View>
+    );
+}
+
+
 
 
 
@@ -39,4 +52,4 @@ async function getCompletedTasks (user:string){
     return completedTaskList;
 }
 
-export {getCurrentTasks,getCompletedTasks};
+export {getCurrentTasks,getCompletedTasks, EditTask};

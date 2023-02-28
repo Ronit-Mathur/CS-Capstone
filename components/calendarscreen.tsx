@@ -10,7 +10,7 @@ const StackNavigator = createNativeStackNavigator();
 
 function CalendarNav (){
   return(
-    <StackNavigator.Navigator initialRouteName='CalendarScreen'>
+    <StackNavigator.Navigator >
       <StackNavigator.Screen name='CalendarScreen' component={CalendarScreen} options={{title:'Calendar'}}/>
       <StackNavigator.Screen name='Task' component={TaskCreation} options={{presentation:'modal'}}/>
       
