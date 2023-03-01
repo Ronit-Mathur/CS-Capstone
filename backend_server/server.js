@@ -205,6 +205,37 @@ module.exports = class Server {
         });
 
         /**
+         * deletes a task in the database
+         */
+        app.get(SERVER_ENDPOINTS.USER_DELETE_TASK, async (req, res) => {
+            if (req.query.id) {
+                await this.taskHandler.deleteTask(req.query.id);
+            } else {
+                res.status(400).send("invalid parameters");
+                return;
+            }
+        });
+
+
+        /**
+         * completed tasks
+         */
+        app.get(SERVER_ENDPOINTS.USER_COMPLETE_TASK, async (req, res) => {
+            if (req.query.taskId && req.query.enjoyment && req.query.physicalActivity && req.query.engagement && req.query.mentalDifficulty) {
+                var result = await this.taskHandler.completeTask(req.query.taskId, req.query.enjoyment, req.query.physicalActivity, req.query.engagement, req.query.mentalDifficulty);
+                if (result) {
+                    res.status(200).send("ok");
+                }
+                else {
+                    res.status(400).send("error");
+                }
+            } else {
+                res.status(400).send("invalid parameters");
+                return;
+            }
+        });
+
+        /**
          * daily methods
          */
 
