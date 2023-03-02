@@ -84,7 +84,7 @@ module.exports = class taskHandler {
 
             //date is given in yyyy-mm-dd. reformat to mm/dd/yyyy
             var dateParts = date.split("-");
-            date = dateParts[2] + "/" + dateParts[1] + "/" + dateParts[0];
+            date = dateParts[1] + "/" + dateParts[2] + "/" + dateParts[0];
 
 
             var startTime = helpers.verifyHourMinuteTimeFormat(parsedStartDate.getHours() + ":" + parsedStartDate.getMinutes());
@@ -188,7 +188,7 @@ module.exports = class taskHandler {
      * @param {*} id 
      */
     async getTask(id) {
-        var result = DatabaseHandler.current.query("SELECT * FROM tasks WHERE id = ?", [id]);
+        var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE id = ?", [id]);
         if (result) {
             return result[0];
         }
@@ -231,7 +231,7 @@ module.exports = class taskHandler {
         var rescursiveId = -1;
 
         //perform update to database
-        DatabaseHandler.current.exec("UPDATE tasks SET username = ?, summary = ?, location =?, date=?, startTime =?, endTime =?, recursiveId = ? WHERE id =?", [username, summary, location, date, startTime,endTime, rescursiveId, id]);
+        DatabaseHandler.current.exec("UPDATE tasks SET username = ?, summary = ?, location =?, date=?, startTime =?, endTime =?, recursiveId = ? WHERE id =?", [username, summary, location, date, startTime, endTime, rescursiveId, id]);
 
         return true;
     }
@@ -248,8 +248,68 @@ module.exports = class taskHandler {
      */
     async _areTaskParametersValid(username, summary, date, location, startTime, endTime) {
         //verify that user exists. check date, endtime and starttime are all in the correct format. 
-        return (await Server.current.getUserHandler().userExists(username)) && helpers.isDateFormat(date) && helpers.isTimeFormat(startTime) && helpers.isTimeFormat(endTime) && location && summary ;
+        return (await Server.current.getUserHandler().userExists(username)) && helpers.isDateFormat(date) && helpers.isTimeFormat(startTime) && helpers.isTimeFormat(endTime) && location && summary;
     }
+
+
+    /**
+     * deletes a task in the database
+     * @param {*} id id of the task to delete
+     */
+    async deleteTask(id) {
+        await DatabaseHandler.current.exec("DELETE FROM tasks WHERE taskId = ?", [id]);
+    }
+
+    /**
+     * @param id id of the task
+     * @returns the completed task object or null if task is not completed
+     */
+    async getCompletedTask(id) {
+        var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE taskId = ?", [id]);
+        if (result) {
+            return result[0];
+        }
+        return null; //no task found with the id
+    }
+
+
+    /**
+     * 
+     * @param {*} id id of the task
+     * @returns if the task has been completed in the database
+     */
+    async isTaskCompleted(id) {
+        return await this.getCompletedTask(id) != null;
+    }
+
+    /**
+     * completes a task in the database
+     * @param {*} id id of the task to completed. must be a pre-existing task
+     * @param {*} enjoyment enjoyment of the task from 1-5. 5 being the most
+     * @param {*} physicalActivity phyiscal activity of the task from 1-5. 5 being the most
+     * @param {*} engagement was the user engaged? from 1-5. 5 being the most
+     * @param {*} mentalDifficulty mental difficult of the task from 1-5. 5 being the
+     * @returns true if successful. false if not
+     */
+    async completeTask(id, enjoyment, physicalActivity, engagement, mentalDifficulty) {
+
+        //check that task exists and is not completed
+        if ((!await this.taskExists(id)) || await this.isTaskCompleted(id)) {
+            return false;
+        }
+
+        //insert into database
+        await DatabaseHandler.current.exec("INSERT INTO completedTasks (taskId, enjoyment, phyiscalActivity, engagement, mentalDifficulty) VALUES(?,?,?,?,?)", [id, enjoyment, physicalActivity, engagement, mentalDifficulty]);
+
+
+        return true;
+
+
+
+    }
+
+
+
 }
 
 

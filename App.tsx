@@ -4,7 +4,7 @@ import { DefaultTheme, NavigationContainer, useNavigation } from '@react-navigat
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Home from './components/homescreen';
+import {HomeScreenNav} from './components/homescreen';
 import CalendarNav from './components/calendarscreen'
 import Stats from './components/statscreen';
 import TaskCreation from './components/tasks';
@@ -33,7 +33,7 @@ const ServerHandler = new serverHandler(SERVER_IP, SERVER_PORT);
 
 function MaterialTabs() {
   return (
-    <MaterialTab.Navigator initialRouteName='Home' tabBarPosition='bottom' screenOptions={{
+    <MaterialTab.Navigator initialRouteName='Home' tabBarPosition='bottom'  style={{}} screenOptions={{
 
       tabBarStyle: { bottom: 25 },
       tabBarIndicatorStyle:{
@@ -47,7 +47,7 @@ function MaterialTabs() {
 
       }} />
 
-      <MaterialTab.Screen name='Home' component={Home} options={{
+      <MaterialTab.Screen name='Home' component={HomeScreenNav} options={{
         tabBarIcon: ({ color, focused }) => (
           <MaterialCommunityIcons name="home" color='black' size={24} />
         ),
@@ -74,7 +74,7 @@ const MyTheme = {
 const App = () => {
   return (
     <SafeAreaProvider>
-      <NavigationContainer theme={MyTheme}>
+      <NavigationContainer theme={MyTheme} >
         <MaterialTabs />
       </NavigationContainer>
     </SafeAreaProvider>
