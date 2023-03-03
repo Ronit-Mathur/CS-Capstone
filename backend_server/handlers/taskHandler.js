@@ -231,7 +231,7 @@ module.exports = class taskHandler {
         var rescursiveId = -1;
 
         //perform update to database
-        DatabaseHandler.current.exec("UPDATE tasks SET username = ?, summary = ?, location =?, date=?, startTime =?, endTime =?, recursiveId = ? WHERE id =?", [username, summary, location, date, startTime, endTime, rescursiveId, id]);
+        DatabaseHandler.current.exec("UPDATE tasks SET username = ?, summary = ?, location =?, date=?, startTime =?, endTime =?, recursiveId = ? WHERE taskId =?", [username, summary, location, date, startTime, endTime, rescursiveId, id]);
 
         return true;
     }
