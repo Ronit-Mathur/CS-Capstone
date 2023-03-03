@@ -265,7 +265,7 @@ module.exports = class taskHandler {
      * @returns the completed task object or null if task is not completed
      */
     async getCompletedTask(id) {
-        var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE taskId = ?", [id]);
+        var result = await DatabaseHandler.current.query("SELECT * FROM completedTasks WHERE taskId = ?", [id]);
         if (result) {
             return result[0];
         }
@@ -300,6 +300,7 @@ module.exports = class taskHandler {
 
         //insert into database
         await DatabaseHandler.current.exec("INSERT INTO completedTasks (taskId, enjoyment, phyiscalActivity, engagement, mentalDifficulty) VALUES(?,?,?,?,?)", [id, enjoyment, physicalActivity, engagement, mentalDifficulty]);
+
 
 
         return true;
