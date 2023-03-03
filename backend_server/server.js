@@ -70,7 +70,6 @@ module.exports = class Server {
         *ssl auth
         * */
         app.use("/.well-known/pki-validation", express.static('./backend_server/static/ssl'));
-        app.use(app.router);
         app.use(function (err, req, res, next) {
             if (!err) return next();
             res.send(500);
