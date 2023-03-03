@@ -228,13 +228,13 @@ module.exports = class Server {
             if (req.query.taskId && req.query.enjoyment && req.query.physicalActivity && req.query.engagement && req.query.mentalDifficulty) {
                 var result = await this.taskHandler.completeTask(req.query.taskId, req.query.enjoyment, req.query.physicalActivity, req.query.engagement, req.query.mentalDifficulty);
                 if (result) {
-                    res.status(200).send("ok");
+                    res.status(200).send(JSON.stringify("ok"));
                 }
                 else {
-                    res.status(400).send("error");
+                    res.status(400).send(JSON.stringify("error"));
                 }
             } else {
-                res.status(400).send("invalid parameters");
+                res.status(400).send(JSON.stringify("invalid parameters"));
                 return;
             }
         });
