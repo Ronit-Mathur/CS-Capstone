@@ -13,13 +13,17 @@ import {createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const user = 'testuser1' //place holder for once we have user functionality
 
+
+
 const StackNavigator = createNativeStackNavigator();
 
 function HomeScreenNav (){
   return(
     <StackNavigator.Navigator initialRouteName='Home'>
-      <StackNavigator.Screen name='HomeScreen' component={Home} options={{title:'Home'}}/>
-      <StackNavigator.Screen name='EditTask' component={HSH.EditTask} options={{presentation:'modal'}}/>
+      <StackNavigator.Screen name='HomeScreen' component={Home} options={{title:'Home'} }/>
+      <StackNavigator.Group  >
+        <StackNavigator.Screen name='EditTask' component={HSH.EditTask} options={{presentation:'modal', headerStyle:{backgroundColor:'transparent',}, title:'', contentStyle:{backgroundColor:'transparent'}}}  />
+      </StackNavigator.Group>
       
     </StackNavigator.Navigator>
   );
@@ -41,14 +45,24 @@ function DailyMood(){
       }}>
       <Text style={{
         flex:1,
-        fontSize:25,
+        fontSize:30,
         textDecorationLine:'underline',
+        marginTop:'2%',
       }} >Welcome {user}</Text>
+
+      <MaterialCommunityIcons name ='account-circle-outline' color='black' size={55} style={{
+          flex:1,
+          position:'absolute',
+          right:0
+        }} 
+        
+          />
 
       <Text style={{
         flex:1,
         alignSelf:'center',
         fontSize:17,
+        marginTop:'10%'
       }}>How are you Feeling Today?</Text>
       
       <View style={{
@@ -82,10 +96,15 @@ function DailyMood(){
         <MaterialCommunityIcons name ='emoticon-outline' color='#07f246' size={55} style={{
           flex:1,
         }} 
-        onPress={async()=> {await Daily.rateDay(user,date,4);}}
+        onPress={async()=> {await Daily.rateDay(user,date,5);}}
         />
-        
       </View>
+        <Text style={{
+          flex:1,
+          alignSelf:'center',
+          fontSize:20,
+        }}>Your Day: {date}</Text>
+
     </View>
   );
 }
@@ -160,6 +179,7 @@ function InProgress(){
   const[refreshing, setRefreshing] = React.useState(false)
   const[list, setList] = React.useState([])
 
+
   const nav = useNavigation()
 
   const onRefresh = React.useCallback(async() =>{
@@ -174,15 +194,15 @@ function InProgress(){
     <View style={{
       flex:1,
     }}>
-      <FlatList  ItemSeparatorComponent={()=> <View style={{flex:1}}></View>} 
+      <FlatList 
       data={list}
-      renderItem={({item})=> <Item title= {item.summary} startTime={item.startTime} endTime={item.endTime} location={item.location} Nav={nav} />} 
+      renderItem={({item}) => testRender({item},nav)} 
       style={{
-        flexGrow:1,
-        
+        flex:1,
+        marginBottom:'10%',
+        marginTop:'3%',
       }} 
-      contentContainerStyle={{
-      }}
+
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
@@ -207,12 +227,14 @@ function Completed(){
   
   return(
     <View style={{
-      flex:1,
+      flexGrow:1,
     }}>
-      <FlatList  ItemSeparatorComponent={()=> <View style={{height:'5%',}}></View>} 
+      <FlatList  
       data={list}
-      renderItem={({item})=> <Item title= {item.summary} startTime={item.startTime} endTime={item.endTime} location={item.location} Nav={nav} />} 
+      renderItem={({item}) => testRender({item},nav)} 
       style={{flexGrow:1,
+        marginBottom:'10%',
+        marginTop:'3%',
       }} 
       contentContainerStyle={{
 
@@ -225,18 +247,137 @@ function Completed(){
   );
 }
 
-const Item = ({title, startTime, endTime, location, Nav}) => (
+const todaysDate = Helpers.getTodaysDate()
+
+/* const Item = ({title, startTime, endTime, location, id,  Nav}) => (
+  
+  
+
   <View style={{
     flex:1,
     backgroundColor:'red',
-    marginTop:'5%',
+    marginTop:'2%',
     alignItems:'center', 
     borderRadius:30,
    }} >
+     { <MaterialCommunityIcons name ='pencil' color='black' size={45} style={{
+        alignSelf:'baseline',
+        top:'20%',
+        borderWidth:1,
+        left:'5%',
+        borderRadius:10,
+        flex:1, 
+        position:'absolute',
+        }} 
+       
+        onPress={()=> Nav.navigate('EditTask') }
+         />}
      <Text style={{color:'white'}}>Title: {title}</Text>
      <Text style={{color:'white'}}>Start Time: {startTime}</Text>
      <Text style={{color:'white'}}>End Time: {endTime}</Text>
      <Text style={{color:'white'}}>Location: {location}</Text>
+     { <MaterialCommunityIcons name ='star' color='black' size={45} style={{
+        alignSelf:'baseline',
+        top:'20%',
+        borderWidth:1,
+        right:'5%',
+        borderRadius:10,
+        flex:1,
+        position:'absolute',
+        }} 
+         />}
+    
+  </View>
+)
+ */
+
+
+
+
+
+
+function testRender ({item},Nav){
+
+
+
+
+return(
+<View style={{
+    flex:1,
+    backgroundColor:'red',
+    marginTop:'2%',
+    alignItems:'center', 
+    borderRadius:30,
+   }} >
+     { <MaterialCommunityIcons name ='pencil' color='black' size={45} style={{
+        alignSelf:'baseline',
+        top:'20%',
+        borderWidth:1,
+        left:'5%',
+        borderRadius:10,
+        flex:1, 
+        position:'absolute',
+        }} 
+       
+        onPress={()=> Nav.navigate('EditTask',{task:{item}})}
+         />}
+     <Text style={{color:'white'}}>Title: {item.summary}</Text>
+     <Text style={{color:'white'}}>Start Time: {item.startTime}</Text>
+     <Text style={{color:'white'}}>End Time: {item.endTime}</Text>
+     <Text style={{color:'white'}}>Location: {item.location}</Text>
+    
+     { <MaterialCommunityIcons name ='star' color='black' size={45} style={{
+        alignSelf:'baseline',
+        top:'20%',
+        borderWidth:1,
+        right:'5%',
+        borderRadius:10,
+        flex:1,
+        position:'absolute',
+        }} 
+         />}
+    
+  </View>
+);
+
+}
+
+const renderItem = ({item}, Nav) => (
+  
+  
+  <View style={{
+    flex:1,
+    backgroundColor:'red',
+    marginTop:'2%',
+    alignItems:'center', 
+    borderRadius:30,
+   }} >
+     { <MaterialCommunityIcons name ='pencil' color='black' size={45} style={{
+        alignSelf:'baseline',
+        top:'20%',
+        borderWidth:1,
+        left:'5%',
+        borderRadius:10,
+        flex:1, 
+        position:'absolute',
+        }} 
+       
+        onPress={()=> Nav.navigate('EditTask') }
+         />}
+     <Text style={{color:'white'}}>Title: {item.summary}</Text>
+     <Text style={{color:'white'}}>Start Time: {item.startTime}</Text>
+     <Text style={{color:'white'}}>End Time: {item.endTime}</Text>
+     <Text style={{color:'white'}}>Location: {item.location}</Text>
+     { <MaterialCommunityIcons name ='star' color='black' size={45} style={{
+        alignSelf:'baseline',
+        top:'20%',
+        borderWidth:1,
+        right:'5%',
+        borderRadius:10,
+        flex:1,
+        position:'absolute',
+        }} 
+         />}
     
   </View>
 )
@@ -249,7 +390,7 @@ function Home() {
     return (
       <View style={{
         flex:1,
-        paddingTop:'5%',
+        marginTop:'2%',
         }}> 
         <View style={{
           flex:1,
@@ -271,5 +412,12 @@ function Home() {
 
     );
   }
+
+
+  async function addNewTask (){
+    const currentDate = Helpers.getTodaysDate()
+    const addNew = await addTask(user, 'KylerTest', currentDate, 'Lumen Field', '00:00', '00:05')
+}
+
 
   export {HomeScreenNav}; 
