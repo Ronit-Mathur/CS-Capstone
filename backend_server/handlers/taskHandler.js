@@ -188,7 +188,7 @@ module.exports = class taskHandler {
      * @param {*} id 
      */
     async getTask(id) {
-        var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE id = ?", [id]);
+        var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE taskId = ?", [id]);
         if (result) {
             return result[0];
         }
