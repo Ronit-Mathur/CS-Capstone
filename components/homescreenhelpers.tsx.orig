@@ -1,7 +1,11 @@
 import { useState, } from 'react';
 import {View,Text, TextInput, Button} from 'react-native';
 import * as Helpers from '../backend_server/lib/helpers';
+<<<<<<< HEAD
 import{getTodaysActiveTasks, getTodaysFinishedTasks, updateTask, completeTask} from '../lib/server/tasks';
+=======
+import{getDaysTasks, getTodaysActiveTasks, getTodaysFinishedTasks, updateTask} from '../lib/server/tasks';
+>>>>>>> 8184e1d4b1b111adcbf00c869c38e6fef79522c4
 import {NavigationContainer, useNavigation} from '@react-navigation/native';
 
 const user = 'testuser1'
