@@ -1,7 +1,7 @@
 import { useState, } from 'react';
 import {View,Text, TextInput, Button} from 'react-native';
 import * as Helpers from '../backend_server/lib/helpers';
-import{getTodaysActiveTasks, getTodaysFinishedTasks, updateTask} from '../lib/server/tasks';
+import{getTodaysActiveTasks, getTodaysFinishedTasks, updateTask, completeTask} from '../lib/server/tasks';
 import {NavigationContainer, useNavigation} from '@react-navigation/native';
 
 const user = 'testuser1'
@@ -126,10 +126,11 @@ function EditTask (task:any){
                     onChangeText={text=>setLoc(text)}
                     />
                 </View>
-                <View style={{
+                <View  style={{
                     flex:1,
                     flexDirection:'row',
                     alignSelf:'center',
+                
                     
                 }}>
                     <Button  title='Cancel'  onPress={()=> navigation.navigate('HomeScreen')}/>
@@ -144,7 +145,163 @@ function EditTask (task:any){
 }
 
 
-async function updateT ( user, summary, startTime, endTime, location, taskId){
+
+function RankTask (task:any){
+    const navigation = useNavigation()
+    const id = task.route.params.task.item.taskId
+    const [enjoyment, setEnjoyment] = useState('1')
+    const [physcialActivity, setPhysicalActivity] = useState('1')
+    const [engagement, setEngagement] = useState('1')
+    const [mentalDifficulty, setMentalDifficulty] = useState('1')
+
+     return(
+         <View style={{
+             flex:1,
+             borderWidth:0,
+             backgroundColor:'transparent',
+             
+             
+         }}>
+             <View style={{
+                 flex:1,
+                 borderWidth:0,
+                 height:'60%',
+                 width:'80%',
+                 alignSelf:'center',
+                 position:'absolute',
+                 top:'10%', 
+                 backgroundColor:'white', 
+                 borderRadius:30, 
+                 
+             }}>
+               
+               
+               <View style={{
+                    flex:1,
+                }}>
+                    <Text style={{
+                        flex:1,
+                        alignSelf:'center',
+                        textDecorationLine:'underline',
+                        paddingTop:'3%',
+                    }}
+                    >Enjoyment</Text>
+                    <TextInput style={{
+                        flex:1,
+                        borderWidth:1,
+                        width:'75%',
+                        alignSelf:'center',
+                        paddingLeft:'3%',
+                        
+                    }} 
+                    placeholder={enjoyment}
+                    placeholderTextColor='black'
+                    onChangeText={text=>setEnjoyment(text)}
+                    />
+                </View>
+                <View style={{
+                    flex:1,
+                }}>
+                    <Text style={{
+                        flex:1,
+                        alignSelf:'center',
+                        textDecorationLine:'underline',
+                        paddingTop:'3%',
+                    }}
+                    >Pysical Activity</Text>
+                    <TextInput style={{
+                        flex:1,
+                        borderWidth:1,
+                        width:'75%',
+                        alignSelf:'center',
+                        paddingLeft:'3%',
+                        
+                    }} 
+                    placeholder={physcialActivity}
+                    placeholderTextColor='black'
+                    onChangeText={text=>setPhysicalActivity(text)}
+                    />
+                </View>
+
+                <View style={{
+                    flex:1,
+                }}>
+                    <Text style={{
+                        flex:1,
+                        alignSelf:'center',
+                        textDecorationLine:'underline',
+                        paddingTop:'3%',
+                    }}
+                    >Engagement</Text>
+                    <TextInput style={{
+                        flex:1,
+                        borderWidth:1,
+                        width:'75%',
+                        alignSelf:'center',
+                        paddingLeft:'3%',
+                        
+                    }} 
+                    placeholder={engagement}
+                    placeholderTextColor='black'
+                    onChangeText={text=>setEngagement(text)}
+                    />
+                </View>
+
+                <View style={{
+                    flex:1,
+                }}>
+                    <Text style={{
+                        flex:1,
+                        alignSelf:'center',
+                        textDecorationLine:'underline',
+                        paddingTop:'3%',
+                    }}
+                    >Mental Difficulty</Text>
+                    <TextInput style={{
+                        flex:1,
+                        borderWidth:1,
+                        width:'75%',
+                        alignSelf:'center',
+                        paddingLeft:'3%',
+                        
+                    }} 
+                    placeholder={mentalDifficulty}
+                    placeholderTextColor='black'
+                    onChangeText={text=>setMentalDifficulty(text)}
+                    />
+                </View>
+                
+                <View  style={{
+                    flex:1,
+                    flexDirection:'row',
+                    alignSelf:'center',
+                
+                    
+                }}>
+                    <Button  title='Cancel'  onPress={()=> navigation.navigate('HomeScreen')}/>
+                    <Button title='Submit' onPress ={async()=> {rankT(id, enjoyment,physcialActivity,engagement,mentalDifficulty); navigation.navigate('HomeScreen')}} />
+                </View>
+            
+             
+ 
+ 
+             </View>
+         </View>
+     );
+ }
+
+
+ async function rankT (id:any, enjoyment:any, physcialActivity:any, engagement:any, mentalDifficulty:any){
+    const numEnjoy = Number(enjoyment)
+    const numPhysical = Number(physcialActivity)
+    const numEngage = Number(engagement)
+    const numMental = Number(mentalDifficulty)
+
+
+    const addRank = await completeTask(id,numEnjoy,numPhysical,numEngage,numMental)
+ }
+
+async function updateT ( user:string, summary:string, startTime:string, endTime:string, location:string, taskId:any){
 
     const day = Helpers.getTodaysDate()
     const update = await updateTask(user, taskId, summary, day, location, startTime, endTime) 
@@ -155,7 +312,6 @@ async function updateT ( user, summary, startTime, endTime, location, taskId){
 async function getCurrentTasks (user:string){
     var currentTaskList: never[] = [];
     const currentTasks = await getTodaysActiveTasks(user);
-    console.log(currentTasks);
     var convertCurrentTasks = Object.values(currentTasks); 
 
     try{
@@ -188,4 +344,4 @@ async function getCompletedTasks (user:string){
     return completedTaskList;
 }
 
-export {getCurrentTasks,getCompletedTasks, EditTask};
+export {getCurrentTasks,getCompletedTasks, EditTask, RankTask};

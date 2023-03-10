@@ -10,6 +10,7 @@ import ActionButton from 'react-native-action-button';
 import * as Helpers from '../backend_server/lib/helpers';
 import * as HSH from './homescreenhelpers';
 import {createNativeStackNavigator } from '@react-navigation/native-stack';
+import {Settings} from './settingScreen';
 
 const user = 'testuser1' //place holder for once we have user functionality
 
@@ -23,6 +24,9 @@ function HomeScreenNav (){
       <StackNavigator.Screen name='HomeScreen' component={Home} options={{title:'Home'} }/>
       <StackNavigator.Group  >
         <StackNavigator.Screen name='EditTask' component={HSH.EditTask} options={{presentation:'modal', headerStyle:{backgroundColor:'transparent',}, title:'', contentStyle:{backgroundColor:'transparent'}}}  />
+        <StackNavigator.Screen name='RankTask' component={HSH.RankTask} options={{presentation:'modal', headerStyle:{backgroundColor:'transparent',}, title:'', contentStyle:{backgroundColor:'transparent'}}}  />
+        <StackNavigator.Screen name ='Settings' component={Settings} options={{presentation:'containedModal',}}  />
+
       </StackNavigator.Group>
       
     </StackNavigator.Navigator>
@@ -34,7 +38,7 @@ function HomeScreenNav (){
 function DailyMood(){
 
   const date = Helpers.getTodaysDate()
- 
+  const navigation = useNavigation()
   return(
     <View style={{
       flex:1,
@@ -56,6 +60,7 @@ function DailyMood(){
           right:0
         }} 
         
+        onPress={()=> navigation.navigate('Settings')}
           />
 
       <Text style={{
@@ -201,6 +206,7 @@ function InProgress(){
         flex:1,
         marginBottom:'10%',
         marginTop:'3%',
+        shadowOpacity:.5,
       }} 
 
       refreshControl={
@@ -235,6 +241,7 @@ function Completed(){
       style={{flexGrow:1,
         marginBottom:'10%',
         marginTop:'3%',
+        shadowOpacity:.5,
       }} 
       contentContainerStyle={{
 
@@ -296,8 +303,13 @@ const todaysDate = Helpers.getTodaysDate()
 
 
 
-function testRender ({item},Nav){
-
+function testRender ({item}:any,Nav:any){
+var bool = false
+if(item.summary.length > 17){
+  bool = true
+}else{
+  bool = false
+}
 
 
 
@@ -308,6 +320,8 @@ return(
     marginTop:'2%',
     alignItems:'center', 
     borderRadius:30,
+    width:'95%',
+    alignSelf:'center',
    }} >
      { <MaterialCommunityIcons name ='pencil' color='black' size={45} style={{
         alignSelf:'baseline',
@@ -317,11 +331,12 @@ return(
         borderRadius:10,
         flex:1, 
         position:'absolute',
+        
         }} 
        
         onPress={()=> Nav.navigate('EditTask',{task:{item}})}
          />}
-     <Text style={{color:'white'}}>Title: {item.summary}</Text>
+     <Text style={{color:'white',}}>Title: {item.summary.substring(0,18)} {bool ? '...' : ''}</Text>
      <Text style={{color:'white'}}>Start Time: {item.startTime}</Text>
      <Text style={{color:'white'}}>End Time: {item.endTime}</Text>
      <Text style={{color:'white'}}>Location: {item.location}</Text>
@@ -335,6 +350,7 @@ return(
         flex:1,
         position:'absolute',
         }} 
+        onPress={()=>Nav.navigate('RankTask',{task:{item}})}
          />}
     
   </View>
@@ -417,7 +433,10 @@ function Home() {
   async function addNewTask (){
     const currentDate = Helpers.getTodaysDate()
     const addNew = await addTask(user, 'KylerTest', currentDate, 'Lumen Field', '00:00', '00:05')
+    
 }
+
+
 
 
   export {HomeScreenNav}; 
