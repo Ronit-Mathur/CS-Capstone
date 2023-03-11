@@ -1,25 +1,12 @@
 import * as React from 'react';
-import {View, TextInput, Text, Pressable} from 'react-native';
+import {View, TextInput, Text, Pressable, Alert} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
 
 
 
-function ToggleDelete (islocked:any, lockStyle:any){
-    if(islocked){
-        return (
-            
-                <MaterialCommunityIcons name='lock' color='black' size={45} style={lockStyle}/>
-            
-        );
-    }
-    else{
-        return(
-            <MaterialCommunityIcons name='lock-open-variant' color='black' size={45}/>
-        );
-    }
-}
+
 
 
 function Settings (){
@@ -28,7 +15,21 @@ function Settings (){
     const[userNameEdit, setUserNameEdit] = React.useState(false)
     const[email,setEmail] = React.useState('example@gmail.com')
     const[emailEdit,setEmailEdit] = React.useState(false)
-    const[locked, setLocked] = React.useState(true)
+
+    const deleteAlert = () =>{
+        Alert.alert('Confirm Delete Account', 'Are you sure you want to delete your Account (This cannot be undone)',[
+            {
+                text: 'Cancel',
+                onPress: () => console.log('Canceled Delete'),
+                style: 'cancel',
+            }, 
+            {
+                text: 'Confirm',
+                onPress: () => console.log('Account Deleted')
+            }
+        ])
+    }
+    
     
     return (
         <View style={{
@@ -145,7 +146,7 @@ function Settings (){
                 flex:2,
                 flexDirection:'column'
             }}>
-                <Pressable  onPress={()=> console.log('Account Deleted')} style={{
+                <Pressable  onPress={deleteAlert} style={{
                     
                     borderWidth:1,
                     width:'40%',
@@ -164,7 +165,7 @@ function Settings (){
                     }}>Delete Account</Text>
 
                 </Pressable>
-               <ToggleDelete islocked={locked} />
+               
 
             </View>
 

@@ -2,7 +2,7 @@ import { useState, } from 'react';
 import {View,Text, TextInput, Button} from 'react-native';
 import * as Helpers from '../backend_server/lib/helpers';
 import{getTodaysActiveTasks, getTodaysFinishedTasks, updateTask, completeTask} from '../lib/server/tasks';
-import {NavigationContainer, useNavigation} from '@react-navigation/native';
+import { useNavigation} from '@react-navigation/native';
 
 const user = 'testuser1'
 function EditTask (task:any){
@@ -327,20 +327,7 @@ async function getCurrentTasks (user:string){
     return currentTaskList;
 }
 
-async function getAllTasks (user:string, day:string) {
-    var taskList: never[] = [];
-    const allTasks = await getDaysTasks(user, day);
-    console.log(allTasks);
-    var convertAllTasks = Object.values(allTasks);
 
-    try {
-        convertAllTasks.forEach(function(task){
-            taskList.push(task);
-        })
-    }catch{
-        console.log('getAllTasks Returned an Empty List');
-    }
-}
 
 async function getCompletedTasks (user:string){
     var completedTaskList: never[] = [];

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Text, View,SafeAreaView, RefreshControl} from 'react-native';
+import {Text, View,SafeAreaView, RefreshControl, Alert} from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {DefaultTheme, NavigationContainer, useNavigation} from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -39,6 +39,18 @@ function DailyMood(){
 
   const date = Helpers.getTodaysDate()
   const navigation = useNavigation()
+  const message = 'Your mood for ' + {date} + ' has been recorded!'
+  const moodRated = () =>{
+    Alert.alert('Daily Mood Recorded', message,[
+        {
+            text: 'Dismiss',
+            onPress: () => console.log('Dismissed'),
+            
+        }, 
+       
+    ])
+}
+
   return(
     <View style={{
       flex:1,
@@ -81,27 +93,27 @@ function DailyMood(){
         <MaterialCommunityIcons name ='emoticon-frown-outline' color='red' size={55} style={{
           flex:1,
         }} 
-        onPress={async()=> {await Daily.rateDay(user,date,1);}}
+        onPress={async()=> {await Daily.rateDay(user,date,1); moodRated}}
         />
          <MaterialCommunityIcons name ='emoticon-sad-outline' color='#fa7916' size={55} style={{
           flex:1,
         }} 
-        onPress={async()=> {await Daily.rateDay(user,date,2);}}
+        onPress={async()=> {await Daily.rateDay(user,date,2); moodRated}}
         />
          <MaterialCommunityIcons name ='emoticon-neutral-outline' color='#ded52c' size={55} style={{
           flex:1,
         }} 
-        onPress={async()=> {await Daily.rateDay(user,date,3);}}
+        onPress={async()=> {await Daily.rateDay(user,date,3); moodRated}}
         />
         <MaterialCommunityIcons name ='emoticon-happy-outline' color='#096622' size={55} style={{
           flex:1,
         }} 
-        onPress={async()=> {await Daily.rateDay(user,date,4);}}
+        onPress={async()=> {await Daily.rateDay(user,date,4); moodRated}}
         />
         <MaterialCommunityIcons name ='emoticon-outline' color='#07f246' size={55} style={{
           flex:1,
         }} 
-        onPress={async()=> {await Daily.rateDay(user,date,5);}}
+        onPress={async()=> {await Daily.rateDay(user,date,5); moodRated}}
         />
       </View>
         <Text style={{
@@ -180,16 +192,22 @@ function TopTabs () {
   );
 }
 
+
+const demoProgress = [
+  {summary:'Demo Scheduled Task', startTime:'15:00', endTime:'17:00', location:'Thompson 399'}
+]
+
 function InProgress(){
   const[refreshing, setRefreshing] = React.useState(false)
   const[list, setList] = React.useState([])
 
-
   const nav = useNavigation()
+
+
 
   const onRefresh = React.useCallback(async() =>{
     setRefreshing(true);
-    setList( await HSH.getCurrentTasks(user));
+    setList (await HSH.getCurrentTasks(user))
     //setList(list)
     setRefreshing(false);
   }, [refreshing])
@@ -217,17 +235,23 @@ function InProgress(){
   );
 }
 
+const demoCompleted = [
+  {summary:'Demo Completed Task', starTime:'11:00', endTime:'12:00', location:'Thompson 399'}
+]
+
+
 function Completed(){
   const[refreshing, setRefreshing] = React.useState(false)
   const[list, setList] = React.useState([])
 
+
   const nav = useNavigation()
 
   const onRefresh = React.useCallback(async() =>{
-    setRefreshing(true);
-    setList( await HSH.getCompletedTasks(user));
+    setRefreshing(true)
+    setList(await HSH.getCompletedTasks(user))
     //setList(list)
-    setRefreshing(false);
+    setRefreshing(false)
   }, [refreshing])
 
   
@@ -255,51 +279,6 @@ function Completed(){
 }
 
 const todaysDate = Helpers.getTodaysDate()
-
-/* const Item = ({title, startTime, endTime, location, id,  Nav}) => (
-  
-  
-
-  <View style={{
-    flex:1,
-    backgroundColor:'red',
-    marginTop:'2%',
-    alignItems:'center', 
-    borderRadius:30,
-   }} >
-     { <MaterialCommunityIcons name ='pencil' color='black' size={45} style={{
-        alignSelf:'baseline',
-        top:'20%',
-        borderWidth:1,
-        left:'5%',
-        borderRadius:10,
-        flex:1, 
-        position:'absolute',
-        }} 
-       
-        onPress={()=> Nav.navigate('EditTask') }
-         />}
-     <Text style={{color:'white'}}>Title: {title}</Text>
-     <Text style={{color:'white'}}>Start Time: {startTime}</Text>
-     <Text style={{color:'white'}}>End Time: {endTime}</Text>
-     <Text style={{color:'white'}}>Location: {location}</Text>
-     { <MaterialCommunityIcons name ='star' color='black' size={45} style={{
-        alignSelf:'baseline',
-        top:'20%',
-        borderWidth:1,
-        right:'5%',
-        borderRadius:10,
-        flex:1,
-        position:'absolute',
-        }} 
-         />}
-    
-  </View>
-)
- */
-
-
-
 
 
 
@@ -358,48 +337,6 @@ return(
 
 }
 
-const renderItem = ({item}, Nav) => (
-  
-  
-  <View style={{
-    flex:1,
-    backgroundColor:'red',
-    marginTop:'2%',
-    alignItems:'center', 
-    borderRadius:30,
-   }} >
-     { <MaterialCommunityIcons name ='pencil' color='black' size={45} style={{
-        alignSelf:'baseline',
-        top:'20%',
-        borderWidth:1,
-        left:'5%',
-        borderRadius:10,
-        flex:1, 
-        position:'absolute',
-        }} 
-       
-        onPress={()=> Nav.navigate('EditTask') }
-         />}
-     <Text style={{color:'white'}}>Title: {item.summary}</Text>
-     <Text style={{color:'white'}}>Start Time: {item.startTime}</Text>
-     <Text style={{color:'white'}}>End Time: {item.endTime}</Text>
-     <Text style={{color:'white'}}>Location: {item.location}</Text>
-     { <MaterialCommunityIcons name ='star' color='black' size={45} style={{
-        alignSelf:'baseline',
-        top:'20%',
-        borderWidth:1,
-        right:'5%',
-        borderRadius:10,
-        flex:1,
-        position:'absolute',
-        }} 
-         />}
-    
-  </View>
-)
-
-
-
 function Home() {
  
   const navigation = useNavigation();
@@ -432,10 +369,9 @@ function Home() {
 
   async function addNewTask (){
     const currentDate = Helpers.getTodaysDate()
-    const addNew = await addTask(user, 'KylerTest', currentDate, 'Lumen Field', '00:00', '00:05')
+    const addNew = await addTask(user, 'KylerTest', currentDate, 'Lumen Field', '20:00', '24:00')
     
 }
-
 
 
 
