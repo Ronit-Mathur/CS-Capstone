@@ -125,6 +125,7 @@ module.exports = {
    */
   getCurrentTime() {
     var date = new Date();
-    return '' + date.getHours() + ':' + date.getMinutes();
+    var stringed =  '' + date.getHours() + ':' + date.getMinutes();
+    return verifyHourMinuteTimeFormat(stringed);
   },
 };

@@ -231,7 +231,7 @@ module.exports = class Server {
                     res.status(200).send(JSON.stringify("ok"));
                 }
                 else {
-                    res.status(400).send(JSON.stringify("error"));
+                    res.status(200).send(JSON.stringify("error"));
                 }
             } else {
                 res.status(400).send(JSON.stringify("invalid parameters"));
