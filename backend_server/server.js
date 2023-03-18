@@ -27,6 +27,7 @@ module.exports = class Server {
      * @param {int} port port to run the server on
      */
     constructor(isRemote, port) {
+
         Server.current = this;
         this.isRemote = isRemote;
         this.port = port;
@@ -35,6 +36,10 @@ module.exports = class Server {
         this.userHandler = new (require("./handlers/userHandler.js"))();
         this.taskHandler = new (require("./handlers/taskHandler.js"))();
         this.dayHandler = new (require('./handlers/dayHandler.js'))();
+
+        this.userHandler.isValidLogin("testuser1", "testpass1").then((res) => {
+            console.log(res);
+        })
 
 
 
@@ -400,7 +405,7 @@ module.exports = class Server {
                 await this.userHandler.importOutlookCalendar(req.query.id, req.ip, req.query.username);
                 res.status(200).send(JSON.stringify("ok"));
             }
-            catch(e){
+            catch (e) {
                 console.log("Error importing from outlook calendar");
                 console.log("username: " + req.query.username);
                 console.log(e);

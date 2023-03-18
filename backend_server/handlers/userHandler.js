@@ -62,8 +62,8 @@ module.exports = class UserHandler {
             return -1;
         }
 
-        var user = this._getUser(username);
-        if (!this._equalsHash(password, user.password)) {
+        var user = await this._getUser(username);
+        if (!await this._equalsHash(password, user.password)) {
             return -1;
         }
 
