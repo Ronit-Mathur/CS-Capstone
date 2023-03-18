@@ -341,7 +341,7 @@ module.exports = class Server {
                 //import calendar
                 await this.userHandler.importGoogleCalendar(req.query.id, req.ip, req.query.username);
                 res.status(200).send(JSON.stringify("ok"));
-            } catch {
+            } catch(e) {
                 console.log("Error importing from google calendar");
                 console.log("username: " + req.query.username);
                 console.log(e);
