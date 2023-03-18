@@ -52,6 +52,41 @@ module.exports = class UserHandler {
 
 
     /**
+     * checks if a login is valid. a.k.a the username and password match
+     * @param {*} username 
+     * @param {*} password 
+     * @returns the api key for the specific user or -1. if user is not valid
+     */
+    async isValidLogin(username, password) {
+        if (!await this.userExists(username)) {
+            return -1;
+        }
+
+        var user = this._getUser(username);
+        if (!this._equalsHash(password, user.password)) {
+            return -1;
+        }
+
+        //user is valid. get the api key of the user and return it
+        return 1;
+    }
+
+    /**
+     * 
+     * @param {*} username
+     * @returns the user associated with the given username or null if the user dosen't exist
+     */
+    async _getUser(username) {
+        var users = await DatabaseHandler.current.query("SELECT * FROM users WHERE username = ?", [username]);
+        if (users && users.length > 0) {
+            return users[0];
+        }
+
+        return null;
+    }
+
+
+    /**
      * hashes a text and returns the hashed value
      * @param {*} text text to hash
      * @returns the hashed value

@@ -125,6 +125,21 @@ module.exports = class Server {
             }
         });
 
+
+        app.get(SERVER_ENDPOINTS.USER_LOGIN, async (req, res) => {
+            //check for username and password
+            if (req.query.username && req.query.password) {
+
+                ///try and get api key from the user handler
+                var apiKey = this.userHandler.isValidLogin(username, password);
+                res.status(200).send(JSON.stringify(apiKey));
+            }
+            else {
+                res.status(400).send("invalid parameters");
+                return;
+            }
+        });
+
         /**
          * task methods
          */
@@ -317,9 +332,16 @@ module.exports = class Server {
                 res.status(400); //invalid query
             }
 
-            //import calendar
-            await this.userHandler.importGoogleCalendar(req.query.id, req.ip, req.query.username);
-            res.status(200).send(JSON.stringify("ok"));
+            try {
+                //import calendar
+                await this.userHandler.importGoogleCalendar(req.query.id, req.ip, req.query.username);
+                res.status(200).send(JSON.stringify("ok"));
+            } catch {
+                console.log("Error importing from google calendar");
+                console.log("username: " + req.query.username);
+                console.log(e);
+                res.status(400); //error importing
+            }
 
         });
 
@@ -374,8 +396,16 @@ module.exports = class Server {
             }
 
             //import calendar
-            await this.userHandler.importOutlookCalendar(req.query.id, req.ip, req.query.username);
-            res.status(200).send(JSON.stringify("ok"));
+            try {
+                await this.userHandler.importOutlookCalendar(req.query.id, req.ip, req.query.username);
+                res.status(200).send(JSON.stringify("ok"));
+            }
+            catch(e){
+                console.log("Error importing from outlook calendar");
+                console.log("username: " + req.query.username);
+                console.log(e);
+                res.status(400); //error importing calendar
+            }
 
         });
 

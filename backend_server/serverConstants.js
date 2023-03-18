@@ -24,6 +24,7 @@ module.exports = {
 
         USER_CREATE: "/api/user/create",
         USER_EXISTS: "/api/user/exists",
+        USER_LOGIN: "/api/user/login",
 
         USER_RATE_DAY: "/api/user/day/rate"
        
