@@ -68,3 +68,4 @@ ios
 android
 
 app.json
+test_db.sqlite
