@@ -312,7 +312,9 @@ async function updateT ( user:string, summary:string, startTime:string, endTime:
 async function getCurrentTasks (user:string){
     var currentTaskList: never[] = [];
     const currentTasks = await getTodaysActiveTasks(user);
-    var convertCurrentTasks = Object.values(currentTasks); 
+    var convertCurrentTasks = Object.values(currentTasks);
+     
+
 
     try{
         convertCurrentTasks.forEach(function(task){
@@ -322,7 +324,7 @@ async function getCurrentTasks (user:string){
         console.log('Returned an Empty List'); 
         
     }
-
+    currentTaskList.sort((a,b)=> (a.startTime > b.startTime) ? 1 : ((a.startTime < b.startTime) ? -1 : 0 ))
 
     return currentTaskList;
 }
@@ -343,6 +345,7 @@ async function getCompletedTasks (user:string){
         
     }
 
+    completedTaskList.sort((a,b)=> (a.startTime > b.startTime) ? 1 : ((a.startTime < b.startTime) ? -1 : 0 ))
     return completedTaskList;
 }
 

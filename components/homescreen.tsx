@@ -39,7 +39,7 @@ function DailyMood(){
 
   const date = Helpers.getTodaysDate()
   const navigation = useNavigation()
-  const message = 'Your mood for ' + {date} + ' has been recorded!'
+  const message = 'Your mood for ' + date + ' has been recorded!'
   const moodRated = () =>{
     Alert.alert('Daily Mood Recorded', message,[
         {
@@ -93,27 +93,27 @@ function DailyMood(){
         <MaterialCommunityIcons name ='emoticon-frown-outline' color='red' size={55} style={{
           flex:1,
         }} 
-        onPress={async()=> {await Daily.rateDay(user,date,1); moodRated}}
+        onPress={async()=> {await Daily.rateDay(user,date,1); moodRated()}}
         />
          <MaterialCommunityIcons name ='emoticon-sad-outline' color='#fa7916' size={55} style={{
           flex:1,
         }} 
-        onPress={async()=> {await Daily.rateDay(user,date,2); moodRated}}
+        onPress={async()=> {await Daily.rateDay(user,date,2); moodRated()}}
         />
          <MaterialCommunityIcons name ='emoticon-neutral-outline' color='#ded52c' size={55} style={{
           flex:1,
         }} 
-        onPress={async()=> {await Daily.rateDay(user,date,3); moodRated}}
+        onPress={async()=> {await Daily.rateDay(user,date,3); moodRated()}}
         />
         <MaterialCommunityIcons name ='emoticon-happy-outline' color='#096622' size={55} style={{
           flex:1,
         }} 
-        onPress={async()=> {await Daily.rateDay(user,date,4); moodRated}}
+        onPress={async()=> {await Daily.rateDay(user,date,4); moodRated()}}
         />
         <MaterialCommunityIcons name ='emoticon-outline' color='#07f246' size={55} style={{
           flex:1,
         }} 
-        onPress={async()=> {await Daily.rateDay(user,date,5); moodRated}}
+        onPress={async()=> {await Daily.rateDay(user,date,5); moodRated()}}
         />
       </View>
         <Text style={{
@@ -369,7 +369,7 @@ function Home() {
 
   async function addNewTask (){
     const currentDate = Helpers.getTodaysDate()
-    const addNew = await addTask(user, 'KylerTest', currentDate, 'Lumen Field', '20:00', '24:00')
+    const addNew = await addTask(user, 'Sort Test', currentDate, 'Lumen Field', '18:00', '24:00')
     
 }
 

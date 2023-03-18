@@ -15,12 +15,13 @@ import {
 import ActionButton from 'react-native-action-button';
 
 import {createUser} from "./lib/server/users";
-
+import  { SignInScreen } from './components/SignInScreen';
 
 /* 
   Create Tabs to switch between Screens
 */
 const MaterialTab = createMaterialTopTabNavigator();
+const StackNavigator = createStackNavigator();
 
 /**
  * server setup
@@ -29,6 +30,43 @@ const MaterialTab = createMaterialTopTabNavigator();
 const SERVER_IP = "https://mentalhealth.ra3.us";
 const SERVER_PORT = 80;
 const ServerHandler = new serverHandler(SERVER_IP, SERVER_PORT);
+
+
+
+
+function MainStack(){
+  const[isSignedIn, setIsSignedIn] = React.useState(false)
+  
+  const verifySignIn = () => {
+    setIsSignedIn(true)
+  }
+
+  const resetSignedin = () =>{
+    setIsSignedIn(false)
+  }
+  
+  return (
+    <StackNavigator.Navigator >
+          {!isSignedIn ? (
+      <StackNavigator.Screen
+        name="SignIn"
+        children={()=> <SignInScreen signIn={verifySignIn} testR={resetSignedin}/>}
+        options={{
+          headerShown:false
+        }}
+      />
+    ) : (
+      // User is signed in
+      <StackNavigator.Screen name="MainApp" component={MaterialTabs} options={{
+        headerShown:false
+      }} />
+    )}
+
+
+
+    </StackNavigator.Navigator>
+  );
+}
 
 
 function MaterialTabs() {
@@ -70,12 +108,21 @@ const MyTheme = {
   },
 };
 
+function PostLogin(){
+  return (
+    <View>
+      <MaterialTabs />
+    </View>
+  );
+}
+
 //Main Application Function
 const App = () => {
+ 
   return (
     <SafeAreaProvider>
       <NavigationContainer theme={MyTheme} >
-        <MaterialTabs />
+        <MainStack />
       </NavigationContainer>
     </SafeAreaProvider>
 
