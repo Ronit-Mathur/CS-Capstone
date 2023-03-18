@@ -37,9 +37,7 @@ module.exports = class Server {
         this.taskHandler = new (require("./handlers/taskHandler.js"))();
         this.dayHandler = new (require('./handlers/dayHandler.js'))();
 
-        this.userHandler.isValidLogin("testuser1", "testpass1").then((res) => {
-            console.log(res);
-        })
+     
 
 
 
