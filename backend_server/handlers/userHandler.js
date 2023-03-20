@@ -70,6 +70,7 @@ module.exports = class UserHandler {
             return -1;
         }
 
+    
         //user is valid. get the api key of the user and return it
         return 1;
     }
