@@ -135,6 +135,7 @@ module.exports = class Server {
 
                 ///try and get api key from the user handler
                 var apiKey = this.userHandler.isValidLogin(req.query.username, req.query.password);
+                console.log(apiKey);
                 res.status(200).send(JSON.stringify(apiKey));
             }
             else {
