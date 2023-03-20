@@ -58,12 +58,9 @@ module.exports = class UserHandler {
      * @returns the api key for the specific user or -1. if user is not valid
      */
     async isValidLogin(username, password) {
-        console.log("is valid");
         if (!await this.userExists(username)) {
             return -1;
         }
-
-        console.log("user exists");
 
         var user = await this._getUser(username);
         if (!await this._equalsHash(password, user.password)) {
