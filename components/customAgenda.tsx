@@ -4,7 +4,7 @@ import {View, Text, RefreshControl} from 'react-native';
 import { Agenda, DateData, } from 'react-native-calendars';
 import { FlatList } from 'react-native-gesture-handler';
 import {getDaysTasks} from '../lib/server/tasks';
-
+import { sendUserName } from './calendarscreen';
 
 
 
@@ -26,16 +26,17 @@ const months = {
 }
 
 
-let user = 'testuser1'
+let user = ''
 
 
 function CustomAgenda (day:any) {
-  
+
+ user = sendUserName()
  let date = day.route.params.dateString
  let month = day.route.params.month
  let numDay = day.route.params.day
  let year = day.route.params.year
- 
+
   
   return (
     <View style ={{

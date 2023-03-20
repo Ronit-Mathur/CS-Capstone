@@ -9,9 +9,11 @@ import {CustomAgenda} from './customAgenda';
 
 const StackNavigator = createNativeStackNavigator();
 
-const user = 'testuser1'
+var  user = ''
 
-function CalendarNav (){
+function CalendarNav ({Name}:any){
+  user = Name
+  
   return(
     <StackNavigator.Navigator >
       <StackNavigator.Screen name='CalendarScreen' component={CalendarScreen} options={{title:'Calendar'}}/>
@@ -21,10 +23,14 @@ function CalendarNav (){
   );
 }
 
-
+const sendUserName = () =>{
+  return user
+}
 
 function CreateCalendar () {
   
+
+
   const navigation = useNavigation();
   return(
     <CalendarList style={{borderTopRightRadius:20,
@@ -68,4 +74,4 @@ function CalendarScreen() {
     );
   }
 
-  export default CalendarNav;
+  export  {CalendarNav, sendUserName};

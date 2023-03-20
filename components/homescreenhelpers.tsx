@@ -3,8 +3,8 @@ import {View,Text, TextInput, Button} from 'react-native';
 import * as Helpers from '../backend_server/lib/helpers';
 import{getTodaysActiveTasks, getTodaysFinishedTasks, updateTask, completeTask} from '../lib/server/tasks';
 import { useNavigation} from '@react-navigation/native';
+import {getUser} from './homescreen'
 
-const user = 'testuser1'
 function EditTask (task:any){
    const navigation = useNavigation()
    const [sum, setSum] = useState(task.route.params.task.item.summary)
@@ -12,7 +12,7 @@ function EditTask (task:any){
    const [end, setEnd] = useState(task.route.params.task.item.endTime)
    const [loc, setLoc] = useState(task.route.params.task.item.location)
    const id = task.route.params.task.item.taskId
-
+   const user = getUser()
     
     return(
         <View style={{
@@ -335,7 +335,7 @@ async function getCompletedTasks (user:string){
     var completedTaskList: never[] = [];
     const completedTasks = await getTodaysFinishedTasks(user);
     var convertCompletedTasks = Object.values(completedTasks);
-    console.log(completedTasks);
+    
     try{
         convertCompletedTasks.forEach(function(task){
             completedTaskList.push(task);

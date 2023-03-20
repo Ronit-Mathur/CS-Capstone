@@ -11,14 +11,16 @@ import * as Helpers from '../backend_server/lib/helpers';
 import * as HSH from './homescreenhelpers';
 import {createNativeStackNavigator } from '@react-navigation/native-stack';
 import {Settings} from './settingScreen';
+import { add } from 'react-native-reanimated';
 
-const user = 'testuser1' //place holder for once we have user functionality
+var user = ''
 
 
 
 const StackNavigator = createNativeStackNavigator();
 
-function HomeScreenNav (){
+function HomeScreenNav ({Name}:any){
+  user = Name
   return(
     <StackNavigator.Navigator initialRouteName='Home'>
       <StackNavigator.Screen name='HomeScreen' component={Home} options={{title:'Home'} }/>
@@ -280,6 +282,9 @@ function Completed(){
 
 const todaysDate = Helpers.getTodaysDate()
 
+const getUser = () =>{
+  return user
+}
 
 
 function testRender ({item}:any,Nav:any){
@@ -369,10 +374,11 @@ function Home() {
 
   async function addNewTask (){
     const currentDate = Helpers.getTodaysDate()
-    const addNew = await addTask(user, 'Sort Test', currentDate, 'Lumen Field', '18:00', '24:00')
+    const addNew = await addTask('testuser1', 'Test User Test', currentDate, 'Lumen Field', '18:00', '24:00')
     
 }
 
 
 
-  export {HomeScreenNav}; 
+
+  export {HomeScreenNav, getUser}; 

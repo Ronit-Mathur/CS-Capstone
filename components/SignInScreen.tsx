@@ -1,15 +1,16 @@
 import * as React from 'react'
 import {View, Text, TextInput, Button} from 'react-native'
 import {loginUser} from '../lib/server/users'
+import { useNavigation } from '@react-navigation/native'
 
 
 
 
-const SignInScreen = ({signIn}:any, {testR}:any)=>{
+const SignInScreen = ({signIn}:any) =>{
     const[userName, setUserName] = React.useState('')
     const[password, setPassword] = React.useState('')
+    const navigation = useNavigation()
     
-    {testR}
 
 
     return(
@@ -68,7 +69,9 @@ const SignInScreen = ({signIn}:any, {testR}:any)=>{
                             flex:1,
                             paddingLeft:'3%',
                         }} 
-                        onChangeText={setUserName} />
+                        onChangeText={setUserName} 
+                        autoCapitalize= 'none'/>
+                        
                     </View>
 
                     <View style={{
@@ -90,7 +93,8 @@ const SignInScreen = ({signIn}:any, {testR}:any)=>{
                             
                         }} 
                      onChangeText={setPassword} 
-                     secureTextEntry={true}/>
+                     secureTextEntry={true}
+                     autoCapitalize='none'/>
                     </View>
 
                 </View>
@@ -104,15 +108,15 @@ const SignInScreen = ({signIn}:any, {testR}:any)=>{
                 }}>
                     <Button title='Sign In' onPress={async() =>{
                         const validLog = await loginUser(userName,password)
-                        console.log(validLog)
+                       
                         if(validLog){
-                            signIn()
+                            signIn(userName)
                         }
                         else{
                             console.log('Invalid Login')
                         }
                     }} />
-                    <Button title='Create Account' onPress={() => console.log('PRESSED')} />
+                    <Button title='Create Account' onPress={() => navigation.navigate('CreateAccount')} />
                 </View>
 
             </View>
