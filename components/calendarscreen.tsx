@@ -5,24 +5,32 @@ import {Calendar, CalendarList} from 'react-native-calendars'
 import TaskCreation from './tasks';
 import {createNativeStackNavigator } from '@react-navigation/native-stack';
 import ActionButton from 'react-native-action-button';
-import CustomAgenda from './customAgenda';
+import {CustomAgenda} from './customAgenda';
 
 const StackNavigator = createNativeStackNavigator();
 
-function CalendarNav (){
+var  user = ''
+
+function CalendarNav ({Name}:any){
+  user = Name
+  
   return(
     <StackNavigator.Navigator >
       <StackNavigator.Screen name='CalendarScreen' component={CalendarScreen} options={{title:'Calendar'}}/>
       <StackNavigator.Screen name='Task' component={TaskCreation} options={{presentation:'modal'}}/>
-      <StackNavigator.Screen name='CalAgenda' component={CustomAgenda} options={{presentation:'modal'}}/>
+      <StackNavigator.Screen name='CalAgenda' component={CustomAgenda} options={{presentation:'modal', title: 'Daily Agenda'}}/>
     </StackNavigator.Navigator>
   );
 }
 
-
+const sendUserName = () =>{
+  return user
+}
 
 function CreateCalendar () {
   
+
+
   const navigation = useNavigation();
   return(
     <CalendarList style={{borderTopRightRadius:20,
@@ -32,7 +40,7 @@ function CreateCalendar () {
       borderBottomRightRadius:20, 
        
      }} 
-     onDayPress={ day =>{navigation.navigate('CalAgenda')}}
+     onDayPress={ (day) =>{navigation.navigate('CalAgenda', day)}}
      />
     // <Calendar  style={{
     //   borderTopRightRadius:20,
@@ -66,4 +74,4 @@ function CalendarScreen() {
     );
   }
 
-  export default CalendarNav;
+  export  {CalendarNav, sendUserName};
