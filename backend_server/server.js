@@ -134,8 +134,7 @@ module.exports = class Server {
             if (req.query.username && req.query.password) {
 
                 ///try and get api key from the user handler
-                var apiKey = this.userHandler.isValidLogin(req.query.username, req.query.password);
-                console.log(apiKey);
+                var apiKey = await this.userHandler.isValidLogin(req.query.username, req.query.password);
                 res.status(200).send(JSON.stringify(apiKey));
             }
             else {
