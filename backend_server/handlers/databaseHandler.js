@@ -76,6 +76,13 @@ module.exports = class DatabaseHandler {
         await db.run("CREATE TABLE IF NOT EXISTS daily (date TEXT, username TEXT, happiness INTEGER , rating REAL, FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE, PRIMARY KEY(date, username))");
 
 
+        //api keys
+        //maps a username to it's current api key
+        //username - the username the api key belongs to
+        //key - a string of letters and numbers which makes up the api key
+        //date - the date the key was issued in the format mm/dd/yyyy
+        await db.run("CREATE TABLE IF NOT EXISTS apiCredentials (username TEXT PRIMARY KEY, key TEXT, date TEXT, FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE)")
+
         //close connection
         db.close();
     }

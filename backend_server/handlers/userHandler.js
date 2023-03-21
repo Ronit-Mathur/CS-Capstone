@@ -2,6 +2,7 @@ const DatabaseHandler = require("./databaseHandler")
 const bcrypt = require("bcrypt");
 const { getOutlookEventsFromToken, getOutlookCalendarsFromToken, getOutlookOAuth2Token, getAuthorizedGoogleOAuth2Client, getGoogleCalendarsFromClient, getGoogleEventsFromClient } = require("../lib/external_integration/calendarImports");
 const Server = require("../server");
+const crypto = require("crypto");
 
 /**
  * handles user operations. this includes interacting with the database. initialize database before creating or using
@@ -68,8 +69,22 @@ module.exports = class UserHandler {
         }
 
     
-        //user is valid. get the api key of the user and return it
-        return 1;
+        //user is valid.
+        //generate a new api key for the user and store it in the database
+        var key = await this.generateAndStoreApiKey();
+
+        return key;
+    }
+
+
+    /**
+     * generates a new api key for the user and stores it in the database
+     * @param {*} username 
+     * @returns the new api key
+     */
+    async generateAndStoreApiKey(username){
+        var key = crypto.randomBytes(20).toString('hex');
+        return key;
     }
 
     /**
