@@ -105,7 +105,7 @@ module.exports = class UserHandler {
         }
         else{
             //update table
-            await DatabaseHandler.current.exec("UPDATE apiCredentials SET key = ?, date = ? WHERE username = ?" [key, today, username]);
+            await DatabaseHandler.current.exec("UPDATE apiCredentials SET key = ?, date = ? WHERE username = ?", [key, today, username]);
         }
      
    
