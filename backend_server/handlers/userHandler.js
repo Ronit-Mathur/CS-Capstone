@@ -86,7 +86,7 @@ module.exports = class UserHandler {
     async _generateAndStoreApiKey(username) {
 
         //make sure user exists
-        if(!await this.userExists(username)){
+        if (!await this.userExists(username)) {
             console.log("[userHandler] unable to generate new api key for user \"" + username + "\". user does not exist");
             return -1;
         }
@@ -99,16 +99,16 @@ module.exports = class UserHandler {
         var currentKeyData = await this._getApiKey(username);
 
         //store new key into database
-        if(currentKeyData === null){
+        if (currentKeyData === null) {
             //insert into api table
             await DatabaseHandler.current.exec("INSERT INTO apiCredentials (username, key, date) VALUES (?,?,?)", [username, key, today]);
         }
-        else{
+        else {
             //update table
             await DatabaseHandler.current.exec("UPDATE apiCredentials SET key = ?, date = ? WHERE username = ?", [key, today, username]);
         }
-     
-   
+
+
 
         return key;
     }
@@ -121,7 +121,7 @@ module.exports = class UserHandler {
      */
     async _getApiKey(username) {
 
-        var result = null;
+        var result = [];
 
         try {
             result = await DatabaseHandler.current.query("SELECT * FROM apiCredentials WHERE username = ?", [username]);
@@ -130,7 +130,12 @@ module.exports = class UserHandler {
             console.log("[userHandler] error retreiving api key from db for \"" + username + "\"");
         }
 
-        return result;
+        if (result.length > 0) {
+            return result[0];
+        }
+        else {
+            return null;
+        }
 
     }
 
@@ -170,8 +175,8 @@ module.exports = class UserHandler {
      * @param {*} apiKey api key of the user
      * @returns true if the api key is a valid authentication key
      */
-    async authenthicate(username, apiKey){
-        if(!await this.userExists(username)){
+    async authenthicate(username, apiKey) {
+        if (!await this.userExists(username)) {
             return false;
         }
 
