@@ -6,3 +6,8 @@ create db manager operation queue
 recursive tasks
 
 wrappers left:
+
+Daily mood list retrieval [Date, Time, Value]
+Retrieve all tasks with tracked engagement
+
+
