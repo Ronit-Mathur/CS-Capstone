@@ -164,12 +164,12 @@ module.exports = class Server {
         app.get(SERVER_ENDPOINTS.USER_TASKS_BY_DAY, async (req, res) => {
 
             //make sure call is authenticate before contuing
-            /** 
+            
             if(!await this.authenticateQuery(req, res)){
                 res.status(400).send("invalid auth key");
                 return;
             }
-            **/
+            
             if (req.query.username && req.query.day && helpers.isDateFormat(req.query.day)) {
 
                 if (req.query.before) {

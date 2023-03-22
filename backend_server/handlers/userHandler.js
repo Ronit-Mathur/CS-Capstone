@@ -176,6 +176,9 @@ module.exports = class UserHandler {
         }
 
         var apiInfo = await this._getApiKey(username);
+        console.log(apiInfo.key);
+        console.log(apiKey);
+        return true;
         return apiInfo.key == apiKey.trim();
     }
 
