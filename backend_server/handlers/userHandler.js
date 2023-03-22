@@ -71,7 +71,7 @@ module.exports = class UserHandler {
 
         //user is valid.
         //generate a new api key for the user and store it in the database
-        var key = await this._generateAndStoreApiKey();
+        var key = await this._generateAndStoreApiKey(username);
 
         return key;
     }
