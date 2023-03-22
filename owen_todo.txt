@@ -1,8 +1,6 @@
 Owen's todo list:
 
-
 implement full auth on api calls
-fix google and outlook import incosistencies
 switch dates over to epoch
 create db manager operation queue
 recursive tasks

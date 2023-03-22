@@ -112,7 +112,7 @@ module.exports = class DatabaseHandler {
             await db.run(statement, params);
             await db.close();
         }
-        catch(e){
+        catch (e) {
             console.log("database handler unable to execute run \"" + statement + "\"");
             console.log("Params: " + params);
             console.log(e);
@@ -140,5 +140,14 @@ module.exports = class DatabaseHandler {
             response = [];
         }
         return response;
+    }
+
+    /**
+     * debug methods
+     */
+
+    async _DEBUG_wipeTasks() {
+        await this.exec("DROP tasks");
+        await this.exec("DROP completedTasks");
     }
 }
