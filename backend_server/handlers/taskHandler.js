@@ -79,10 +79,13 @@ module.exports = class taskHandler {
         for (var i = 0; i < events.length; i++) {
             const event = events[i];
             var summary = event.summary;
-
-            console.log(event.start.dateTime);
+            
+            if(!event.start.dateTime){
+                continue; //skip the event
+            }
+          
             var parsedStartDate = new Date(Date.parse(event.start.dateTime));
-            console.log(parsedStartDate);
+      
             
             var date = parsedStartDate.toISOString().split('T')[0];
 
@@ -98,6 +101,9 @@ module.exports = class taskHandler {
                 continue; //ignore multi day events
             }
 
+            if(!event.start.endTime){
+                continue; //skip the event
+            }
             var endTime = helpers.verifyHourMinuteTimeFormat(parsedEndDate.getHours() + ":" + parsedEndDate.getMinutes());
             var location = "none";
             await this.addTask(username, summary, date, location, startTime, endTime);
