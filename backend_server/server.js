@@ -61,8 +61,8 @@ module.exports = class Server {
      * @param {*} res 
      * @returns true if query is authenticated correctly
      */
-    authenticateQuery(req, res){
-        return req.query.auth && req.query.username && this.userHandler.authenticate(req.query.username && req.query.auth);
+    async authenticateQuery(req, res){
+        return req.query.auth && req.query.username && await this.userHandler.authenthicate(req.query.username && req.query.auth);
     }
 
     /**
@@ -164,7 +164,7 @@ module.exports = class Server {
         app.get(SERVER_ENDPOINTS.USER_TASKS_BY_DAY, async (req, res) => {
 
             //make sure call is authenticate before contuing
-            if(!this.authenticateQuery(req, res)){
+            if(!await this.authenticateQuery(req, res)){
                 res.status(400).send("invalid auth key");
                 return;
             }
