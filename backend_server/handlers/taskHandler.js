@@ -76,11 +76,11 @@ module.exports = class taskHandler {
 
 
     async parseAndImportGoogleEvents(events, username) {
+        console.log("[TaskHandler] Importing google events from user \"" + username +"\"");
         for (var i = 0; i < events.length; i++) {
             const event = events[i];
             var summary = event.summary;
             
-            console.log(event.start);
             if(!event.start.dateTime){
                 continue; //skip the event
                
@@ -115,6 +115,7 @@ module.exports = class taskHandler {
     }
 
     async parseAndImportOutlookEvents(events, username) {
+        console.log("[TaskHandler] Importing outlook events from user \"" + username +"\"");
         for (var i = 0; i < events.length; i++) {
             const event = events[i];
             var summary = event.subject;
