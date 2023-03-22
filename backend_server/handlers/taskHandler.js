@@ -80,6 +80,7 @@ module.exports = class taskHandler {
             const event = events[i];
             var summary = event.summary;
             
+            console.log(event.start);
             if(!event.start.dateTime){
                 continue; //skip the event
             }
