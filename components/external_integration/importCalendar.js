@@ -13,6 +13,7 @@ export default class ImportCalendar extends React.Component {
             listCalendars: false, //if true list calendars on page
             calendars: [], //list of calendars to display. {name, id}
             calendarProvider: "", //which service the objects in the the calendar state list belong to
+            imported: false
         }
     }
 
@@ -32,6 +33,11 @@ export default class ImportCalendar extends React.Component {
             //change view to calendar list
             display = this.getCalendarDisplay();
         }
+
+        if(this.state.imported){
+            display = (<Text style={styles.text}>Calendar Imported</Text>);
+        }
+
 
         return (
             <View>
@@ -79,10 +85,12 @@ export default class ImportCalendar extends React.Component {
         var username = serverHandler.current.userState.username;
 
         if (this.state.calendarProvider == "google") {
-            await importGoogleCalendar(id, username);
+            importGoogleCalendar(id, username);
+            this.setState({imported: true});
         }
         else if(this.state.calendarProvider == "outlook"){
-            await importOutlookCalendar(id, username);
+            importOutlookCalendar(id, username);
+            this.setState({imported: true});
         }
     }
 

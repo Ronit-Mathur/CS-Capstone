@@ -64,6 +64,11 @@ module.exports = class taskHandler {
             return -1;
         }
 
+        if(await this._similarTaskExist(username, summary, date, location, startTime, endTime)){
+            //dont add to calendar as conflict exists
+            return -1;
+        }
+
 
         //everything is valid, add to database
         var taskId = await this._getNewTaskId();
@@ -72,6 +77,22 @@ module.exports = class taskHandler {
 
         return taskId;
 
+    }
+
+
+    /**
+     * checks a task that exists with the given parameters. used to check if a task is already in the database before creating one with a separate id.
+     * @param {*} username 
+     * @param {*} summary 
+     * @param {*} date 
+     * @param {*} location 
+     * @param {*} startTime 
+     * @param {*} endTime 
+     * @returns true if a task with similar parameters exists.
+     */
+    async _similarTaskExist(username, summary, date, location, startTime, endTime){
+        var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE username = ? AND summary = ? AND date = ? AND location = ? AND startTime = ? AND endTime = ?", [username, summary, date, location, startTime, endTime]);
+        return result != null && result != [];
     }
 
 
