@@ -79,7 +79,11 @@ module.exports = class taskHandler {
         for (var i = 0; i < events.length; i++) {
             const event = events[i];
             var summary = event.summary;
+
+            console.log(event.start.dateTime);
             var parsedStartDate = new Date(Date.parse(event.start.dateTime));
+            console.log(parsedStartDate);
+            
             var date = parsedStartDate.toISOString().split('T')[0];
 
             //date is given in yyyy-mm-dd. reformat to mm/dd/yyyy
@@ -156,6 +160,8 @@ module.exports = class taskHandler {
                 activeTasks.push(todaysTasks[i]);
             }
         }
+
+        
 
         return activeTasks;
 

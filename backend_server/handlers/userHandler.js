@@ -162,6 +162,23 @@ module.exports = class UserHandler {
     }
 
 
+
+
+    /**
+     * checks to see if a user has the correct authentication key
+     * @param {*} username username api key belongs to
+     * @param {*} apiKey api key of the user
+     * @returns true if the api key is a valid authentication key
+     */
+    async authenthicate(username, apiKey){
+        if(!await this.userExists(username)){
+            return false;
+        }
+
+        var apiInfo = await this._getApiKey(username);
+        return apiInfo.key == apiKey.trim();
+    }
+
     /**
      * checks if a hash and text value are equal
      * @param {*} text 
