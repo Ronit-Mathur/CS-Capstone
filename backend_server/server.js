@@ -165,10 +165,12 @@ module.exports = class Server {
 
             //make sure call is authenticate before contuing
             
+            /** 
             if(!await this.authenticateQuery(req, res)){
                 res.status(400).send("invalid auth key");
                 return;
             }
+            **/
             
             if (req.query.username && req.query.day && helpers.isDateFormat(req.query.day)) {
 
