@@ -147,7 +147,7 @@ module.exports = class DatabaseHandler {
      */
 
     async _DEBUG_wipeTasks() {
-        await this.exec("DROP tasks");
-        await this.exec("DROP completedTasks");
+        await this.exec("DROP TABLE tasks");
+        await this.exec("DROP TABLE completedTasks");
     }
 }
