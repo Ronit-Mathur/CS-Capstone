@@ -68,10 +68,10 @@ module.exports = class UserHandler {
             return -1;
         }
 
-    
+
         //user is valid.
         //generate a new api key for the user and store it in the database
-        var key = await this.generateAndStoreApiKey();
+        var key = await this._generateAndStoreApiKey();
 
         return key;
     }
@@ -80,11 +80,57 @@ module.exports = class UserHandler {
     /**
      * generates a new api key for the user and stores it in the database
      * @param {*} username 
-     * @returns the new api key
+     * @returns the new api key or -1 if failed
      */
-    async generateAndStoreApiKey(username){
+    async _generateAndStoreApiKey(username) {
+
+        //make sure user exists
+        if(!await this.userExists(username)){
+            console.log("[userHandler] unable to generate new api key for user \"" + username + "\". user does not exist");
+            return -1;
+        }
+
         var key = crypto.randomBytes(20).toString('hex');
+        var today = helpers.getTodaysDate();
+
+
+        //check if user exists in the api database
+        var currentKeyData = await this._getApiKey(username);
+
+        //store new key into database
+        if(currentKeyData === null){
+            //insert into api table
+            await DatabaseHandler.current.exec("INSERT INTO apiCredentials (username, key, date) VALUES (?,?,?)", [username, key, today]);
+        }
+        else{
+            //update table
+            await DatabaseHandler.current.exec("UPDATE apiCredentials SET key = ?, date = ? WHERE username = ?" [key, today, username]);
+        }
+     
+   
+
         return key;
+    }
+
+
+    /**
+     * 
+     * @param {*} username 
+     * @returns the current {username, api key, date} belonging to the user or null if the user dosen't have one
+     */
+    async _getApiKey(username) {
+
+        var result = null;
+
+        try {
+            result = await DatabaseHandler.current.query("SELECT * FROM apiCredentials WHERE username = ?", [username]);
+        }
+        catch (e) {
+            console.log("[userHandler] error retreiving api key from db for \"" + username + "\"");
+        }
+
+        return result;
+
     }
 
     /**
