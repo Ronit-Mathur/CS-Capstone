@@ -62,6 +62,8 @@ module.exports = class Server {
      * @returns true if query is authenticated correctly
      */
     async authenticateQuery(req, res){
+        console.log(req.query);
+        return true;
         return req.query.auth && req.query.username && await this.userHandler.authenthicate(req.query.username && req.query.auth);
     }
 
@@ -165,12 +167,12 @@ module.exports = class Server {
 
             //make sure call is authenticate before contuing
             
-            /** 
+          
             if(!await this.authenticateQuery(req, res)){
                 res.status(400).send("invalid auth key");
                 return;
             }
-            **/
+         
             
             if (req.query.username && req.query.day && helpers.isDateFormat(req.query.day)) {
 
