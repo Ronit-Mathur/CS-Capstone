@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const { getOutlookEventsFromToken, getOutlookCalendarsFromToken, getOutlookOAuth2Token, getAuthorizedGoogleOAuth2Client, getGoogleCalendarsFromClient, getGoogleEventsFromClient } = require("../lib/external_integration/calendarImports");
 const Server = require("../server");
 const crypto = require("crypto");
+const helpers = require("../lib/helpers");
 
 /**
  * handles user operations. this includes interacting with the database. initialize database before creating or using
