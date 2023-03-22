@@ -92,7 +92,6 @@ module.exports = class taskHandler {
      */
     async _similarTaskExist(username, summary, date, location, startTime, endTime){
         var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE username = ? AND summary = ? AND date = ? AND location = ? AND startTime = ? AND endTime = ?", [username, summary, date, location, startTime, endTime]);
-        
         return result.length > 0;
     }
 
