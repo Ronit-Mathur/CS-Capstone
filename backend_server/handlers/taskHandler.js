@@ -82,7 +82,6 @@ module.exports = class taskHandler {
             
             console.log(event.start);
             if(!event.start.dateTime){
-                console.log("no start");
                 continue; //skip the event
                
             }
@@ -102,18 +101,15 @@ module.exports = class taskHandler {
 
             
             if (!helpers.datesAreOnSameDay(parsedStartDate, parsedEndDate)) {
-                console.log("multi day");
                 continue; //ignore multi day events
             }
 
-            if(!event.start.endTime){
-                console.log("no end");
+            if(!event.end.dateTime){
                 continue; //skip the event
                 
             }
             var endTime = helpers.verifyHourMinuteTimeFormat(parsedEndDate.getHours() + ":" + parsedEndDate.getMinutes());
             var location = "none";
-            console.log("adding");
             await this.addTask(username, summary, date, location, startTime, endTime);
         }
     }
