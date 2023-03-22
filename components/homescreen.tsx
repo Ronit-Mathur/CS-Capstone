@@ -12,6 +12,7 @@ import * as HSH from './homescreenhelpers';
 import {createNativeStackNavigator } from '@react-navigation/native-stack';
 import {Settings} from './settingScreen';
 import { add } from 'react-native-reanimated';
+import CalImportPage from './CalImportPage';
 
 var user = ''
 
@@ -28,6 +29,7 @@ function HomeScreenNav ({Name}:any){
         <StackNavigator.Screen name='EditTask' component={HSH.EditTask} options={{presentation:'modal', headerStyle:{backgroundColor:'transparent',}, title:'', contentStyle:{backgroundColor:'transparent'}}}  />
         <StackNavigator.Screen name='RankTask' component={HSH.RankTask} options={{presentation:'modal', headerStyle:{backgroundColor:'transparent',}, title:'', contentStyle:{backgroundColor:'transparent'}}}  />
         <StackNavigator.Screen name ='Settings' component={Settings} options={{presentation:'containedModal',}}  />
+        <StackNavigator.Screen name ='calImport' component={CalImportPage} options={{presentation:'containedModal',}}  />
 
       </StackNavigator.Group>
       
