@@ -22,8 +22,42 @@ module.exports = class dayHandler {
             return false;
         }
 
+        //check that day hasn't already been rated by the user
+        if(await this._dateRated(username, date)){
+            return false;
+        }
+
         var rating = -1; //set a rating of -1 TODO
         await DatabaseHandler.current.exec("INSERT INTO daily (date,username,happiness,rating, time) VALUES (?,?,?,?,?)", [date,username,happiness, rating, time]);
         return true;
+    }
+
+
+    /**
+     * 
+     * @param {*} username 
+     * @param {*} date 
+     * @returns a daily object or null if the day has not been rated
+     */
+    async getDaily(username, date){
+        var result = await DatabaseHandler.current.query("SELECT * FROM daily WHERE username = ? && date = ?", [username, date]);
+        if(result.length > 0){
+            return result[0];
+        }
+        else{
+            return null;
+        }
+    }
+
+
+    /**
+     * 
+     * @param {*} username 
+     * @param {*} date 
+     * @returns true if the date has already been rated by the user
+     */
+    async _dateRated(username, date){
+        var result = await DatabaseHandler.current.query("SELECT * FROM daily WHERE username = ? AND date = ?",[username, date]);
+        return result.length > 0;
     }
 }

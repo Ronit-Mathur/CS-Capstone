@@ -323,6 +323,24 @@ module.exports = class Server {
             }
         });
 
+        app.get(SERVER_ENDPOINTS.USER_GET_DAY_RATING, async (req, res) =>{
+            
+            if(!await this.authenticateQuery(req, res)){
+                res.status(400).send("invalid auth key");
+                return;
+            }
+            if(req.query.username && req.query.day){
+                var dailyObj = await this.dayHandler.getDaily(req.query.username, req.query.day);
+                res.status(200).send(dailyObj);
+                return;
+            }
+            else {
+                res.status(400).send("invalid parameters");
+                return;
+            }
+        });
+        
+
         /**
          * google oauth2
          */
