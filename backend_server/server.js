@@ -313,8 +313,8 @@ module.exports = class Server {
                 return;
             }
 
-            if (req.query.username, req.query.day, req.query.happiness) {
-                await this.dayHandler.rateDay(req.query.username, req.query.day, req.query.happiness);
+            if (req.query.username, req.query.day, req.query.happiness, req.query.time) {
+                await this.dayHandler.rateDay(req.query.username, req.query.day, req.query.happiness, req.query.time);
                 res.status(200).send(JSON.stringify("done"));
             }
             else {

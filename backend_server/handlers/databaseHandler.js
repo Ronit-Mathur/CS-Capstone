@@ -70,10 +70,11 @@ module.exports = class DatabaseHandler {
         //daily
         //a rating of individual days for users
         //date - date of the day in the format mm/dd/yyyy
+        //time - epoch time when the rating was done
         //username - the user which the day belongs to. linked to the users table
         //happiness - a happiness value associated with the whole day. scale 1-5. 5 being greated
         //rating - a general summary rating for the day made from pre-existing data. floating point number from 0-1;
-        await db.run("CREATE TABLE IF NOT EXISTS daily (date TEXT, username TEXT, happiness INTEGER , rating REAL, FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE, PRIMARY KEY(date, username))");
+        await db.run("CREATE TABLE IF NOT EXISTS daily (date TEXT, time TEXT, username TEXT, happiness INTEGER , rating REAL, FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE, PRIMARY KEY(date, username))");
 
 
         //api keys
@@ -149,5 +150,9 @@ module.exports = class DatabaseHandler {
     async _DEBUG_wipeTasks() {
         await this.exec("DROP TABLE tasks");
         await this.exec("DROP TABLE completedTasks");
+    }
+
+    async _DEBUG_wipeDailys(){
+        await this.exec("DROP TABLE daily");
     }
 }

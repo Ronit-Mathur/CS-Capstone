@@ -97,27 +97,27 @@ function DailyMood(){
         <MaterialCommunityIcons name ='emoticon-frown-outline' color='red' size={55} style={{
           flex:1,
         }} 
-        onPress={async()=> {await Daily.rateDay(user,date,1); moodRated()}}
+        onPress={async()=> {await Daily.rateDay(user,1); moodRated()}}
         />
          <MaterialCommunityIcons name ='emoticon-sad-outline' color='#fa7916' size={55} style={{
           flex:1,
         }} 
-        onPress={async()=> {await Daily.rateDay(user,date,2); moodRated()}}
+        onPress={async()=> {await Daily.rateDay(user,2); moodRated()}}
         />
          <MaterialCommunityIcons name ='emoticon-neutral-outline' color='#ded52c' size={55} style={{
           flex:1,
         }} 
-        onPress={async()=> {await Daily.rateDay(user,date,3); moodRated()}}
+        onPress={async()=> {await Daily.rateDay(user,3); moodRated()}}
         />
         <MaterialCommunityIcons name ='emoticon-happy-outline' color='#096622' size={55} style={{
           flex:1,
         }} 
-        onPress={async()=> {await Daily.rateDay(user,date,4); moodRated()}}
+        onPress={async()=> {await Daily.rateDay(user,4); moodRated()}}
         />
         <MaterialCommunityIcons name ='emoticon-outline' color='#07f246' size={55} style={{
           flex:1,
         }} 
-        onPress={async()=> {await Daily.rateDay(user,date,5); moodRated()}}
+        onPress={async()=> {await Daily.rateDay(user,5); moodRated()}}
         />
       </View>
         <Text style={{
