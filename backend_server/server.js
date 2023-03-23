@@ -215,6 +215,12 @@ module.exports = class Server {
          * add a task for a user
          */
         app.get(SERVER_ENDPOINTS.USER_ADD_TASK, async (req, res) => {
+
+            if(!await this.authenticateQuery(req, res)){
+                res.status(400).send("invalid auth key");
+                return;
+            }
+
             if (req.query.username && req.query.day && helpers.isDateFormat(req.query.day) && req.query.summary && req.query.startTime && helpers.isTimeFormat(req.query.startTime) && req.query.endTime && helpers.isTimeFormat(req.query.endTime) && req.query.location) {
                 const taskId = await this.taskHandler.addTask(req.query.username, req.query.summary, req.query.day, req.query.location, req.query.startTime, req.query.endTime);
                 res.status(200).send(JSON.stringify(taskId));
@@ -230,6 +236,12 @@ module.exports = class Server {
          * update a task for a user
          */
         app.get(SERVER_ENDPOINTS.USER_UPDATE_TASK, async (req, res) => {
+
+            if(!await this.authenticateQuery(req, res)){
+                res.status(400).send("invalid auth key");
+                return;
+            }
+
             if (req.query.username && req.query.day && helpers.isDateFormat(req.query.day) && req.query.summary && req.query.startTime && helpers.isTimeFormat(req.query.startTime) && req.query.endTime && helpers.isTimeFormat(req.query.endTime) && req.query.location && req.query.taskId) {
                 const result = await this.taskHandler.updateTask(req.query.taskId, req.query.username, req.query.summary, req.query.day, req.query.location, req.query.startTime, req.query.endTime);
                 if (result) {
@@ -251,6 +263,12 @@ module.exports = class Server {
          * deletes a task in the database
          */
         app.get(SERVER_ENDPOINTS.USER_DELETE_TASK, async (req, res) => {
+
+            if(!await this.authenticateQuery(req, res)){
+                res.status(400).send("invalid auth key");
+                return;
+            }
+
             if (req.query.id) {
                 await this.taskHandler.deleteTask(req.query.id);
             } else {
@@ -264,6 +282,12 @@ module.exports = class Server {
          * completed tasks
          */
         app.get(SERVER_ENDPOINTS.USER_COMPLETE_TASK, async (req, res) => {
+
+            if(!await this.authenticateQuery(req, res)){
+                res.status(400).send("invalid auth key");
+                return;
+            }
+
             if (req.query.taskId && req.query.enjoyment && req.query.physicalActivity && req.query.engagement && req.query.mentalDifficulty) {
                 var result = await this.taskHandler.completeTask(req.query.taskId, req.query.enjoyment, req.query.physicalActivity, req.query.engagement, req.query.mentalDifficulty);
                 if (result) {
@@ -283,6 +307,12 @@ module.exports = class Server {
          */
 
         app.get(SERVER_ENDPOINTS.USER_RATE_DAY, async (req, res) => {
+
+            if(!await this.authenticateQuery(req, res)){
+                res.status(400).send("invalid auth key");
+                return;
+            }
+
             if (req.query.username, req.query.day, req.query.happiness) {
                 await this.dayHandler.rateDay(req.query.username, req.query.day, req.query.happiness);
                 res.status(200).send(JSON.stringify("done"));
@@ -333,6 +363,11 @@ module.exports = class Server {
          */
         app.get(SERVER_ENDPOINTS.GOOGLE_CALENDAR_LIST_CALENDARS, async (req, res) => {
 
+            if(!await this.authenticateQuery(req, res)){
+                res.status(400).send("invalid auth key");
+                return;
+            }
+
             //check if user is authenticated
             if (!this.userHandler.hasGoogleAuthentication(req.ip)) {
                 res.status(400);
@@ -351,6 +386,11 @@ module.exports = class Server {
          * imports a users calendar from google given an id
          */
         app.get(SERVER_ENDPOINTS.GOOGLE_CALENDAR_IMPORT_ENDPOINT, async (req, res) => {
+
+            if(!await this.authenticateQuery(req, res)){
+                res.status(400).send("invalid auth key");
+                return;
+            }
 
             if (!req.query.id || !req.query.username || !this.userHandler.hasGoogleAuthentication(req.ip)) {
                 res.status(400); //invalid query
@@ -399,6 +439,12 @@ module.exports = class Server {
         });
 
         app.get(SERVER_ENDPOINTS.OUTLOOK_CALENDAR_LIST_CALENDARS, async (req, res) => {
+
+            if(!await this.authenticateQuery(req, res)){
+                res.status(400).send("invalid auth key");
+                return;
+            }
+
             //check if user is authenticated
             if (!this.userHandler.hasOutlookAuthentication(req.ip)) {
                 res.status(400);
@@ -414,6 +460,11 @@ module.exports = class Server {
        * imports a users calendar from outlook given an id
        */
         app.get(SERVER_ENDPOINTS.OUTLOOK_CALENDAR_IMPORT_ENDPOINT, async (req, res) => {
+
+            if(!await this.authenticateQuery(req, res)){
+                res.status(400).send("invalid auth key");
+                return;
+            }
 
             if (!req.query.id || !req.query.username || !this.userHandler.hasOutlookAuthentication(req.ip)) {
                 res.status(400); //invalid query
