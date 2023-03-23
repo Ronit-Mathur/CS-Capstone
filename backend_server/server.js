@@ -37,7 +37,7 @@ module.exports = class Server {
         this.taskHandler = new (require("./handlers/taskHandler.js"))();
         this.dayHandler = new (require('./handlers/dayHandler.js'))();
 
-     
+
 
 
 
@@ -61,7 +61,7 @@ module.exports = class Server {
      * @param {*} res 
      * @returns true if query is authenticated correctly
      */
-    async authenticateQuery(req, res){
+    async authenticateQuery(req, res) {
         return req.query.auth && req.query.username && await this.userHandler.authenthicate(req.query.username, req.query.auth);
     }
 
@@ -158,20 +158,63 @@ module.exports = class Server {
          * task methods
          */
 
+
+        /**
+         * get all tasks within a month
+         */
+        app.get(SERVER_ENDPOINTS.USER_TASKS_BY_MONTH, async (req, res) => {
+            if (!await this.authenticateQuery(req, res)) {
+                res.status(400).send("invalid auth key");
+                return;
+            }
+            if (req.query.username && req.query.month) {
+                var tasks = await this.taskHandler.getMonthsTasks(req.query.month, req.query.username);
+                res.status(200).send(tasks);
+            }
+            else {
+                res.status(400).send("invalid paramaters");
+                return;
+            }
+        });
+
+
+
+        /**
+         * get an individual task by it's id
+         */
+        app.get(SERVER_ENDPOINTS.USER_TASK_BY_ID, async (req, res) => {
+
+            if (!await this.authenticateQuery(req, res)) {
+                res.status(400).send("invalid auth key");
+                return;
+            }
+
+            if (req.query.taskId && req.query.username) {
+                var task = await this.taskHandler.getUserTask(req.query.username, req.query.taskId);
+                res.status(200).send(task);
+                return;
+            }
+            else {
+                res.status(400).send("invalid parameters");
+                return;
+            }
+
+        });
+
         /**
          * access a users tasks by day
          */
         app.get(SERVER_ENDPOINTS.USER_TASKS_BY_DAY, async (req, res) => {
 
             //make sure call is authenticate before contuing
-            
-          
-            if(!await this.authenticateQuery(req, res)){
+
+
+            if (!await this.authenticateQuery(req, res)) {
                 res.status(400).send("invalid auth key");
                 return;
             }
-         
-            
+
+
             if (req.query.username && req.query.day && helpers.isDateFormat(req.query.day)) {
 
                 if (req.query.before) {
@@ -216,7 +259,7 @@ module.exports = class Server {
          */
         app.get(SERVER_ENDPOINTS.USER_ADD_TASK, async (req, res) => {
 
-            if(!await this.authenticateQuery(req, res)){
+            if (!await this.authenticateQuery(req, res)) {
                 res.status(400).send("invalid auth key");
                 return;
             }
@@ -237,7 +280,7 @@ module.exports = class Server {
          */
         app.get(SERVER_ENDPOINTS.USER_UPDATE_TASK, async (req, res) => {
 
-            if(!await this.authenticateQuery(req, res)){
+            if (!await this.authenticateQuery(req, res)) {
                 res.status(400).send("invalid auth key");
                 return;
             }
@@ -264,7 +307,7 @@ module.exports = class Server {
          */
         app.get(SERVER_ENDPOINTS.USER_DELETE_TASK, async (req, res) => {
 
-            if(!await this.authenticateQuery(req, res)){
+            if (!await this.authenticateQuery(req, res)) {
                 res.status(400).send("invalid auth key");
                 return;
             }
@@ -283,7 +326,7 @@ module.exports = class Server {
          */
         app.get(SERVER_ENDPOINTS.USER_RATE_TASK, async (req, res) => {
 
-            if(!await this.authenticateQuery(req, res)){
+            if (!await this.authenticateQuery(req, res)) {
                 res.status(400).send("invalid auth key");
                 return;
             }
@@ -303,14 +346,33 @@ module.exports = class Server {
         });
 
 
-        app.get(SERVER_ENDPOINTS.USER_GET_TASK_RATING, async (req, res) =>{
-            if(!await this.authenticateQuery(req, res)){
+        app.get(SERVER_ENDPOINTS.USER_GET_TASK_RATING, async (req, res) => {
+            if (!await this.authenticateQuery(req, res)) {
                 res.status(400).send("invalid auth key");
                 return;
             }
-            if(req.query.taskId && req.query.username){
+            if (req.query.taskId && req.query.username) {
                 var rating = await this.taskHandler.getRatedTask(req.query.taskId);
                 res.status(200).send(rating);
+                return;
+            }
+            else {
+                res.status(400).send(JSON.stringify("invalid parameters"));
+                return;
+            }
+
+        });
+
+
+        app.get(SERVER_ENDPOINTS.USER_GET_TASK_RATINGS_BY_MONTH, async (req, res) => {
+            if (!await this.authenticateQuery(req, res)) {
+                res.status(400).send("invalid auth key");
+                return;
+            }
+
+            if (req.query.month && req.query.username) {
+                var tasks = await this.taskHandler.getMonthsRatedTasks(req.query.month, req.query.username);
+                res.status(200).send(tasks);
                 return;
             }
             else {
@@ -326,7 +388,7 @@ module.exports = class Server {
 
         app.get(SERVER_ENDPOINTS.USER_RATE_DAY, async (req, res) => {
 
-            if(!await this.authenticateQuery(req, res)){
+            if (!await this.authenticateQuery(req, res)) {
                 res.status(400).send("invalid auth key");
                 return;
             }
@@ -341,13 +403,13 @@ module.exports = class Server {
             }
         });
 
-        app.get(SERVER_ENDPOINTS.USER_GET_DAY_RATING, async (req, res) =>{
-            
-            if(!await this.authenticateQuery(req, res)){
+        app.get(SERVER_ENDPOINTS.USER_GET_DAY_RATING, async (req, res) => {
+
+            if (!await this.authenticateQuery(req, res)) {
                 res.status(400).send("invalid auth key");
                 return;
             }
-            if(req.query.username && req.query.day){
+            if (req.query.username && req.query.day) {
                 var dailyObj = await this.dayHandler.getDaily(req.query.username, req.query.day);
                 res.status(200).send(dailyObj);
                 return;
@@ -357,7 +419,7 @@ module.exports = class Server {
                 return;
             }
         });
-        
+
 
         /**
          * google oauth2
@@ -399,7 +461,7 @@ module.exports = class Server {
          */
         app.get(SERVER_ENDPOINTS.GOOGLE_CALENDAR_LIST_CALENDARS, async (req, res) => {
 
-            if(!await this.authenticateQuery(req, res)){
+            if (!await this.authenticateQuery(req, res)) {
                 res.status(400).send("invalid auth key");
                 return;
             }
@@ -423,7 +485,7 @@ module.exports = class Server {
          */
         app.get(SERVER_ENDPOINTS.GOOGLE_CALENDAR_IMPORT_ENDPOINT, async (req, res) => {
 
-            if(!await this.authenticateQuery(req, res)){
+            if (!await this.authenticateQuery(req, res)) {
                 res.status(400).send("invalid auth key");
                 return;
             }
@@ -436,7 +498,7 @@ module.exports = class Server {
                 //import calendar
                 await this.userHandler.importGoogleCalendar(req.query.id, req.ip, req.query.username);
                 res.status(200).send(JSON.stringify("ok"));
-            } catch(e) {
+            } catch (e) {
                 console.log("Error importing from google calendar");
                 console.log("username: " + req.query.username);
                 console.log(e);
@@ -476,7 +538,7 @@ module.exports = class Server {
 
         app.get(SERVER_ENDPOINTS.OUTLOOK_CALENDAR_LIST_CALENDARS, async (req, res) => {
 
-            if(!await this.authenticateQuery(req, res)){
+            if (!await this.authenticateQuery(req, res)) {
                 res.status(400).send("invalid auth key");
                 return;
             }
@@ -497,7 +559,7 @@ module.exports = class Server {
        */
         app.get(SERVER_ENDPOINTS.OUTLOOK_CALENDAR_IMPORT_ENDPOINT, async (req, res) => {
 
-            if(!await this.authenticateQuery(req, res)){
+            if (!await this.authenticateQuery(req, res)) {
                 res.status(400).send("invalid auth key");
                 return;
             }

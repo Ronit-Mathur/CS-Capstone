@@ -5,6 +5,7 @@
 const DatabaseHandler = require("./databaseHandler");
 const helpers = require("../lib/helpers");
 const Server = require("../server");
+const UserHandler = require("./userHandler");
 
 module.exports = class taskHandler {
 
@@ -64,7 +65,7 @@ module.exports = class taskHandler {
             return -1;
         }
 
-        if(await this._similarTaskExist(username, summary, date, location, startTime, endTime)){
+        if (await this._similarTaskExist(username, summary, date, location, startTime, endTime)) {
             //dont add to calendar as conflict exists
             return -1;
         }
@@ -90,26 +91,26 @@ module.exports = class taskHandler {
      * @param {*} endTime 
      * @returns true if a task with similar parameters exists.
      */
-    async _similarTaskExist(username, summary, date, location, startTime, endTime){
+    async _similarTaskExist(username, summary, date, location, startTime, endTime) {
         var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE username = ? AND summary = ? AND date = ? AND location = ? AND startTime = ? AND endTime = ?", [username, summary, date, location, startTime, endTime]);
         return result.length > 0;
     }
 
 
     async parseAndImportGoogleEvents(events, username) {
-        console.log("[TaskHandler] Importing google events from user \"" + username +"\"");
+        console.log("[TaskHandler] Importing google events from user \"" + username + "\"");
         for (var i = 0; i < events.length; i++) {
             const event = events[i];
             var summary = event.summary;
-            
-            if(!event.start.dateTime){
+
+            if (!event.start.dateTime) {
                 continue; //skip the event
-               
+
             }
-          
+
             var parsedStartDate = new Date(Date.parse(event.start.dateTime));
-      
-            
+
+
             var date = parsedStartDate.toISOString().split('T')[0];
 
             //date is given in yyyy-mm-dd. reformat to mm/dd/yyyy
@@ -120,14 +121,14 @@ module.exports = class taskHandler {
             var startTime = helpers.verifyHourMinuteTimeFormat(parsedStartDate.getHours() + ":" + parsedStartDate.getMinutes());
             var parsedEndDate = new Date(Date.parse(event.end.dateTime));
 
-            
+
             if (!helpers.datesAreOnSameDay(parsedStartDate, parsedEndDate)) {
                 continue; //ignore multi day events
             }
 
-            if(!event.end.dateTime){
+            if (!event.end.dateTime) {
                 continue; //skip the event
-                
+
             }
             var endTime = helpers.verifyHourMinuteTimeFormat(parsedEndDate.getHours() + ":" + parsedEndDate.getMinutes());
             var location = "none";
@@ -136,7 +137,7 @@ module.exports = class taskHandler {
     }
 
     async parseAndImportOutlookEvents(events, username) {
-        console.log("[TaskHandler] Importing outlook events from user \"" + username +"\"");
+        console.log("[TaskHandler] Importing outlook events from user \"" + username + "\"");
         for (var i = 0; i < events.length; i++) {
             const event = events[i];
             var summary = event.subject;
@@ -193,7 +194,7 @@ module.exports = class taskHandler {
             }
         }
 
-        
+
 
         return activeTasks;
 
@@ -227,6 +228,14 @@ module.exports = class taskHandler {
      */
     async getTask(id) {
         var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE taskId = ?", [id]);
+        if (result) {
+            return result[0];
+        }
+        return null; //no task found with the id
+    }
+
+    async getUserTask(username, id){
+        var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE taskId = ? && username = ?", [id, username]);
         if (result) {
             return result[0];
         }
@@ -347,6 +356,56 @@ module.exports = class taskHandler {
 
     }
 
+
+
+    /**
+     * gets all the tasks within a month for a specific user
+     * @param {*} month month to get tasks from in the format mm/yyyy
+     * @param {*} username 
+     * @returns a list of {day, taskId}
+     */
+    async getMonthsTasks(month, username) {
+        //verify the user exists
+        if (!await UserHandler.current.userExists(username)) {
+            return [];
+        }
+
+        //verify month is in the correct format
+        if (month.length != 7 || month.substring(2, 3) != "/") {
+            return [];
+        }
+
+        var monthNum = month.substring(0, 2);
+        var yearNum = month.substring(3, 7);
+        var glob = monthNum + "/??/" + yearNum;
+        var tasks = await DatabaseHandler.current.exec("SELECT taskId, date FROM tasks WHERE date GLOB ? AND username = ?", [glob, username]);
+        return tasks;
+    }
+
+
+    /**
+    * gets all the rated tasks within a month for a specific user
+    * @param {*} month month to get tasks from in the format mm/yyyy
+    * @param {*} username 
+    * @returns a list of {day, taskId}
+    */
+    async getMonthsRatedTasks(month, username) {
+        //verify the user exists
+        if (!await UserHandler.current.userExists(username)) {
+            return [];
+        }
+
+        //verify month is in the correct format
+        if (month.length != 7 || month.substring(2, 3) != "/") {
+            return [];
+        }
+
+        var monthNum = month.substring(0, 2);
+        var yearNum = month.substring(3, 7);
+        var glob = monthNum + "/??/" + yearNum;
+        var tasks = await DatabaseHandler.current.exec("SELECT taskId, date FROM ratedTasks WHERE date GLOB ? AND username = ?", [glob, username]);
+        return tasks;
+    }
 
 
 }

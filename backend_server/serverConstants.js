@@ -19,9 +19,12 @@ module.exports = {
         USER_ADD_TASK: "/api/user/tasks/add",
         USER_UPDATE_TASK: "/api/user/tasks/update",
         USER_DELETE_TASK: "/api/user/tasks/delete",
+        USER_TASKS_BY_MONTH: "/api/user/tasks/month",
+        USER_TASK_BY_ID: "/api/user/tasks/id",
         
         USER_RATE_TASK: "/api/user/tasks/rated/rate",
-        USER_GET_TASK_RATING: "/api/user/tasks/rated/get",
+        USER_GET_TASK_RATING: "/api/user/tasks/rated/day",
+        USER_GET_TASK_RATINGS_BY_MONTH: "/api/user/tasks/rated/month",
 
         USER_CREATE: "/api/user/create",
         USER_EXISTS: "/api/user/exists",

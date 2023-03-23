@@ -8,6 +8,4 @@ recursive tasks
 wrappers left:
 
 Retrieve all tasks with tracked engagement
-isRated wrapper for individual tasks
-
 
