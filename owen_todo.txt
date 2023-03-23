@@ -6,7 +6,7 @@ recursive tasks
 
 wrappers left:
 
-Daily mood list retrieval [Date, Time, Value]
 Retrieve all tasks with tracked engagement
+isRated wrapper for individual tasks
 
 
