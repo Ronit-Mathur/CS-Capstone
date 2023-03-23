@@ -62,8 +62,6 @@ module.exports = class Server {
      * @returns true if query is authenticated correctly
      */
     async authenticateQuery(req, res){
-        console.log(req.query);
-        return true;
         return req.query.auth && req.query.username && await this.userHandler.authenthicate(req.query.username && req.query.auth);
     }
 
