@@ -58,14 +58,14 @@ module.exports = class DatabaseHandler {
         //rescursiveId - an id shared by all tasks which are linked or -1 if individual
         await db.run("CREATE TABLE IF NOT EXISTS tasks (taskId INTEGER PRIMARY KEY UNIQUE,  username TEXT, summary TEXT, location TEXT, date TEXT, startTime TEXT, endTime TEXT, recursiveId INTEGER , FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE)");
 
-        //completedTasks
-        //a completed task is added data for a task. contains data about how the task was performed.
+        //ratedTask
+        //a rated task is added data for a task. contains data about how the task was performed.
         //taskId - id belonging to the individual task. references the tasks table
         //enjoyment - how much the user enjoyed the tasks. scale 1-5. 5 being greatest
         //physicalActivity - how physically active the user was. scale 1-5. 5 being greatest
         //engagement - how engaged the user was mentally. scale 1-5. 5 being greatest
         //mentalDifficulty - how mentally difficult the task was. scale 1-5. 5 being greatest
-        await db.run("CREATE TABLE IF NOT EXISTS completedTasks (taskId INTEGER  PRIMARY KEY UNIQUE, enjoyment INTEGER , phyiscalActivity INTEGER , engagement INTEGER , mentalDifficulty INTEGER , FOREIGN KEY(taskId) REFERENCES tasks(taskId) ON DELETE CASCADE)");
+        await db.run("CREATE TABLE IF NOT EXISTS ratedTasks (taskId INTEGER  PRIMARY KEY UNIQUE, enjoyment INTEGER , phyiscalActivity INTEGER , engagement INTEGER , mentalDifficulty INTEGER , FOREIGN KEY(taskId) REFERENCES tasks(taskId) ON DELETE CASCADE)");
 
         //daily
         //a rating of individual days for users
@@ -149,7 +149,7 @@ module.exports = class DatabaseHandler {
 
     async _DEBUG_wipeTasks() {
         await this.exec("DROP TABLE tasks");
-        await this.exec("DROP TABLE completedTasks");
+        await this.exec("DROP TABLE ratedTasks");
     }
 
     async _DEBUG_wipeDailys(){

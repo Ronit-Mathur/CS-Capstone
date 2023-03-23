@@ -279,9 +279,9 @@ module.exports = class Server {
 
 
         /**
-         * completed tasks
+         * rated tasks
          */
-        app.get(SERVER_ENDPOINTS.USER_COMPLETE_TASK, async (req, res) => {
+        app.get(SERVER_ENDPOINTS.USER_RATE_TASK, async (req, res) => {
 
             if(!await this.authenticateQuery(req, res)){
                 res.status(400).send("invalid auth key");
@@ -289,7 +289,7 @@ module.exports = class Server {
             }
 
             if (req.query.taskId && req.query.enjoyment && req.query.physicalActivity && req.query.engagement && req.query.mentalDifficulty) {
-                var result = await this.taskHandler.completeTask(req.query.taskId, req.query.enjoyment, req.query.physicalActivity, req.query.engagement, req.query.mentalDifficulty);
+                var result = await this.taskHandler.rateTask(req.query.taskId, req.query.enjoyment, req.query.physicalActivity, req.query.engagement, req.query.mentalDifficulty);
                 if (result) {
                     res.status(200).send(JSON.stringify("ok"));
                 }
@@ -300,6 +300,24 @@ module.exports = class Server {
                 res.status(400).send(JSON.stringify("invalid parameters"));
                 return;
             }
+        });
+
+
+        app.get(SERVER_ENDPOINTS.USER_GET_TASK_RATING, async (req, res) =>{
+            if(!await this.authenticateQuery(req, res)){
+                res.status(400).send("invalid auth key");
+                return;
+            }
+            if(req.query.taskId && req.query.username){
+                var rating = await this.taskHandler.getRatedTask(req.query.taskId);
+                res.status(200).send(rating);
+                return;
+            }
+            else {
+                res.status(400).send(JSON.stringify("invalid parameters"));
+                return;
+            }
+
         });
 
         /**

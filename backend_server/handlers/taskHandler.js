@@ -300,10 +300,10 @@ module.exports = class taskHandler {
 
     /**
      * @param id id of the task
-     * @returns the completed task object or null if task is not completed
+     * @returns the rated task object or null if task is not completed
      */
-    async getCompletedTask(id) {
-        var result = await DatabaseHandler.current.query("SELECT * FROM completedTasks WHERE taskId = ?", [id]);
+    async getRatedTask(id) {
+        var result = await DatabaseHandler.current.query("SELECT * FROM ratedTasks WHERE taskId = ?", [id]);
         if (result) {
             return result[0];
         }
@@ -316,8 +316,8 @@ module.exports = class taskHandler {
      * @param {*} id id of the task
      * @returns if the task has been completed in the database
      */
-    async isTaskCompleted(id) {
-        return await this.getCompletedTask(id) != null;
+    async isTaskRated(id) {
+        return await this.getRatedTasks(id) != null;
     }
 
     /**
@@ -329,15 +329,15 @@ module.exports = class taskHandler {
      * @param {*} mentalDifficulty mental difficult of the task from 1-5. 5 being the
      * @returns true if successful. false if not
      */
-    async completeTask(id, enjoyment, physicalActivity, engagement, mentalDifficulty) {
+    async rateTask(id, enjoyment, physicalActivity, engagement, mentalDifficulty) {
 
         //check that task exists and is not completed
-        if ((!await this.taskExists(id)) || await this.isTaskCompleted(id)) {
+        if ((!await this.taskExists(id)) || await this.isTaskRated(id)) {
             return false;
         }
 
         //insert into database
-        await DatabaseHandler.current.exec("INSERT INTO completedTasks (taskId, enjoyment, phyiscalActivity, engagement, mentalDifficulty) VALUES(?,?,?,?,?)", [id, enjoyment, physicalActivity, engagement, mentalDifficulty]);
+        await DatabaseHandler.current.exec("INSERT INTO ratedTasks (taskId, enjoyment, phyiscalActivity, engagement, mentalDifficulty) VALUES(?,?,?,?,?)", [id, enjoyment, physicalActivity, engagement, mentalDifficulty]);
 
 
 

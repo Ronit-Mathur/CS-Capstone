@@ -20,7 +20,8 @@ module.exports = {
         USER_UPDATE_TASK: "/api/user/tasks/update",
         USER_DELETE_TASK: "/api/user/tasks/delete",
         
-        USER_COMPLETE_TASK: "/api/user/tasks/completed/complete",
+        USER_RATE_TASK: "/api/user/tasks/rated/rate",
+        USER_GET_TASK_RATING: "/api/user/tasks/rated/get",
 
         USER_CREATE: "/api/user/create",
         USER_EXISTS: "/api/user/exists",
