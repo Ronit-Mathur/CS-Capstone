@@ -58,23 +58,31 @@ module.exports = class DatabaseHandler {
         //rescursiveId - an id shared by all tasks which are linked or -1 if individual
         await db.run("CREATE TABLE IF NOT EXISTS tasks (taskId INTEGER PRIMARY KEY UNIQUE,  username TEXT, summary TEXT, location TEXT, date TEXT, startTime TEXT, endTime TEXT, recursiveId INTEGER , FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE)");
 
-        //completedTasks
-        //a completed task is added data for a task. contains data about how the task was performed.
+        //ratedTask
+        //a rated task is added data for a task. contains data about how the task was performed.
         //taskId - id belonging to the individual task. references the tasks table
         //enjoyment - how much the user enjoyed the tasks. scale 1-5. 5 being greatest
         //physicalActivity - how physically active the user was. scale 1-5. 5 being greatest
         //engagement - how engaged the user was mentally. scale 1-5. 5 being greatest
         //mentalDifficulty - how mentally difficult the task was. scale 1-5. 5 being greatest
-        await db.run("CREATE TABLE IF NOT EXISTS completedTasks (taskId INTEGER  PRIMARY KEY UNIQUE, enjoyment INTEGER , phyiscalActivity INTEGER , engagement INTEGER , mentalDifficulty INTEGER , FOREIGN KEY(taskId) REFERENCES tasks(taskId) ON DELETE CASCADE)");
+        await db.run("CREATE TABLE IF NOT EXISTS ratedTasks (taskId INTEGER  PRIMARY KEY UNIQUE, enjoyment INTEGER , phyiscalActivity INTEGER , engagement INTEGER , mentalDifficulty INTEGER , FOREIGN KEY(taskId) REFERENCES tasks(taskId) ON DELETE CASCADE)");
 
         //daily
         //a rating of individual days for users
         //date - date of the day in the format mm/dd/yyyy
+        //time - epoch time when the rating was done
         //username - the user which the day belongs to. linked to the users table
         //happiness - a happiness value associated with the whole day. scale 1-5. 5 being greated
         //rating - a general summary rating for the day made from pre-existing data. floating point number from 0-1;
-        await db.run("CREATE TABLE IF NOT EXISTS daily (date TEXT, username TEXT, happiness INTEGER , rating REAL, FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE, PRIMARY KEY(date, username))");
+        await db.run("CREATE TABLE IF NOT EXISTS daily (date TEXT, time TEXT, username TEXT, happiness INTEGER , rating REAL, FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE, PRIMARY KEY(date, username))");
 
+
+        //api keys
+        //maps a username to it's current api key
+        //username - the username the api key belongs to
+        //key - a string of letters and numbers which makes up the api key
+        //date - the date the key was issued in the format mm/dd/yyyy
+        await db.run("CREATE TABLE IF NOT EXISTS apiCredentials (username TEXT PRIMARY KEY, key TEXT, date TEXT, FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE)")
 
         //close connection
         db.close();
@@ -105,7 +113,7 @@ module.exports = class DatabaseHandler {
             await db.run(statement, params);
             await db.close();
         }
-        catch(e){
+        catch (e) {
             console.log("database handler unable to execute run \"" + statement + "\"");
             console.log("Params: " + params);
             console.log(e);
@@ -133,5 +141,18 @@ module.exports = class DatabaseHandler {
             response = [];
         }
         return response;
+    }
+
+    /**
+     * debug methods
+     */
+
+    async _DEBUG_wipeTasks() {
+        await this.exec("DROP TABLE tasks");
+        await this.exec("DROP TABLE ratedTasks");
+    }
+
+    async _DEBUG_wipeDailys(){
+        await this.exec("DROP TABLE daily");
     }
 }

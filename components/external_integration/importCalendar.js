@@ -1,6 +1,7 @@
 import React from "react"
 import { Text, TextInput, View, Image, SafeAreaView, Button, StyleSheet, Pressable } from 'react-native';
 import { importOutlookCalendar, getGoogleCalendars, importGoogleCalendar, getOutlookCalendars } from '../../lib/external_integration/calendarIntegration';
+import serverHandler from "../../lib/server/serverHandler";
 import { createUser } from "../../lib/server/users";
 
 
@@ -12,6 +13,7 @@ export default class ImportCalendar extends React.Component {
             listCalendars: false, //if true list calendars on page
             calendars: [], //list of calendars to display. {name, id}
             calendarProvider: "", //which service the objects in the the calendar state list belong to
+            imported: false
         }
     }
 
@@ -31,6 +33,11 @@ export default class ImportCalendar extends React.Component {
             //change view to calendar list
             display = this.getCalendarDisplay();
         }
+
+        if(this.state.imported){
+            display = (<Text style={styles.text}>Calendar Imported</Text>);
+        }
+
 
         return (
             <View>
@@ -74,11 +81,16 @@ export default class ImportCalendar extends React.Component {
      */
     async importCalendar(id) {
         //check which provide to import to
+
+        var username = serverHandler.current.userState.username;
+
         if (this.state.calendarProvider == "google") {
-            await importGoogleCalendar(id);
+            importGoogleCalendar(id, username);
+            this.setState({imported: true});
         }
         else if(this.state.calendarProvider == "outlook"){
-            await importOutlookCalendar(id);
+            importOutlookCalendar(id, username);
+            this.setState({imported: true});
         }
     }
 

@@ -5,6 +5,7 @@
 const DatabaseHandler = require("./databaseHandler");
 const helpers = require("../lib/helpers");
 const Server = require("../server");
+const UserHandler = require("./userHandler");
 
 module.exports = class taskHandler {
 
@@ -64,6 +65,11 @@ module.exports = class taskHandler {
             return -1;
         }
 
+        if (await this._similarTaskExist(username, summary, date, location, startTime, endTime)) {
+            //dont add to calendar as conflict exists
+            return -1;
+        }
+
 
         //everything is valid, add to database
         var taskId = await this._getNewTaskId();
@@ -75,11 +81,36 @@ module.exports = class taskHandler {
     }
 
 
+    /**
+     * checks a task that exists with the given parameters. used to check if a task is already in the database before creating one with a separate id.
+     * @param {*} username 
+     * @param {*} summary 
+     * @param {*} date 
+     * @param {*} location 
+     * @param {*} startTime 
+     * @param {*} endTime 
+     * @returns true if a task with similar parameters exists.
+     */
+    async _similarTaskExist(username, summary, date, location, startTime, endTime) {
+        var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE username = ? AND summary = ? AND date = ? AND location = ? AND startTime = ? AND endTime = ?", [username, summary, date, location, startTime, endTime]);
+        return result.length > 0;
+    }
+
+
     async parseAndImportGoogleEvents(events, username) {
+        console.log("[TaskHandler] Importing google events from user \"" + username + "\"");
         for (var i = 0; i < events.length; i++) {
             const event = events[i];
             var summary = event.summary;
+
+            if (!event.start.dateTime) {
+                continue; //skip the event
+
+            }
+
             var parsedStartDate = new Date(Date.parse(event.start.dateTime));
+
+
             var date = parsedStartDate.toISOString().split('T')[0];
 
             //date is given in yyyy-mm-dd. reformat to mm/dd/yyyy
@@ -90,10 +121,15 @@ module.exports = class taskHandler {
             var startTime = helpers.verifyHourMinuteTimeFormat(parsedStartDate.getHours() + ":" + parsedStartDate.getMinutes());
             var parsedEndDate = new Date(Date.parse(event.end.dateTime));
 
+
             if (!helpers.datesAreOnSameDay(parsedStartDate, parsedEndDate)) {
                 continue; //ignore multi day events
             }
 
+            if (!event.end.dateTime) {
+                continue; //skip the event
+
+            }
             var endTime = helpers.verifyHourMinuteTimeFormat(parsedEndDate.getHours() + ":" + parsedEndDate.getMinutes());
             var location = "none";
             await this.addTask(username, summary, date, location, startTime, endTime);
@@ -101,6 +137,7 @@ module.exports = class taskHandler {
     }
 
     async parseAndImportOutlookEvents(events, username) {
+        console.log("[TaskHandler] Importing outlook events from user \"" + username + "\"");
         for (var i = 0; i < events.length; i++) {
             const event = events[i];
             var summary = event.subject;
@@ -157,6 +194,8 @@ module.exports = class taskHandler {
             }
         }
 
+
+
         return activeTasks;
 
     }
@@ -189,6 +228,14 @@ module.exports = class taskHandler {
      */
     async getTask(id) {
         var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE taskId = ?", [id]);
+        if (result) {
+            return result[0];
+        }
+        return null; //no task found with the id
+    }
+
+    async getUserTask(username, id){
+        var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE taskId = ? && username = ?", [id, username]);
         if (result) {
             return result[0];
         }
@@ -262,10 +309,10 @@ module.exports = class taskHandler {
 
     /**
      * @param id id of the task
-     * @returns the completed task object or null if task is not completed
+     * @returns the rated task object or null if task is not completed
      */
-    async getCompletedTask(id) {
-        var result = await DatabaseHandler.current.query("SELECT * FROM completedTasks WHERE taskId = ?", [id]);
+    async getRatedTask(id) {
+        var result = await DatabaseHandler.current.query("SELECT * FROM ratedTasks WHERE taskId = ?", [id]);
         if (result) {
             return result[0];
         }
@@ -278,8 +325,8 @@ module.exports = class taskHandler {
      * @param {*} id id of the task
      * @returns if the task has been completed in the database
      */
-    async isTaskCompleted(id) {
-        return await this.getCompletedTask(id) != null;
+    async isTaskRated(id) {
+        return await this.getRatedTasks(id) != null;
     }
 
     /**
@@ -291,15 +338,15 @@ module.exports = class taskHandler {
      * @param {*} mentalDifficulty mental difficult of the task from 1-5. 5 being the
      * @returns true if successful. false if not
      */
-    async completeTask(id, enjoyment, physicalActivity, engagement, mentalDifficulty) {
+    async rateTask(id, enjoyment, physicalActivity, engagement, mentalDifficulty) {
 
         //check that task exists and is not completed
-        if ((!await this.taskExists(id)) || await this.isTaskCompleted(id)) {
+        if ((!await this.taskExists(id)) || await this.isTaskRated(id)) {
             return false;
         }
 
         //insert into database
-        await DatabaseHandler.current.exec("INSERT INTO completedTasks (taskId, enjoyment, phyiscalActivity, engagement, mentalDifficulty) VALUES(?,?,?,?,?)", [id, enjoyment, physicalActivity, engagement, mentalDifficulty]);
+        await DatabaseHandler.current.exec("INSERT INTO ratedTasks (taskId, enjoyment, phyiscalActivity, engagement, mentalDifficulty) VALUES(?,?,?,?,?)", [id, enjoyment, physicalActivity, engagement, mentalDifficulty]);
 
 
 
@@ -309,6 +356,56 @@ module.exports = class taskHandler {
 
     }
 
+
+
+    /**
+     * gets all the tasks within a month for a specific user
+     * @param {*} month month to get tasks from in the format mm/yyyy
+     * @param {*} username 
+     * @returns a list of {day, taskId}
+     */
+    async getMonthsTasks(month, username) {
+        //verify the user exists
+        if (!await UserHandler.current.userExists(username)) {
+            return [];
+        }
+
+        //verify month is in the correct format
+        if (month.length != 7 || month.substring(2, 3) != "/") {
+            return [];
+        }
+
+        var monthNum = month.substring(0, 2);
+        var yearNum = month.substring(3, 7);
+        var glob = monthNum + "/??/" + yearNum;
+        var tasks = await DatabaseHandler.current.exec("SELECT taskId, date FROM tasks WHERE date GLOB ? AND username = ?", [glob, username]);
+        return tasks;
+    }
+
+
+    /**
+    * gets all the rated tasks within a month for a specific user
+    * @param {*} month month to get tasks from in the format mm/yyyy
+    * @param {*} username 
+    * @returns a list of {day, taskId}
+    */
+    async getMonthsRatedTasks(month, username) {
+        //verify the user exists
+        if (!await UserHandler.current.userExists(username)) {
+            return [];
+        }
+
+        //verify month is in the correct format
+        if (month.length != 7 || month.substring(2, 3) != "/") {
+            return [];
+        }
+
+        var monthNum = month.substring(0, 2);
+        var yearNum = month.substring(3, 7);
+        var glob = monthNum + "/??/" + yearNum;
+        var tasks = await DatabaseHandler.current.exec("SELECT taskId, date FROM ratedTasks WHERE date GLOB ? AND username = ?", [glob, username]);
+        return tasks;
+    }
 
 
 }

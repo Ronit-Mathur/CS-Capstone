@@ -2,6 +2,8 @@ const DatabaseHandler = require("./databaseHandler")
 const bcrypt = require("bcrypt");
 const { getOutlookEventsFromToken, getOutlookCalendarsFromToken, getOutlookOAuth2Token, getAuthorizedGoogleOAuth2Client, getGoogleCalendarsFromClient, getGoogleEventsFromClient } = require("../lib/external_integration/calendarImports");
 const Server = require("../server");
+const crypto = require("crypto");
+const helpers = require("../lib/helpers");
 
 /**
  * handles user operations. this includes interacting with the database. initialize database before creating or using
@@ -58,21 +60,83 @@ module.exports = class UserHandler {
      * @returns the api key for the specific user or -1. if user is not valid
      */
     async isValidLogin(username, password) {
-        console.log("is valid");
         if (!await this.userExists(username)) {
             return -1;
         }
-
-        console.log("user exists");
 
         var user = await this._getUser(username);
         if (!await this._equalsHash(password, user.password)) {
             return -1;
         }
 
-    
-        //user is valid. get the api key of the user and return it
-        return 1;
+
+        //user is valid.
+        //generate a new api key for the user and store it in the database
+        var key = await this._generateAndStoreApiKey(username);
+
+        return key;
+    }
+
+
+    /**
+     * generates a new api key for the user and stores it in the database
+     * @param {*} username 
+     * @returns the new api key or -1 if failed
+     */
+    async _generateAndStoreApiKey(username) {
+
+        //make sure user exists
+        if (!await this.userExists(username)) {
+            console.log("[userHandler] unable to generate new api key for user \"" + username + "\". user does not exist");
+            return -1;
+        }
+
+        var key = crypto.randomBytes(20).toString('hex');
+        var today = helpers.getTodaysDate();
+
+
+        //check if user exists in the api database
+        var currentKeyData = await this._getApiKey(username);
+
+        //store new key into database
+        if (currentKeyData === null) {
+            //insert into api table
+            await DatabaseHandler.current.exec("INSERT INTO apiCredentials (username, key, date) VALUES (?,?,?)", [username, key, today]);
+        }
+        else {
+            //update table
+            await DatabaseHandler.current.exec("UPDATE apiCredentials SET key = ?, date = ? WHERE username = ?", [key, today, username]);
+        }
+
+
+
+        return key;
+    }
+
+
+    /**
+     * 
+     * @param {*} username 
+     * @returns the current {username, api key, date} belonging to the user or null if the user dosen't have one
+     */
+    async _getApiKey(username) {
+
+        var result = [];
+
+        try {
+            result = await DatabaseHandler.current.query("SELECT * FROM apiCredentials WHERE username = ?", [username]);
+        }
+        catch (e) {
+            console.log("[userHandler] error retreiving api key from db for \"" + username + "\"");
+        }
+
+        if (result.length > 0) {
+            return result[0];
+        }
+        else {
+            return null;
+        }
+
     }
 
     /**
@@ -102,6 +166,23 @@ module.exports = class UserHandler {
         return hash;
     }
 
+
+
+
+    /**
+     * checks to see if a user has the correct authentication key
+     * @param {*} username username api key belongs to
+     * @param {*} apiKey api key of the user
+     * @returns true if the api key is a valid authentication key
+     */
+    async authenthicate(username, apiKey) {
+        if (!await this.userExists(username)) {
+            return false;
+        }
+
+        var apiInfo = await this._getApiKey(username);
+        return apiInfo.key == apiKey.trim();
+    }
 
     /**
      * checks if a hash and text value are equal
