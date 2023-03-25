@@ -17,7 +17,7 @@ function CalendarNav ({Name}:any){
   return(
     <StackNavigator.Navigator >
       <StackNavigator.Screen name='CalendarScreen' component={CalendarScreen} options={{title:'Calendar'}}/>
-      <StackNavigator.Screen name='Task' component={TaskCreation} options={{presentation:'modal'}}/>
+    
       <StackNavigator.Screen name='CalAgenda' component={CustomAgenda} options={{presentation:'modal', title: 'Daily Agenda'}}/>
     </StackNavigator.Navigator>
   );

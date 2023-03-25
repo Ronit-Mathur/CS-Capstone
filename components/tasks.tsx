@@ -3,12 +3,12 @@ import {Text, TextInput, SafeAreaView,View, Button} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { addTask } from '../lib/server/tasks';
-import { Agenda } from 'react-native-calendars';
 
 
 
 
-function TaskCreation (this: any){
+
+function TaskCreation (){
     
     const [taskTitle, setTaskTitle] = React.useState("");
     const [startTime, setStarttime] = React.useState("");
@@ -47,9 +47,9 @@ function TaskCreation (this: any){
                 
                 <Button title='Start Time' onPress={() => (setShowStartTime(!showStartTime))}></Button>
                 {showStartTime && ( 
-                <RNDateTimePicker onChange={onChange} value={date} mode="time" display="spinner"/>)}
+                <RNDateTimePicker onChange={onChange} value={date} mode="time" display="spinner" textColor='black'/>)}
                 
-                <RNDateTimePicker value={date} onChange={onChange} mode="date" style={{}}/>
+              
                 
                 <Button title='End Time' onPress={() => (setShowEndTime(!showEndTime))}></Button>
                 {showEndTime && ( 
@@ -64,4 +64,4 @@ function TaskCreation (this: any){
     );
 }
 
-export default TaskCreation;
+export {TaskCreation};

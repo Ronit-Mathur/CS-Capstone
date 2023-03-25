@@ -99,7 +99,7 @@ function Completed({date}:any){
     }}>
       <FlatList  
       data={list}
-      renderItem={({item}) => testRender({item})} 
+      renderItem={({item}) => testRender(item)} 
       style={{flexGrow:1,
         marginBottom:'10%',
         marginTop:'3%',
@@ -118,7 +118,7 @@ function Completed({date}:any){
 
 
 
-function testRender ({item}:any){
+function testRender (item:any){
   var bool = false
   if(item.summary.length > 17){
     bool = true

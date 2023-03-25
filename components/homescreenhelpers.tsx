@@ -6,6 +6,7 @@ import { useNavigation} from '@react-navigation/native';
 import {getUser} from './homescreen'
 
 function EditTask (task:any){
+    console.log(task)
    const navigation = useNavigation()
    const [sum, setSum] = useState(task.route.params.task.item.summary)
    const [start, setStart] = useState(task.route.params.task.item.startTime)

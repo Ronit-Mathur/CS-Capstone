@@ -108,7 +108,7 @@ const SignInScreen = ({signIn}:any) =>{
                 }}>
                     <Button title='Sign In' onPress={async() =>{
                         const validLog = await loginUser(userName,password)
-                       
+                        
                         if(validLog){
                             signIn(userName)
                         }

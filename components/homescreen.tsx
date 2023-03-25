@@ -12,7 +12,7 @@ import * as HSH from './homescreenhelpers';
 import {createNativeStackNavigator } from '@react-navigation/native-stack';
 import {Settings} from './settingScreen';
 import { add } from 'react-native-reanimated';
-
+import {TaskCreation} from './tasks'
 var user = ''
 
 
@@ -28,6 +28,7 @@ function HomeScreenNav ({Name}:any){
         <StackNavigator.Screen name='EditTask' component={HSH.EditTask} options={{presentation:'modal', headerStyle:{backgroundColor:'transparent',}, title:'', contentStyle:{backgroundColor:'transparent'}}}  />
         <StackNavigator.Screen name='RankTask' component={HSH.RankTask} options={{presentation:'modal', headerStyle:{backgroundColor:'transparent',}, title:'', contentStyle:{backgroundColor:'transparent'}}}  />
         <StackNavigator.Screen name ='Settings' component={Settings} options={{presentation:'containedModal',}}  />
+        <StackNavigator.Screen name = 'AddTask' component={TaskCreation} options={{presentation:'modal'}}/>
 
       </StackNavigator.Group>
       
@@ -227,6 +228,7 @@ function InProgress(){
         marginBottom:'10%',
         marginTop:'3%',
         shadowOpacity:.5,
+        
       }} 
 
       refreshControl={
@@ -363,9 +365,17 @@ function Home() {
           
         }}>
           <TopTabs />
+       
         </View>
         
-        
+        <ActionButton
+            
+            position='right'
+            size={75}
+            buttonColor="blue"
+            onPress={() =>  navigation.navigate('AddTask')}
+            style={{marginRight:0, marginBottom:'3%'}}
+          />
       </View>
 
     );
@@ -374,7 +384,7 @@ function Home() {
 
   async function addNewTask (){
     const currentDate = Helpers.getTodaysDate()
-    const addNew = await addTask('testuser1', 'Test User Test', currentDate, 'Lumen Field', '18:00', '24:00')
+    const addNew = await addTask('kway66', 'Test', currentDate, 'Lumen Field', '18:00', '24:00')
     
 }
 
