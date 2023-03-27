@@ -1,5 +1,6 @@
 Owen's todo list:
 
+import using timezones from google calendar
 switch google and outlook api keys to username not ip
 switch dates over to epoch
 create db manager operation queue
