@@ -98,7 +98,7 @@ export default class ImportCalendar extends React.Component {
         await getOutlookCalendars((calendars) => {
 
             //update state infos
-            this.setState({ calendars: calendars, listCalendars: true, calendarProvider: "outlook" });
+            this.setState({ calendars: calendars, listCalendars: true, calendarProvider: "outlook", });
         });
     }
 }
