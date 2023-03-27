@@ -326,7 +326,7 @@ module.exports = class taskHandler {
      * @returns if the task has been completed in the database
      */
     async isTaskRated(id) {
-        return await this.getRatedTasks(id) != null;
+        return await this.getRatedTask(id) != null;
     }
 
     /**
@@ -378,7 +378,7 @@ module.exports = class taskHandler {
         var monthNum = month.substring(0, 2);
         var yearNum = month.substring(3, 7);
         var glob = monthNum + "/??/" + yearNum;
-        var tasks = await DatabaseHandler.current.exec("SELECT taskId, date FROM tasks WHERE date GLOB ? AND username = ?", [glob, username]);
+        var tasks = await DatabaseHandler.current.query("SELECT taskId, date FROM tasks WHERE date GLOB ? AND username = ?", [glob, username]);
         return tasks;
     }
 
@@ -403,7 +403,7 @@ module.exports = class taskHandler {
         var monthNum = month.substring(0, 2);
         var yearNum = month.substring(3, 7);
         var glob = monthNum + "/??/" + yearNum;
-        var tasks = await DatabaseHandler.current.exec("SELECT taskId, date FROM ratedTasks WHERE date GLOB ? AND username = ?", [glob, username]);
+        var tasks = await DatabaseHandler.current.query("SELECT taskId, date FROM ratedTasks WHERE date GLOB ? AND username = ?", [glob, username]);
         return tasks;
     }
 

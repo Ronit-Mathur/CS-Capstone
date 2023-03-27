@@ -9,7 +9,8 @@
 		"lint": "eslint .",
 		"start": "react-native start",
 		"test": "jest",
-		"start-server": "node remoteServer.mjs"
+		"start-server": "node remoteServer.mjs",
+		"test-server": "node testServer.mjs"
 	},
 	"repository": {
 		"type": "git",
