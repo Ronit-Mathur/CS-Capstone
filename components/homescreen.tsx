@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Text, View,SafeAreaView, RefreshControl, Alert} from 'react-native';
+import {Text, View,SafeAreaView, RefreshControl, Alert, Button} from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {DefaultTheme, NavigationContainer, useNavigation} from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -31,7 +31,7 @@ function HomeScreenNav ({Name}:any){
         <StackNavigator.Screen name='RankTask' component={HSH.RankTask} options={{presentation:'modal', headerStyle:{backgroundColor:'transparent',}, title:'', contentStyle:{backgroundColor:'transparent'}}}  />
         <StackNavigator.Screen name ='Settings' component={Settings} options={{presentation:'containedModal',}}  />
         <StackNavigator.Screen name ='calImport' component={CalImportPage} options={{presentation:'containedModal',}}  />
-
+        <StackNavigator.Screen name = 'AddTask' component={TaskCreation} options={{presentation:'modal'}}/>
       </StackNavigator.Group>
       
     </StackNavigator.Navigator>
@@ -354,30 +354,35 @@ function Home() {
         flex:1,
         marginTop:'2%',
         }}> 
-        <View style={{
-          flex:1,
-          shadowOpacity:.5,
-        }}>
-          <DailyMood />
-        </View>
-        <View style={{
-          flex:2,
-          width:'90%',
-          alignSelf:'center',
-          
-        }}>
-          <TopTabs />
-       
-        </View>
-        
-        <ActionButton
+          <View style={{
+            flex:1,
+            shadowOpacity:.5,
+          }}>
+
+            <DailyMood />
+            <Button title='AddManualTask' onPress={addNewTask} />
+
+          </View>
+
+          <View style={{
+            flex:2,
+            width:'90%',
+            alignSelf:'center',
             
-            position='right'
-            size={75}
-            buttonColor="blue"
-            onPress={() =>  navigation.navigate('AddTask')}
-            style={{marginRight:0, marginBottom:'3%'}}
-          />
+          }}>
+
+            <TopTabs />
+            
+          </View>
+          
+          <ActionButton
+              
+              position='right'
+              size={75}
+              buttonColor="blue"
+              onPress={() =>  navigation.navigate('AddTask')}
+              style={{marginRight:0, marginBottom:'3%'}}
+            />
       </View>
 
     );
@@ -387,7 +392,7 @@ function Home() {
   async function addNewTask (){
     const currentDate = Helpers.getTodaysDate()
     const addNew = await addTask('kway66', 'Test', currentDate, 'Lumen Field', '18:00', '24:00')
-    
+    console.log(addNew);
 }
 
 
