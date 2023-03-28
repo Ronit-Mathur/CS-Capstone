@@ -17,6 +17,6 @@ module.exports = class Operation{
     }
 
     setId(id){
-        this.Id = id;
+        this.id = id;
     }
 }

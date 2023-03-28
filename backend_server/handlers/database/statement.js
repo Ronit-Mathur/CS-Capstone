@@ -1,3 +1,4 @@
+const DatabaseHandler = require("../databaseHandler");
 const Operation = require("./operation");
 
 module.exports = class Statement extends Operation{
@@ -24,7 +25,7 @@ module.exports = class Statement extends Operation{
      * executes the statement of a database handler
      * @param {*} databaseHandler 
      */
-    async execute(databaseHandler){
-        await databaseHandler.exec(this.statement, this.params);
+    async execute(){
+        await DatabaseHandler.current.exec(this.statement, this.params);
     }
 }

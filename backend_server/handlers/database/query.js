@@ -1,3 +1,4 @@
+const DatabaseHandler = require("../databaseHandler");
 const Operation = require("./operation");
 
 module.exports = class Query extends Operation{
@@ -15,7 +16,7 @@ module.exports = class Query extends Operation{
     constructor(priority, statement, params){
         super(priority);
 
-        this.state = statement;
+        this.statement = statement;
         this.params = params;
     }
 
@@ -26,7 +27,7 @@ module.exports = class Query extends Operation{
      * @param {*} databaseHandler 
      * @returns returns the result to the query
      */
-    async execute(databaseHandler){
-        return await databaseHandler.query(this.statement, this.params);
+    async execute(){
+        return await DatabaseHandler.current.query(this.statement, this.params);
     }
 }
