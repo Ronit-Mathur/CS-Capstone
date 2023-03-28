@@ -82,7 +82,17 @@ module.exports = class DatabaseHandler {
 
         var operation = this.operationQueue.dequeue();
         this.currentOperation = operation;
-        this.operationResults[operation.getId()] = await operation.execute();
+        var statement = operation.getStatement();
+        var params = operation.getParams();
+        var result = "finished";
+        if(operation instanceof Query){
+            result = await this.query(statement, params);
+        }   
+        else if(operation instanceof Statement){
+            await this.exec(statement, params);
+        }
+
+        this.operationResults[operation.getId()] =result;
 
 
         if(this.operationQueue.size() == 0){

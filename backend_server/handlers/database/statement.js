@@ -21,11 +21,11 @@ module.exports = class Statement extends Operation{
     }
 
 
-    /**
-     * executes the statement of a database handler
-     * @param {*} databaseHandler 
-     */
-    async execute(){
-        await DatabaseHandler.current.exec(this.statement, this.params);
+    getStatement(){
+        return this.statement;
+    }
+
+    getParams(){
+        return this.params;
     }
 }

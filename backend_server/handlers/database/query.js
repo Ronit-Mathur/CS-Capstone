@@ -21,13 +21,11 @@ module.exports = class Query extends Operation{
     }
 
 
+    getStatement(){
+        return this.statement;
+    }
 
-    /**
-     * executes the query on the given databasehandler
-     * @param {*} databaseHandler 
-     * @returns returns the result to the query
-     */
-    async execute(){
-        return await DatabaseHandler.current.query(this.statement, this.params);
+    getParams(){
+        return this.params;
     }
 }
