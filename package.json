@@ -40,6 +40,7 @@
 		"node-outlook": "^1.1.8",
 		"node-pre-gyp": "^0.17.0",
 		"path": "^0.12.7",
+		"priority-queue-node": "^1.0.2",
 		"react": "18.2.0",
 		"react-native": "0.71.1",
 		"react-native-action-button": "^2.8.5",
