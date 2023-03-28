@@ -172,13 +172,14 @@ module.exports = class taskHandler {
      * @returns a days tasks for a given user
      */
     async getDaysTasks(username, day) {
-        var query = new Query(1, "SELECT * FROM tasks WHERE date = ? AND username = ?", [day, username]);
-        var id = DatabaseHandler.current.enqueueOperation(query);
-        while(!DatabaseHandler.current.isOperationFinished(id)){
-            //do nothing
-        }
+        //var query = new Query(1, "SELECT * FROM tasks WHERE date = ? AND username = ?", [day, username]);
+        //var id = DatabaseHandler.current.enqueueOperation(query);
+        //while(!DatabaseHandler.current.isOperationFinished(id)){
+        //    //do nothing
+        //}
 
-        var result = DatabaseHandler.current.getOperationResult(id);
+        //var result = DatabaseHandler.current.getOperationResult(id);
+        var result = DatabaseHandler.current.query("SELECT * FROM tasks WHERE date = ? AND username = ?", [day, username]);
 
         return result;
     }
