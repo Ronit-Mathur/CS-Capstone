@@ -37,6 +37,7 @@ module.exports = class DatabaseHandler {
      */
     async init() {
         await this._initDatabase();
+        this._initOperationQueue();
     }
 
 
