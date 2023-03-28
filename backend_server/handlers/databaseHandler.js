@@ -7,6 +7,8 @@ const sqlite3 = require('sqlite3').verbose();
 const sqlite = require('sqlite');
 const PriorityQueue = require('priority-queue-node')
 const helpers = require("../lib/helpers");
+const Query = require("./database/query");
+const Statement = require("./database/statement");
 
 
 module.exports = class DatabaseHandler {
@@ -69,6 +71,7 @@ module.exports = class DatabaseHandler {
         this.operationResults[id] = "waiting";
         this.operationQueue.enqueue(operation);
         this._processNextOperation();
+        return id;
     }
 
 
@@ -86,6 +89,7 @@ module.exports = class DatabaseHandler {
         var params = operation.getParams();
         var result = "finished";
         if(operation instanceof Query){
+            
             result = await this.query(statement, params);
         }   
         else if(operation instanceof Statement){
@@ -130,7 +134,7 @@ module.exports = class DatabaseHandler {
      * @returns true if the operation has finished
      */
     isOperationFinished(id){
-        return this.operationResults[id] == "waiting";
+        return this.operationResults[id] != "waiting";
     }
 
 
