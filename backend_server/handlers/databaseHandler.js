@@ -82,7 +82,7 @@ module.exports = class DatabaseHandler {
 
         var operation = this.operationQueue.dequeue();
         this.currentOperation = operation;
-        this.operationResults[operation.getId()] = await operation.execute();
+        this.operationResults[operation.getId()] = await operation.execute(this);
 
 
         if(this.operationQueue.size() == 0){

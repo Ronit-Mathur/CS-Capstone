@@ -14,6 +14,9 @@ module.exports = class Query extends Operation{
      */
     constructor(priority, statement, params){
         super(priority);
+
+        this.state = statement;
+        this.params = params;
     }
 
 
