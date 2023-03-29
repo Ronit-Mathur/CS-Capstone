@@ -9,6 +9,7 @@ recursive tasks
 wrappers left:
 
 Retrieve all tasks with tracked engagement
+<<<<<<< HEAD
 get next task that will be completed based on endTime
 update user email
 update username
@@ -16,3 +17,6 @@ change password
 return list of users completed tasks that have not yet been rated
 
 
+=======
+return a users unrated completed tasks
+>>>>>>> a69fa559ebeb1e30e7628626acc53260a74260e6
