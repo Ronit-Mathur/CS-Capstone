@@ -64,13 +64,13 @@ module.exports = class DatabaseHandler {
      * @param {*} operation 
      * @returns the id of the operation for return calls and checking if finished 
      */
-    enqueueOperation(operation){   
+    async enqueueOperation(operation){   
         //generate a new id
         var id = this._getNewOperationId();
         operation.setId(id);
         this.operationResults[id] = "waiting";
         this.operationQueue.enqueue(operation);
-        this._processNextOperation();
+        await this._processNextOperation();
         return id;
     }
 
