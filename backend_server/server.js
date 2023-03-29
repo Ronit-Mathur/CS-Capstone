@@ -381,6 +381,26 @@ module.exports = class Server {
             }
 
         });
+        /**
+         * get all unrated tasks from a user
+         */
+        app.get(SERVER_ENDPOINTS.USER_TASKS_NOT_RATED, async (req, res) => {
+            if (!await this.authenticateQuery(req, res)) {
+                res.status(400).send("invalid auth key");
+                return;
+            }
+
+            if ( req.query.username) {
+                var tasks = await this.taskHandler.getUnratedCompletedTasks( req.query.username);
+                res.status(200).send(tasks);
+                return;
+            }
+            else {
+                res.status(400).send(JSON.stringify("invalid parameters"));
+                return;
+            }
+
+        });
 
         /**
          * daily methods
