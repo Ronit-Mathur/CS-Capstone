@@ -416,6 +416,23 @@ module.exports = class taskHandler {
     }
 
 
+    /**
+     * 
+     * @param {*} username the username which the tasks belong
+     * @returns a list of all a user's unrated, completed tasks
+     */
+    async getUnratedCompletedTasks(username){
+        if (!await UserHandler.current.userExists(username)) {
+            return [];
+        }
+
+
+        var tasks = await DatabaseHandler.current.query("SELECT taskId, date FROM tasks WHERE username=? AND taskId NOT IN (SELECT taskId FROM ratedTasks WHERE username=?)"[username, username]);
+        return tasks;
+
+    }
+
+
 }
 
 

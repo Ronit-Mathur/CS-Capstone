@@ -21,7 +21,9 @@ module.exports = {
         USER_DELETE_TASK: "/api/user/tasks/delete",
         USER_TASKS_BY_MONTH: "/api/user/tasks/month",
         USER_TASK_BY_ID: "/api/user/tasks/id",
+        USER_TASKS_NOT_RATED: "/api/user/tasks/unrated",
         
+    
         USER_RATE_TASK: "/api/user/tasks/rated/rate",
         USER_GET_TASK_RATING: "/api/user/tasks/rated/day",
         USER_GET_TASK_RATINGS_BY_MONTH: "/api/user/tasks/rated/month",
