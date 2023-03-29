@@ -175,7 +175,7 @@ module.exports = class taskHandler {
         var query = new Query(1, "SELECT * FROM tasks WHERE date = ? AND username = ?", [day, username]);
         var id = DatabaseHandler.current.enqueueOperation(query);
         while(!DatabaseHandler.current.isOperationFinished(id)){
-            //do nothing
+           await sleep(300);
         }
 
         var result = DatabaseHandler.current.getOperationResult(id);

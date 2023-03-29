@@ -53,10 +53,10 @@ module.exports = class DatabaseHandler {
 
         this.operationResults = {}; //the operation results are {operationId:result}
 
-  
+
     }
 
-  
+
 
 
     /**
@@ -64,7 +64,7 @@ module.exports = class DatabaseHandler {
      * @param {*} operation 
      * @returns the id of the operation for return calls and checking if finished 
      */
-    enqueueOperation(operation){   
+    enqueueOperation(operation) {
         //generate a new id
         var id = this._getNewOperationId();
         operation.setId(id);
@@ -78,8 +78,8 @@ module.exports = class DatabaseHandler {
     /**
      * processes the next operation
      */
-    async _processNextOperation(){
-        if(this.currentOperation !== false || this.operationQueue.size() == 0){
+    async _processNextOperation() {
+        if (this.currentOperation !== false || this.operationQueue.size() == 0) {
             return;
         }
 
@@ -88,24 +88,31 @@ module.exports = class DatabaseHandler {
         var statement = operation.getStatement();
         var params = operation.getParams();
         var result = "finished";
-        if(operation instanceof Query){
-            
-            result = await this.query(statement, params);
-        }   
-        else if(operation instanceof Statement){
-            await this.exec(statement, params);
+
+        try {
+            if (operation instanceof Query) {
+
+                result = await this.query(statement, params);
+            }
+            else if (operation instanceof Statement) {
+                await this.exec(statement, params);
+            }
+        }catch(e){
+            console.log("[DatabaseHandler] Unable to process next operation");
+            console.log(e);
+            result = "error";
         }
 
-        this.operationResults[operation.getId()] =result;
+        this.operationResults[operation.getId()] = result;
 
 
-        if(this.operationQueue.size() == 0){
+        if (this.operationQueue.size() == 0) {
             this.currentOperation = false;
             return;
         }
 
         this._processNextOperation();
-        
+
 
 
 
@@ -118,8 +125,8 @@ module.exports = class DatabaseHandler {
      * @param {*} id 
      * @returns the result of a database operation with the given id. will delete the result once finished
      */
-    getOperationResult(id){
-        if(!this.isOperationFinished(id)){
+    getOperationResult(id) {
+        if (!this.isOperationFinished(id)) {
             return;
         }
         var result = this.operationResults[id];
@@ -133,7 +140,7 @@ module.exports = class DatabaseHandler {
      * @param {*} id 
      * @returns true if the operation has finished
      */
-    isOperationFinished(id){
+    isOperationFinished(id) {
         return this.operationResults[id] != "waiting";
     }
 
@@ -142,9 +149,9 @@ module.exports = class DatabaseHandler {
     /**
      * @returns a new operation id not being used by another operation
      */
-    _getNewOperationId(){
+    _getNewOperationId() {
         var newOppId = helpers.getRandomInt(99999);
-        while(this.operationResults.hasOwnProperty(newOppId)){
+        while (this.operationResults.hasOwnProperty(newOppId)) {
             newOppId = helpers.getRandomInt(99999);
         }
 
