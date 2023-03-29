@@ -128,4 +128,10 @@ module.exports = {
     var stringed =  '' + date.getHours() + ':' + date.getMinutes();
     return this.verifyHourMinuteTimeFormat(stringed);
   },
+
+  getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+  }
 };
+
+

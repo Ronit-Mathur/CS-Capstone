@@ -6,6 +6,7 @@ const DatabaseHandler = require("./databaseHandler");
 const helpers = require("../lib/helpers");
 const Server = require("../server");
 const UserHandler = require("./userHandler");
+const Query = require("./database/query");
 
 module.exports = class taskHandler {
 
@@ -171,7 +172,14 @@ module.exports = class taskHandler {
      * @returns a days tasks for a given user
      */
     async getDaysTasks(username, day) {
-        var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE date = ? AND username = ?", [day, username]);
+        //var query = new Query(1, "SELECT * FROM tasks WHERE date = ? AND username = ?", [day, username]);
+        //var id = DatabaseHandler.current.enqueueOperation(query);
+        //while(!DatabaseHandler.current.isOperationFinished(id)){
+        //    //do nothing
+        //}
+
+        //var result = DatabaseHandler.current.getOperationResult(id);
+        var result = DatabaseHandler.current.query("SELECT * FROM tasks WHERE date = ? AND username = ?", [day, username]);
 
         return result;
     }
@@ -326,7 +334,7 @@ module.exports = class taskHandler {
      * @returns if the task has been completed in the database
      */
     async isTaskRated(id) {
-        return await this.getRatedTasks(id) != null;
+        return await this.getRatedTask(id) != null;
     }
 
     /**
@@ -378,7 +386,7 @@ module.exports = class taskHandler {
         var monthNum = month.substring(0, 2);
         var yearNum = month.substring(3, 7);
         var glob = monthNum + "/??/" + yearNum;
-        var tasks = await DatabaseHandler.current.exec("SELECT taskId, date FROM tasks WHERE date GLOB ? AND username = ?", [glob, username]);
+        var tasks = await DatabaseHandler.current.query("SELECT taskId, date FROM tasks WHERE date GLOB ? AND username = ?", [glob, username]);
         return tasks;
     }
 
@@ -403,7 +411,7 @@ module.exports = class taskHandler {
         var monthNum = month.substring(0, 2);
         var yearNum = month.substring(3, 7);
         var glob = monthNum + "/??/" + yearNum;
-        var tasks = await DatabaseHandler.current.exec("SELECT taskId, date FROM ratedTasks WHERE date GLOB ? AND username = ?", [glob, username]);
+        var tasks = await DatabaseHandler.current.query("SELECT taskId, date FROM ratedTasks WHERE date GLOB ? AND username = ?", [glob, username]);
         return tasks;
     }
 

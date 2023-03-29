@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Text, View,SafeAreaView, RefreshControl, Alert} from 'react-native';
+import {Text, View,SafeAreaView, RefreshControl, Alert, Button} from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {DefaultTheme, NavigationContainer, useNavigation} from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -32,7 +32,6 @@ function HomeScreenNav ({Name}:any){
         <StackNavigator.Screen name ='Settings' component={Settings} options={{presentation:'containedModal',}}  />
         <StackNavigator.Screen name ='calImport' component={CalImportPage} options={{presentation:'containedModal',}}  />
         <StackNavigator.Screen name = 'AddTask' component={TaskCreation} options={{presentation:'modal'}}/>
-
       </StackNavigator.Group>
       
     </StackNavigator.Navigator>
