@@ -173,7 +173,7 @@ module.exports = class taskHandler {
      */
     async getDaysTasks(username, day) {
         var query = new Query(1, "SELECT * FROM tasks WHERE date = ? AND username = ?", [day, username]);
-        var id = await DatabaseHandler.current.enqueueOperation(query);
+        var id = DatabaseHandler.current.enqueueOperation(query);
         while(!DatabaseHandler.current.isOperationFinished(id)){
             //do nothing
         }
