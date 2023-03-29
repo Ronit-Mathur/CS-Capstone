@@ -28,10 +28,7 @@ function TaskCreation (){
     return(
         
         <View style={{
-            paddingLeft:10,
-            paddingRight:10,
-            paddingTop:10,
-            paddingBottom:10
+            flex:1,
         }}>
             <TextInput 
             style={{height: 40}}

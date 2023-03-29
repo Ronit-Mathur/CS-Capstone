@@ -31,6 +31,7 @@ function HomeScreenNav ({Name}:any){
         <StackNavigator.Screen name='RankTask' component={HSH.RankTask} options={{presentation:'modal', headerStyle:{backgroundColor:'transparent',}, title:'', contentStyle:{backgroundColor:'transparent'}}}  />
         <StackNavigator.Screen name ='Settings' component={Settings} options={{presentation:'containedModal',}}  />
         <StackNavigator.Screen name ='calImport' component={CalImportPage} options={{presentation:'containedModal',}}  />
+        <StackNavigator.Screen name = 'AddTask' component={TaskCreation} options={{presentation:'modal'}}/>
 
       </StackNavigator.Group>
       
@@ -389,6 +390,7 @@ function Home() {
     const addNew = await addTask('kway66', 'Test', currentDate, 'Lumen Field', '18:00', '24:00')
     
 }
+
 
 
 
