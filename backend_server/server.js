@@ -402,6 +402,28 @@ module.exports = class Server {
 
         });
 
+
+        /**
+         * get all rated tasks from a user by the engagement value
+         */
+        app.get(SERVER_ENDPOINTS.USER_GET_RATED_TASKS_BY_ENGAGEMENT, async (req, res) => {
+            if (!await this.authenticateQuery(req, res)) {
+                res.status(400).send("invalid auth key");
+                return;
+            }
+
+            if ( req.query.username && req.query.engagement) {
+                var tasks = await this.taskHandler.getRatedByEngagement( req.query.username, req.query.engagement);
+                res.status(200).send(tasks);
+                return;
+            }
+            else {
+                res.status(400).send(JSON.stringify("invalid parameters"));
+                return;
+            }
+
+        });
+
         /**
          * daily methods
          */

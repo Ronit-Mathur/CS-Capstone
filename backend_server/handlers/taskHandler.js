@@ -427,10 +427,28 @@ module.exports = class taskHandler {
         }
 
 
-        var tasks = await DatabaseHandler.current.query("SELECT taskId, date FROM tasks WHERE username=? AND taskId NOT IN (SELECT taskId FROM ratedTasks WHERE username=?)"[username, username]);
+        var tasks = await DatabaseHandler.current.query("SELECT taskId, date FROM tasks WHERE username=? AND taskId NOT IN (SELECT taskId FROM ratedTasks)"[username]);
         return tasks;
 
     }
+
+    /**
+     * 
+     * @param {*} username 
+     * @param {*} engagement 
+     * @returns a list of a user's rated tasks {taskId, date} with the given engagement vaulue 
+     */
+    async getRatedByEngagement(username, engagement){
+        if (!await UserHandler.current.userExists(username)) {
+            return [];
+        }
+
+
+        var tasks = await DatabaseHandler.current.query("SELECT taskId, date FROM tasks WHERE username=? AND taskId IN (SELECT taskId from ratesTasks WHERE engagement =?)"[username, engagement]);
+        return tasks;
+
+    }
+
 
 
 }

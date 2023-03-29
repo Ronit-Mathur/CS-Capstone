@@ -23,10 +23,12 @@ module.exports = {
         USER_TASK_BY_ID: "/api/user/tasks/id",
         USER_TASKS_NOT_RATED: "/api/user/tasks/unrated",
         
+        
     
         USER_RATE_TASK: "/api/user/tasks/rated/rate",
         USER_GET_TASK_RATING: "/api/user/tasks/rated/day",
         USER_GET_TASK_RATINGS_BY_MONTH: "/api/user/tasks/rated/month",
+        USER_GET_RATED_TASKS_BY_ENGAGEMENT: "/api/user/tasks/rated/engagement",
 
         USER_CREATE: "/api/user/create",
         USER_EXISTS: "/api/user/exists",

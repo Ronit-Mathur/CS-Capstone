@@ -9,4 +9,3 @@ recursive tasks
 wrappers left:
 
 Retrieve all tasks with tracked engagement
-return a users unrated completed tasks
