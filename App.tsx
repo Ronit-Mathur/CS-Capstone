@@ -11,6 +11,7 @@ import TaskCreation from './components/tasks';
 import serverHandler from './lib/server/serverHandler';
 import { SafeAreaProvider} from 'react-native-safe-area-context';
 import { CreateAccount } from './components/createaccount';
+import {loginUserSession} from "./lib/server/users";
 
 
 import  { SignInScreen } from './components/SignInScreen';
@@ -30,17 +31,26 @@ const SERVER_PORT = 80;
 const ServerHandler = new serverHandler(SERVER_IP, SERVER_PORT);
 
 
-var userName = ''
+
+var userName = '';
 
 function MainStack(){
 
   const[isSignedIn, setIsSignedIn] = React.useState(false)
+ 
   
   function verifySignIn(uName:string){
     userName = uName
     
     setIsSignedIn(true)
   }
+
+  loginUserSession((result:boolean, username:string) =>{
+    if(!result){
+      return;
+    }
+    verifySignIn(username);
+  });
 
  
   
@@ -109,7 +119,8 @@ const MyTheme = {
 
 //Main Application Function
 const App = () => {
- 
+  
+
   return (
     <SafeAreaProvider>
       <NavigationContainer theme={MyTheme} >

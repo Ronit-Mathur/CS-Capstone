@@ -96,7 +96,7 @@ module.exports = class UserHandler {
         }
 
         var currentToken = await this._getSessionToken(username);
-        if(currentToken != sessionToken){
+        if(currentToken && currentToken.token != sessionToken){
             return -1;
         }
 
