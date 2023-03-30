@@ -45,7 +45,7 @@ function MainStack(){
  
   
   return (
-    <StackNavigator.Navigator >
+    <StackNavigator.Navigator  >
           {!isSignedIn ? (
       <>
       <StackNavigator.Screen

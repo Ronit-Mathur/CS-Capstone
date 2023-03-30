@@ -14,6 +14,7 @@ import {Settings} from './settingScreen';
 import { add } from 'react-native-reanimated';
 import {TaskCreation} from './tasks'
 import CalImportPage from './CalImportPage';
+import helpers from '../backend_server/lib/helpers';
 
 var user = ''
 
@@ -24,8 +25,8 @@ const StackNavigator = createNativeStackNavigator();
 function HomeScreenNav ({Name}:any){
   user = Name
   return(
-    <StackNavigator.Navigator initialRouteName='Home'>
-      <StackNavigator.Screen name='HomeScreen' component={Home} options={{title:'Home'} }/>
+    <StackNavigator.Navigator initialRouteName='Home' >
+      <StackNavigator.Screen name='HomeScreen' component={Home} options={{title:'Home', headerShown:false} } />
       <StackNavigator.Group  >
         <StackNavigator.Screen name='EditTask' component={HSH.EditTask} options={{presentation:'modal', headerStyle:{backgroundColor:'transparent',}, title:'', contentStyle:{backgroundColor:'transparent'}}}  />
         <StackNavigator.Screen name='RankTask' component={HSH.RankTask} options={{presentation:'modal', headerStyle:{backgroundColor:'transparent',}, title:'', contentStyle:{backgroundColor:'transparent'}}}  />
@@ -67,9 +68,9 @@ function DailyMood(){
       <Text style={{
         flex:1,
         fontSize:30,
-        textDecorationLine:'underline',
+        fontWeight:"bold",
         marginTop:'2%',
-      }} >Welcome {user}</Text>
+      }} >Welcome { helpers.capitalizeFirstLetter(user)}</Text>
 
       <MaterialCommunityIcons name ='account-circle-outline' color='black' size={55} style={{
           flex:1,
@@ -84,7 +85,8 @@ function DailyMood(){
         flex:1,
         alignSelf:'center',
         fontSize:17,
-        marginTop:'10%'
+        marginTop:'10%',
+        fontWeight: "bold"
       }}>How are you Feeling Today?</Text>
       
       <View style={{

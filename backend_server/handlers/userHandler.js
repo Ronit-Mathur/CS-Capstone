@@ -5,7 +5,7 @@ const Server = require("../server");
 const crypto = require("crypto");
 const helpers = require("../lib/helpers");
 const Query = require("./database/query");
-const Statement =require("./database/statement");
+const Statement = require("./database/statement");
 
 /**
  * handles user operations. this includes interacting with the database. initialize database before creating or using
@@ -65,7 +65,7 @@ module.exports = class UserHandler {
      * checks if a login is valid. a.k.a the username and password match
      * @param {*} username 
      * @param {*} password 
-     * @returns the api key for the specific user or -1. if user is not valid
+     * @returns the [api key, session token] for the specific user or -1. if user is not valid
      */
     async isValidLogin(username, password) {
         if (!await this.userExists(username)) {
@@ -81,8 +81,8 @@ module.exports = class UserHandler {
         //user is valid.
         //generate a new api key for the user and store it in the database
         var key = await this._generateAndStoreApiKey(username);
-
-        return key;
+        var token = await this._generateAndStoreSessionToken(username);
+        return [key, token];
     }
 
 
@@ -126,6 +126,36 @@ module.exports = class UserHandler {
     }
 
 
+    async _generateAndStoreSessionToken(username) {
+        //make sure user exists
+        if (!await this.userExists(username)) {
+            console.log("[userHandler] unable to generate new session key for user \"" + username + "\". user does not exist");
+            return -1;
+        }
+
+        var token = crypto.randomBytes(20).toString('hex');
+     
+
+
+        //check if user exists in the api database
+        var currentKeyData = await this._getSessionToken(username);
+        let statement;
+        //store new key into database
+        if (currentKeyData === null) {
+            //insert into api table
+            statement = new Statement(1, "INSERT INTO sessionTokens (username, token) VALUES (?,?,?)", [username, token]);
+        
+        }
+        else {
+            //update table
+            statement = new Statement(1, "UPDATE sessionTokens SET token = ?, WHERE username = ?", [token, username]);
+          
+        }
+
+        return token;
+
+    }
+
     /**
      * 
      * @param {*} username 
@@ -143,6 +173,34 @@ module.exports = class UserHandler {
         }
         catch (e) {
             console.log("[userHandler] error retreiving api key from db for \"" + username + "\"");
+        }
+
+        if (result.length > 0) {
+            return result[0];
+        }
+        else {
+            return null;
+        }
+
+    }
+
+
+    /**
+     * 
+     * @param {*} username 
+     * @returns the current {username, session token, date} belonging to the user or null if the user dosen't have one
+     */
+    async _getSessionToken(username){
+        var result = [];
+
+        try {
+            var q = new Query(1, "SELECT * FROM sessionTokens WHERE username = ?", [username]);
+            var oppId = DatabaseHandler.current.enqueueOperation(q);
+            result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+            //result = await DatabaseHandler.current.query("SELECT * FROM apiCredentials WHERE username = ?", [username]);
+        }
+        catch (e) {
+            console.log("[userHandler] error retreiving session token from db for \"" + username + "\"");
         }
 
         if (result.length > 0) {

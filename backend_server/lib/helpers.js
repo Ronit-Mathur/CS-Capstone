@@ -143,6 +143,20 @@ module.exports = {
     return new Promise((resolve) => {
       setTimeout(resolve, ms);
     });
+  },
+
+
+  /**
+   * capitalizes the first letter of a string
+   * @param {*} s 
+   * @return capitalized string
+   */
+  capitalizeFirstLetter(s){
+    if(s.length == 0){
+      return s;
+    }
+    return s.charAt(0).toUpperCase() + s.slice(1); //https://stackoverflow.com/questions/1026069/how-do-i-make-the-first-letter-of-a-string-uppercase-in-javascript
+
   }
 };
 

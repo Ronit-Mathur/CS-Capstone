@@ -223,7 +223,15 @@ module.exports = class DatabaseHandler {
         //username - the username the api key belongs to
         //key - a string of letters and numbers which makes up the api key
         //date - the date the key was issued in the format mm/dd/yyyy
-        await db.run("CREATE TABLE IF NOT EXISTS apiCredentials (username TEXT PRIMARY KEY, key TEXT, date TEXT, FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE)")
+        await db.run("CREATE TABLE IF NOT EXISTS apiCredentials (username TEXT PRIMARY KEY, key TEXT, date TEXT, FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE)");
+
+
+        //session tokens
+        //maps a username to it's current session token
+        //username - the username the session token belongs to
+        //token - the session token of the user. a string of letters and numbers
+        await db.run("CREATE TABLE IF NOT EXISTS sessionTokens (username TEXT PRIMARY KEY, token TEXT, FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE)");
+
 
         //close connection
         db.close();
