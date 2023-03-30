@@ -162,7 +162,7 @@ module.exports = class UserHandler {
     async _getUser(username) {
         var q = new Query(1, "SELECT * FROM users WHERE username = ?", [username]);
         var oppId = DatabaseHandler.current.enqueueOperation(q);
-        var users = await Database.current.waitForOperationToFinish(oppId);
+        var users = await DatabaseHandler.current.waitForOperationToFinish(oppId);
         //var users = await DatabaseHandler.current.query("SELECT * FROM users WHERE username = ?", [username]);
         if (users && users.length > 0) {
             return users[0];
