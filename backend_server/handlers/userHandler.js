@@ -149,7 +149,7 @@ module.exports = class UserHandler {
         }
         else {
             //update table
-            statement = new Statement(1, "UPDATE sessionTokens SET token = ?, WHERE username = ?", [token, username]);
+            statement = new Statement(1, "UPDATE sessionTokens SET token = ? WHERE username = ?", [token, username]);
           
         }
 
