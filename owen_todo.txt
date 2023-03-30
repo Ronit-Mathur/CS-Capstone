@@ -1,16 +1,11 @@
 Owen's todo list:
 
-session tokens
 import using timezones from google calendar
 switch google and outlook api keys to username not ip
 switch dates over to epoch
-create db manager operation queue
 recursive tasks
 
 wrappers left:
-
-Retrieve all tasks with tracked engagement
-
 get next task that will be completed based on endTime
 update user email
 update username

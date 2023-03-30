@@ -75,7 +75,7 @@ module.exports = class taskHandler {
         //everything is valid, add to database
         var taskId = await this._getNewTaskId();
         var statement = new Statement(priority, "INSERT INTO tasks (taskId, username, summary, location, date, startTime, endTime, recursiveId) VALUES(?,?,?,?,?,?,?,-1)", [taskId, username, summary, location, date, startTime, endTime]);
-        DatabaseHandler.current.exec.enqueueOperation(statement);
+        DatabaseHandler.current.enqueueOperation(statement);
         //await DatabaseHandler.current.exec("INSERT INTO tasks (taskId, username, summary, location, date, startTime, endTime, recursiveId) VALUES(?,?,?,?,?,?,?,-1)", [taskId, username, summary, location, date, startTime, endTime]);
 
 

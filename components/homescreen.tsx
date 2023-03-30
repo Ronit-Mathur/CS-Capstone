@@ -15,6 +15,7 @@ import { add } from 'react-native-reanimated';
 import {TaskCreation} from './tasks'
 import CalImportPage from './CalImportPage';
 import helpers from '../backend_server/lib/helpers';
+import StylingConstants from './StylingConstants';
 
 var user = ''
 
@@ -71,6 +72,11 @@ function DailyMood(){
         fontWeight:"bold",
         marginTop:'2%',
       }} >Welcome { helpers.capitalizeFirstLetter(user)}</Text>
+      <Text style={{
+        flex:1,
+        fontSize:StylingConstants.normalFontSize,
+        marginTop:'2%',
+      }} >{date}</Text>
 
       <MaterialCommunityIcons name ='account-circle-outline' color='black' size={55} style={{
           flex:1,
@@ -84,7 +90,7 @@ function DailyMood(){
       <Text style={{
         flex:1,
         alignSelf:'center',
-        fontSize:17,
+        fontSize:StylingConstants.normalFontSize,
         marginTop:'10%',
         fontWeight: "bold"
       }}>How are you Feeling Today?</Text>
@@ -126,8 +132,9 @@ function DailyMood(){
         <Text style={{
           flex:1,
           alignSelf:'center',
-          fontSize:20,
-        }}>Your Day: {date}</Text>
+          fontSize:StylingConstants.normalFontSize,
+          fontWeight: "bold"
+        }}>Your Tasks Todays</Text>
 
     </View>
   );
@@ -180,9 +187,9 @@ function TopTabs () {
         flex:1,
         height:'70%',
         borderRadius:100,
-        backgroundColor:'maroon',
-        opacity:.50,
-        bottom:'8%',
+        backgroundColor: StylingConstants.highlightColor,
+        opacity:1,
+        bottom:'10%',
         marginLeft:'2.5%',
         marginRight:'55.5%',
       }
