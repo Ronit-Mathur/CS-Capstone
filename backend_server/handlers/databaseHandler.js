@@ -123,6 +123,8 @@ module.exports = class DatabaseHandler {
             return;
         }
 
+        this.currentOperation = false;
+
         this._processNextOperation();
 
 

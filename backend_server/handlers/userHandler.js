@@ -127,6 +127,7 @@ module.exports = class UserHandler {
 
 
     async _generateAndStoreSessionToken(username) {
+        console.log("[userHandler] Generating a new session key for \"" + username + "\"");
         //make sure user exists
         if (!await this.userExists(username)) {
             console.log("[userHandler] unable to generate new session key for user \"" + username + "\". user does not exist");
@@ -151,6 +152,9 @@ module.exports = class UserHandler {
             statement = new Statement(1, "UPDATE sessionTokens SET token = ?, WHERE username = ?", [token, username]);
           
         }
+
+        DatabaseHandler.current.enqueueOperation(statement);
+
 
         return token;
 

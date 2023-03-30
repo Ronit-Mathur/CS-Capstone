@@ -645,8 +645,8 @@ module.exports = class Server {
             console.log(`Mental Health Tracker API running on ${this.port}`)
         })
 
-        server.timeout= 2000;
-        nonSSLServer.timeout = 2000; 
+        server.timeout= 4000;
+        nonSSLServer.timeout = 4000; 
 
 
 
