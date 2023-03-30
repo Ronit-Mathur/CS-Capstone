@@ -157,7 +157,18 @@ module.exports = {
     }
     return s.charAt(0).toUpperCase() + s.slice(1); //https://stackoverflow.com/questions/1026069/how-do-i-make-the-first-letter-of-a-string-uppercase-in-javascript
 
-  }
+  },
+
+
+  //https://stackoverflow.com/questions/196972/convert-string-to-title-case-with-javascript
+  toTitleCase(str) {
+  return str.replace(
+    /\w\S*/g,
+    function(txt) {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    }
+  );
+}
 };
 
 
