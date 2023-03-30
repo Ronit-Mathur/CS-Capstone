@@ -1,6 +1,6 @@
 const DatabaseHandler = require("./databaseHandler");
 const helpers = require("../lib/helpers");
-const { Statement } = require("sqlite3");
+const Statement =require("./database/statement");
 const Query = require("./database/query");
 
 module.exports = class dayHandler {

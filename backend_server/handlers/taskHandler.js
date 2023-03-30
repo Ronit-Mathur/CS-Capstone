@@ -7,7 +7,7 @@ const helpers = require("../lib/helpers");
 const Server = require("../server");
 const UserHandler = require("./userHandler");
 const Query = require("./database/query");
-const { Statement } = require("sqlite");
+const Statement =require("./database/statement");
 
 module.exports = class taskHandler {
 

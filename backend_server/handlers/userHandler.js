@@ -5,7 +5,7 @@ const Server = require("../server");
 const crypto = require("crypto");
 const helpers = require("../lib/helpers");
 const Query = require("./database/query");
-const { Statement } = require("sqlite");
+const Statement =require("./database/statement");
 
 /**
  * handles user operations. this includes interacting with the database. initialize database before creating or using
