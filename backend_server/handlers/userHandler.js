@@ -144,7 +144,7 @@ module.exports = class UserHandler {
         //store new key into database
         if (currentKeyData === null) {
             //insert into api table
-            statement = new Statement(1, "INSERT INTO sessionTokens (username, token) VALUES (?,?,?)", [username, token]);
+            statement = new Statement(1, "INSERT INTO sessionTokens (username, token) VALUES (?,?)", [username, token]);
         
         }
         else {
