@@ -154,6 +154,23 @@ module.exports = class Server {
             }
         });
 
+
+        /**
+         * tries to log in using a sesison token
+         */
+        app.get(SERVER_ENDPOINTS.USER_SESSION_LOGIN, async (req, res) =>{
+            if (req.query.username && req.query.sessionToken) {
+
+                ///try and get api key from the user handler
+                var apiKey = await this.userHandler.isValidSessionLogin(req.query.username, req.query.sessionToken);
+                res.status(200).send(JSON.stringify(apiKey));
+            }
+            else {
+                res.status(400).send("invalid parameters");
+                return;
+            }
+        })
+
         /**
          * task methods
          */

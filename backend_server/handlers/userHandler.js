@@ -84,6 +84,29 @@ module.exports = class UserHandler {
         var token = await this._generateAndStoreSessionToken(username);
         return [key, token];
     }
+      /**
+     * checks if a session login is valid. a.k.a the username and session token match. if true, a new session token is generated
+     * @param {*} username 
+     * @param {*} sessionToken 
+     * @returns the [api key, session token] for the specific user or -1. if user is not valid
+     */
+      async isValidSessionLogin(username, sessionToken) {
+        if (!await this.userExists(username)) {
+            return -1;
+        }
+
+        var currentToken = await this._getSessionToken(username);
+        if(currentToken != sessionToken){
+            return -1;
+        }
+
+
+        //user is valid.
+        //generate a new api key for the user and store it in the database
+        var key = await this._generateAndStoreApiKey(username);
+        var token = await this._generateAndStoreSessionToken(username);
+        return [key, token];
+    }
 
 
     /**
