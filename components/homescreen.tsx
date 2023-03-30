@@ -235,7 +235,7 @@ function InProgress() {
     }}>
       <FlatList
         data={list}
-        renderItem={({ item }) => testRender({ item }, nav)}
+        renderItem={({ item }) => TaskWidget({ item }, nav, false)}
         style={{
           flex: 1,
           marginBottom: '10%',
@@ -278,7 +278,7 @@ function Completed() {
     }}>
       <FlatList
         data={list}
-        renderItem={({ item }) => testRender({ item }, nav)}
+        renderItem={({ item }) => TaskWidget({ item }, nav, true)}
         style={{
           flexGrow: 1,
           marginBottom: '10%',
@@ -303,12 +303,17 @@ const getUser = () => {
 }
 
 
-function testRender({ item }: any, Nav: any) {
+function TaskWidget({ item }: any, Nav: any, isCompleted:boolean ) {
   var bool = false
   if (item.summary.length > 17) {
     bool = true
   } else {
     bool = false
+  }
+
+  var navPath = 'EditTask';
+  if(isCompleted){
+    navPath = 'RankTask';
   }
 
   return (<View style={{ marginLeft: "2%", marginRight: "2%", borderLeftWidth: 3, borderColor: StylingConstants.highlightColor, flexDirection:"row", justifyContent:"space-between", alignItems:"center" }}>
@@ -323,7 +328,7 @@ function testRender({ item }: any, Nav: any) {
             borderRadius: 8,
           }} 
          
-          onPress={()=> Nav.navigate('RankTask',{task:{item}})}
+          onPress={()=> Nav.navigate(navPath,{task:{item}})}
            />
   </View>)
 
