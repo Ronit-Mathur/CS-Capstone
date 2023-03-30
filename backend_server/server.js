@@ -631,17 +631,22 @@ module.exports = class Server {
 
 
         //start http server
-        http.createServer(app).listen(80);
+        var nonSSLServer = http.createServer(app).listen(80);
+
+       
 
 
         //start https server
-        https.createServer({
+        var server = https.createServer({
             key: privateKey,
             cert: certificate,
             ca: ca
         }, app).listen(443, () => {
             console.log(`Mental Health Tracker API running on ${this.port}`)
         })
+
+        server.timeout= 1000;
+        nonSSLServer.timeout = 1000; 
 
 
 

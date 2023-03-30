@@ -9,6 +9,7 @@ recursive tasks
 wrappers left:
 
 Retrieve all tasks with tracked engagement
+
 get next task that will be completed based on endTime
 update user email
 update username
@@ -21,4 +22,5 @@ error code:
 daily mood already input
 task already rated
 during login/account creation: user already exists
+
 
