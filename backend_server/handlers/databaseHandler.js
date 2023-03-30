@@ -74,6 +74,18 @@ module.exports = class DatabaseHandler {
         return id;
     }
 
+    /**
+     * waits for a specific tasks to finish
+     * @param {*} id task id
+     * @return the result of the task
+     */
+    async waitForTaskToFinish(id){
+        while(!DatabaseHandler.current.isOperationFinished(id)){
+            await helpers.sleep(300);
+        }
+
+        return DatabaseHandler.current.getOperationResult(id);
+    }
 
     /**
      * processes the next operation

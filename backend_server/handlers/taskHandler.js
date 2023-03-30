@@ -7,6 +7,7 @@ const helpers = require("../lib/helpers");
 const Server = require("../server");
 const UserHandler = require("./userHandler");
 const Query = require("./database/query");
+const { Statement } = require("sqlite");
 
 module.exports = class taskHandler {
 
@@ -40,8 +41,8 @@ module.exports = class taskHandler {
      * @return a list of all task ids in the database
      */
     async getAllTaskIds() {
-        var result = await DatabaseHandler.current.query("SELECT taskId FROM tasks ORDER BY taskId");
-
+       var oppId = DatabaseHandler.current.enqueueOperation(new Statement(1, "SELECT taskId FROM tasks ORDER BY taskId", []));
+       var result =  await DatabaseHandler.current.waitForOperationToFinish(oppId);
         //convert from objects to a list of ints
         var idLs = [];
         for (var i = 0; i < result.length; i++) {
@@ -59,9 +60,8 @@ module.exports = class taskHandler {
      * @param {*} date date of the task in the string format mm/dd/yyyy
      * @param {*} startTime start time of the task in the string format hh:mm
      * @param {*} endTime end time of the task in the string format hh:mm
-     * @return the new id of the task or -1 if it wasn't added
      */
-    async addTask(username, summary, date, location, startTime, endTime) {
+    async addTask(username, summary, date, location, startTime, endTime, priority) {
         if (!await this._areTaskParametersValid(username, summary, date, location, startTime, endTime)) {
             return -1;
         }
@@ -74,10 +74,12 @@ module.exports = class taskHandler {
 
         //everything is valid, add to database
         var taskId = await this._getNewTaskId();
-        await DatabaseHandler.current.exec("INSERT INTO tasks (taskId, username, summary, location, date, startTime, endTime, recursiveId) VALUES(?,?,?,?,?,?,?,-1)", [taskId, username, summary, location, date, startTime, endTime]);
+        var statement = new Statement(priority, "INSERT INTO tasks (taskId, username, summary, location, date, startTime, endTime, recursiveId) VALUES(?,?,?,?,?,?,?,-1)", [taskId, username, summary, location, date, startTime, endTime]);
+        DatabaseHandler.current.exec.enqueueOperation(statement);
+        //await DatabaseHandler.current.exec("INSERT INTO tasks (taskId, username, summary, location, date, startTime, endTime, recursiveId) VALUES(?,?,?,?,?,?,?,-1)", [taskId, username, summary, location, date, startTime, endTime]);
 
 
-        return taskId;
+        return;
 
     }
 
@@ -93,7 +95,10 @@ module.exports = class taskHandler {
      * @returns true if a task with similar parameters exists.
      */
     async _similarTaskExist(username, summary, date, location, startTime, endTime) {
-        var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE username = ? AND summary = ? AND date = ? AND location = ? AND startTime = ? AND endTime = ?", [username, summary, date, location, startTime, endTime]);
+        var q = new Query(1, "SELECT * FROM tasks WHERE username = ? AND summary = ? AND date = ? AND location = ? AND startTime = ? AND endTime = ?", [username, summary, date, location, startTime, endTime]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+        //var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE username = ? AND summary = ? AND date = ? AND location = ? AND startTime = ? AND endTime = ?", [username, summary, date, location, startTime, endTime]);
         return result.length > 0;
     }
 
@@ -133,7 +138,7 @@ module.exports = class taskHandler {
             }
             var endTime = helpers.verifyHourMinuteTimeFormat(parsedEndDate.getHours() + ":" + parsedEndDate.getMinutes());
             var location = "none";
-            await this.addTask(username, summary, date, location, startTime, endTime);
+            await this.addTask(username, summary, date, location, startTime, endTime, 5);
         }
     }
 
@@ -159,7 +164,7 @@ module.exports = class taskHandler {
 
             var endTime = helpers.verifyHourMinuteTimeFormat(parsedEndDate.getHours() + ":" + parsedEndDate.getMinutes());
             var location = "none";
-            await this.addTask(username, summary, date, location, startTime, endTime);
+            await this.addTask(username, summary, date, location, startTime, endTime, 5);
         }
 
     }
@@ -174,11 +179,9 @@ module.exports = class taskHandler {
     async getDaysTasks(username, day) {
         var query = new Query(1, "SELECT * FROM tasks WHERE date = ? AND username = ?", [day, username]);
         var id = DatabaseHandler.current.enqueueOperation(query);
-        while(!DatabaseHandler.current.isOperationFinished(id)){
-           await sleep(300);
-        }
+       
 
-        var result = DatabaseHandler.current.getOperationResult(id);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(id);
         //var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE date = ? AND username = ?", [day, username]);
 
         return result;
@@ -235,7 +238,10 @@ module.exports = class taskHandler {
      * @param {*} id 
      */
     async getTask(id) {
-        var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE taskId = ?", [id]);
+        var q = new Query(1, "SELECT * FROM tasks WHERE taskId = ?", [id]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+        //var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE taskId = ?", [id]);
         if (result) {
             return result[0];
         }
@@ -243,7 +249,10 @@ module.exports = class taskHandler {
     }
 
     async getUserTask(username, id){
-        var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE taskId = ? && username = ?", [id, username]);
+        var q = new Query(1, "SELECT * FROM tasks WHERE taskId = ? && username = ?", [id, username]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+        //var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE taskId = ? && username = ?", [id, username]);
         if (result) {
             return result[0];
         }
@@ -286,7 +295,9 @@ module.exports = class taskHandler {
         var rescursiveId = -1;
 
         //perform update to database
-        DatabaseHandler.current.exec("UPDATE tasks SET username = ?, summary = ?, location =?, date=?, startTime =?, endTime =?, recursiveId = ? WHERE taskId =?", [username, summary, location, date, startTime, endTime, rescursiveId, id]);
+        var statement = new Statement(2,"UPDATE tasks SET username = ?, summary = ?, location =?, date=?, startTime =?, endTime =?, recursiveId = ? WHERE taskId =?", [username, summary, location, date, startTime, endTime, rescursiveId, id] );
+        DatabaseHandler.current.enqueueOperation(statement);
+        //DatabaseHandler.current.exec("UPDATE tasks SET username = ?, summary = ?, location =?, date=?, startTime =?, endTime =?, recursiveId = ? WHERE taskId =?", [username, summary, location, date, startTime, endTime, rescursiveId, id]);
 
         return true;
     }
@@ -312,7 +323,8 @@ module.exports = class taskHandler {
      * @param {*} id id of the task to delete
      */
     async deleteTask(id) {
-        await DatabaseHandler.current.exec("DELETE FROM tasks WHERE taskId = ?", [id]);
+        var s = new Statement(2,"DELETE FROM tasks WHERE taskId = ?", [id] );
+        DatabaseHandler.current.enqueueOperation(s);
     }
 
     /**
@@ -320,7 +332,10 @@ module.exports = class taskHandler {
      * @returns the rated task object or null if task is not completed
      */
     async getRatedTask(id) {
-        var result = await DatabaseHandler.current.query("SELECT * FROM ratedTasks WHERE taskId = ?", [id]);
+        var q = new Query(1, "SELECT * FROM ratedTasks WHERE taskId = ?", [id]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+        //var result = await DatabaseHandler.current.query("SELECT * FROM ratedTasks WHERE taskId = ?", [id]);
         if (result) {
             return result[0];
         }
@@ -354,7 +369,9 @@ module.exports = class taskHandler {
         }
 
         //insert into database
-        await DatabaseHandler.current.exec("INSERT INTO ratedTasks (taskId, enjoyment, phyiscalActivity, engagement, mentalDifficulty) VALUES(?,?,?,?,?)", [id, enjoyment, physicalActivity, engagement, mentalDifficulty]);
+        var statement = new Statement(2, "INSERT INTO ratedTasks (taskId, enjoyment, phyiscalActivity, engagement, mentalDifficulty) VALUES(?,?,?,?,?)", [id, enjoyment, physicalActivity, engagement, mentalDifficulty]);
+        DatabaseHandler.current.enqueueOperation(statement);
+        //await DatabaseHandler.current.exec("INSERT INTO ratedTasks (taskId, enjoyment, phyiscalActivity, engagement, mentalDifficulty) VALUES(?,?,?,?,?)", [id, enjoyment, physicalActivity, engagement, mentalDifficulty]);
 
 
 
@@ -386,7 +403,10 @@ module.exports = class taskHandler {
         var monthNum = month.substring(0, 2);
         var yearNum = month.substring(3, 7);
         var glob = monthNum + "/??/" + yearNum;
-        var tasks = await DatabaseHandler.current.query("SELECT taskId, date FROM tasks WHERE date GLOB ? AND username = ?", [glob, username]);
+        var q = new Query(1, "SELECT taskId, date FROM tasks WHERE date GLOB ? AND username = ?", [glob, username]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var tasks = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+        //var tasks = await DatabaseHandler.current.query("SELECT taskId, date FROM tasks WHERE date GLOB ? AND username = ?", [glob, username]);
         return tasks;
     }
 
@@ -411,7 +431,10 @@ module.exports = class taskHandler {
         var monthNum = month.substring(0, 2);
         var yearNum = month.substring(3, 7);
         var glob = monthNum + "/??/" + yearNum;
-        var tasks = await DatabaseHandler.current.query("SELECT taskId, date FROM ratedTasks WHERE date GLOB ? AND username = ?", [glob, username]);
+        var q = new Query(1, "SELECT taskId, date FROM ratedTasks WHERE date GLOB ? AND username = ?", [glob, username]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var tasks = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+        //var tasks = await DatabaseHandler.current.query("SELECT taskId, date FROM ratedTasks WHERE date GLOB ? AND username = ?", [glob, username]);
         return tasks;
     }
 
@@ -426,8 +449,10 @@ module.exports = class taskHandler {
             return [];
         }
 
-
-        var tasks = await DatabaseHandler.current.query("SELECT taskId, date FROM tasks WHERE username=? AND taskId NOT IN (SELECT taskId FROM ratedTasks)"[username]);
+        var q = new Query(1, "SELECT taskId, date FROM tasks WHERE username=? AND taskId NOT IN (SELECT taskId FROM ratedTasks)", [username]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var tasks = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+        //var tasks = await DatabaseHandler.current.query("SELECT taskId, date FROM tasks WHERE username=? AND taskId NOT IN (SELECT taskId FROM ratedTasks)", [username]);
         return tasks;
 
     }
@@ -443,8 +468,10 @@ module.exports = class taskHandler {
             return [];
         }
 
-
-        var tasks = await DatabaseHandler.current.query("SELECT taskId, date FROM tasks WHERE username=? AND taskId IN (SELECT taskId from ratesTasks WHERE engagement =?)"[username, engagement]);
+        var q = new Query(1, "SELECT taskId, date FROM tasks WHERE username=? AND taskId IN (SELECT taskId from ratesTasks WHERE engagement =?)",[username, engagement]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var tasks = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+        //var tasks = await DatabaseHandler.current.query("SELECT taskId, date FROM tasks WHERE username=? AND taskId IN (SELECT taskId from ratesTasks WHERE engagement =?)",[username, engagement]);
         return tasks;
 
     }

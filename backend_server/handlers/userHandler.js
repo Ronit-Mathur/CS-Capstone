@@ -4,6 +4,8 @@ const { getOutlookEventsFromToken, getOutlookCalendarsFromToken, getOutlookOAuth
 const Server = require("../server");
 const crypto = require("crypto");
 const helpers = require("../lib/helpers");
+const Query = require("./database/query");
+const { Statement } = require("sqlite");
 
 /**
  * handles user operations. this includes interacting with the database. initialize database before creating or using
@@ -28,7 +30,10 @@ module.exports = class UserHandler {
      * @return {boolean} true if user exists
      */
     async userExists(username) {
-        var dbResult = await DatabaseHandler.current.query("SELECT * FROM users WHERE username = ?", [username]);
+        var q = new Query(1, "SELECT * FROM users WHERE username = ?", [username]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var dbResult = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+        //var dbResult = await DatabaseHandler.current.query("SELECT * FROM users WHERE username = ?", [username]);
         return dbResult.length != 0;
     }
 
@@ -48,7 +53,10 @@ module.exports = class UserHandler {
         var hashedPassword = await this._hash(password);
 
         //perform insertion statement
-        await DatabaseHandler.current.exec("INSERT INTO users (username, email, password) VALUES(?,?,?)", [username, email, hashedPassword]);
+        var statement = new Statement(1, "INSERT INTO users (username, email, password) VALUES(?,?,?)", [username, email, hashedPassword]);
+        var oppId = DatabaseHandler.current.enqueueOperation(statement);
+        await DatabaseHandler.current.waitForOperationToFinish(oppId);
+        //await DatabaseHandler.current.exec("INSERT INTO users (username, email, password) VALUES(?,?,?)", [username, email, hashedPassword]);
         return true;
     }
 
@@ -97,16 +105,20 @@ module.exports = class UserHandler {
 
         //check if user exists in the api database
         var currentKeyData = await this._getApiKey(username);
-
+        let statement;
         //store new key into database
         if (currentKeyData === null) {
             //insert into api table
-            await DatabaseHandler.current.exec("INSERT INTO apiCredentials (username, key, date) VALUES (?,?,?)", [username, key, today]);
+            statement = new Statement(1, "INSERT INTO apiCredentials (username, key, date) VALUES (?,?,?)", [username, key, today]);
+            //await DatabaseHandler.current.exec("INSERT INTO apiCredentials (username, key, date) VALUES (?,?,?)", [username, key, today]);
         }
         else {
             //update table
-            await DatabaseHandler.current.exec("UPDATE apiCredentials SET key = ?, date = ? WHERE username = ?", [key, today, username]);
+            statement = new Statement(1, "UPDATE apiCredentials SET key = ?, date = ? WHERE username = ?", [key, today, username]);
+            //await DatabaseHandler.current.exec("UPDATE apiCredentials SET key = ?, date = ? WHERE username = ?", [key, today, username]);
         }
+
+        DatabaseHandler.current.enqueueOperation(statement);
 
 
 
@@ -124,7 +136,10 @@ module.exports = class UserHandler {
         var result = [];
 
         try {
-            result = await DatabaseHandler.current.query("SELECT * FROM apiCredentials WHERE username = ?", [username]);
+            var q = new Query(1, "SELECT * FROM apiCredentials WHERE username = ?", [username]);
+            var oppId = DatabaseHandler.current.enqueueOperation(q);
+            result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+            //result = await DatabaseHandler.current.query("SELECT * FROM apiCredentials WHERE username = ?", [username]);
         }
         catch (e) {
             console.log("[userHandler] error retreiving api key from db for \"" + username + "\"");
@@ -145,7 +160,10 @@ module.exports = class UserHandler {
      * @returns the user associated with the given username or null if the user dosen't exist
      */
     async _getUser(username) {
-        var users = await DatabaseHandler.current.query("SELECT * FROM users WHERE username = ?", [username]);
+        var q = new Query(1, "SELECT * FROM users WHERE username = ?", [username]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var users = await Database.current.waitForOperationToFinish(oppId);
+        //var users = await DatabaseHandler.current.query("SELECT * FROM users WHERE username = ?", [username]);
         if (users && users.length > 0) {
             return users[0];
         }

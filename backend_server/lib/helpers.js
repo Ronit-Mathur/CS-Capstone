@@ -125,7 +125,7 @@ module.exports = {
    */
   getCurrentTime() {
     var date = new Date();
-    var stringed =  '' + date.getHours() + ':' + date.getMinutes();
+    var stringed = '' + date.getHours() + ':' + date.getMinutes();
     return this.verifyHourMinuteTimeFormat(stringed);
   },
 
@@ -133,11 +133,17 @@ module.exports = {
     return Math.floor(Math.random() * max);
   },
 
+
+  /**
+   * allows the program to sleep for milliseconds. await this function  
+   * @param {*} ms 
+   * @returns 
+   */
   sleep(ms) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+  }
 };
 
 

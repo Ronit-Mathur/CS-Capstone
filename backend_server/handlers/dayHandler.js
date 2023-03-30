@@ -1,5 +1,7 @@
 const DatabaseHandler = require("./databaseHandler");
 const helpers = require("../lib/helpers");
+const { Statement } = require("sqlite3");
+const Query = require("./database/query");
 
 module.exports = class dayHandler {
     static current
@@ -28,7 +30,9 @@ module.exports = class dayHandler {
         }
 
         var rating = -1; //set a rating of -1 TODO
-        await DatabaseHandler.current.exec("INSERT INTO daily (date,username,happiness,rating, time) VALUES (?,?,?,?,?)", [date,username,happiness, rating, time]);
+        var s = new Statement(2, "INSERT INTO daily (date,username,happiness,rating, time) VALUES (?,?,?,?,?)", [date,username,happiness, rating, time]);
+        DatabaseHandler.current.enqueueOperation(s);
+        //await DatabaseHandler.current.exec("INSERT INTO daily (date,username,happiness,rating, time) VALUES (?,?,?,?,?)", [date,username,happiness, rating, time]);
         return true;
     }
 
@@ -40,7 +44,11 @@ module.exports = class dayHandler {
      * @returns a daily object or null if the day has not been rated
      */
     async getDaily(username, date){
-        var result = await DatabaseHandler.current.query("SELECT * FROM daily WHERE username = ? && date = ?", [username, date]);
+        var q = new Query(1, "SELECT * FROM daily WHERE username = ? && date = ?", [username, date]);
+        var oppID = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppID);
+
+        //var result = await DatabaseHandler.current.query("SELECT * FROM daily WHERE username = ? && date = ?", [username, date]);
         if(result.length > 0){
             return result[0];
         }
@@ -57,7 +65,10 @@ module.exports = class dayHandler {
      * @returns true if the date has already been rated by the user
      */
     async _dateRated(username, date){
-        var result = await DatabaseHandler.current.query("SELECT * FROM daily WHERE username = ? AND date = ?",[username, date]);
+        var q = new Query(1, "SELECT * FROM daily WHERE username = ? AND date = ?",[username, date]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+        //var result = await DatabaseHandler.current.query("SELECT * FROM daily WHERE username = ? AND date = ?",[username, date]);
         return result.length > 0;
     }
 }

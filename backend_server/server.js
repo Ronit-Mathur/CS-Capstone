@@ -265,8 +265,8 @@ module.exports = class Server {
             }
 
             if (req.query.username && req.query.day && helpers.isDateFormat(req.query.day) && req.query.summary && req.query.startTime && helpers.isTimeFormat(req.query.startTime) && req.query.endTime && helpers.isTimeFormat(req.query.endTime) && req.query.location) {
-                const taskId = await this.taskHandler.addTask(req.query.username, req.query.summary, req.query.day, req.query.location, req.query.startTime, req.query.endTime);
-                res.status(200).send(JSON.stringify(taskId));
+                await this.taskHandler.addTask(req.query.username, req.query.summary, req.query.day, req.query.location, req.query.startTime, req.query.endTime, 2);
+                res.status(200).send(JSON.stringify("done"));
                 return;
             }
             else {
