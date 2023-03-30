@@ -41,7 +41,7 @@ module.exports = class taskHandler {
      * @return a list of all task ids in the database
      */
     async getAllTaskIds() {
-       var oppId = DatabaseHandler.current.enqueueOperation(new Statement(1, "SELECT taskId FROM tasks ORDER BY taskId", []));
+       var oppId = DatabaseHandler.current.enqueueOperation(new Query(1, "SELECT taskId FROM tasks ORDER BY taskId", []));
        var result =  await DatabaseHandler.current.waitForOperationToFinish(oppId);
         //convert from objects to a list of ints
         var idLs = [];
