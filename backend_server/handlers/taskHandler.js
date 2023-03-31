@@ -8,6 +8,7 @@ const Server = require("../server");
 const UserHandler = require("./userHandler");
 const Query = require("./database/query");
 const Statement =require("./database/statement");
+const { epochToMMDDYYY } = require("../lib/helpers");
 
 module.exports = class taskHandler {
 
@@ -114,6 +115,9 @@ module.exports = class taskHandler {
             //dont add to calendar as conflict exists
             return -1;
         }
+
+        //find all tasks which share the same summary and link them with a recursive id
+        var query = new Query(priority, "SELECT * FROM tasks WHERE username = ? AND summary =?", [username, summary]);``
 
 
         //everything is valid, add to database
@@ -494,17 +498,31 @@ module.exports = class taskHandler {
         }
 
         var hhmm = helpers.epochToHHMM(epoch);
-       
+        var date = epochToMMDDYYY(epoch);
+        var mm =  date.substring(0, 2) + "/??/" + date.substring(6, 10);;
+        var year = "??/??/" + date.substring(6, 10);
+        console.log(year);
+        console.log(mm);
 
-        var q = new Query(1, "SELECT DISTINCT taskId, date FROM tasks WHERE username=? AND endTime < ? AND taskId NOT IN (SELECT taskId FROM ratedTasks)", [username, hhmm]);
+        var q = new Query(1, "SELECT DISTINCT taskId, date FROM tasks WHERE username=? AND (date != ? || (date == ? && endTime < ?)) AND taskId NOT IN (SELECT taskId FROM ratedTasks)", [username, date,date, hhmm]);
         var oppId = DatabaseHandler.current.enqueueOperation(q);
         var tasks = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+
+
+        var tasksOut = [];
+        for(var i = 0; i<tasks.length; i++){
+
+            var taskDate = tasks[i].date;
+            if(taskDate && helpers.MMDDYYYYbeforeMMDDYYYY(date, taskDate)){
+                tasksOut.push(tasks[i]);
+            }
+        }
 
 
 
 
         //var tasks = await DatabaseHandler.current.query("SELECT taskId, date FROM tasks WHERE username=? AND taskId NOT IN (SELECT taskId FROM ratedTasks)", [username]);
-        return tasks;
+        return tasksOut;
 
     }
 

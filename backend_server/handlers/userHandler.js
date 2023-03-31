@@ -150,7 +150,7 @@ module.exports = class UserHandler {
 
 
     async _generateAndStoreSessionToken(username) {
-        console.log("[userHandler] Generating a new session key for \"" + username + "\"");
+      
         //make sure user exists
         if (!await this.userExists(username)) {
             console.log("[userHandler] unable to generate new session key for user \"" + username + "\". user does not exist");
