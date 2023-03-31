@@ -118,11 +118,28 @@ module.exports = class taskHandler {
 
         //find all tasks which share the same summary and link them with a recursive id
         var query = new Query(priority, "SELECT * FROM tasks WHERE username = ? AND summary =?", [username, summary]);``
+        var oppId =DatabaseHandler.current.enqueueOperation(query);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+
+
+        var recursiveId = -1;
+        if(result.length == 1){
+            //give both tasks a new recursive id
+            var newRId = await this._getNewRecursiveTaskId();
+
+            //update the existing task
+            await this.updateTask(result[0].taskId, username, summary, result[0].date, result[0].location, result[0].startTime, result[0].endTime, newRId);
+            recursiveId = newRId;
+        }
+        else if(result.length > 1){
+            //give current task the same recursive id
+            recursiveId = result[0].recursiveId; 
+        }
 
 
         //everything is valid, add to database
         var taskId = await this._getNewTaskId();
-        var statement = new Statement(priority, "INSERT INTO tasks (taskId, username, summary, location, date, startTime, endTime, recursiveId) VALUES(?,?,?,?,?,?,?,-1)", [taskId, username, summary, location, date, startTime, endTime]);
+        var statement = new Statement(priority, "INSERT INTO tasks (taskId, username, summary, location, date, startTime, endTime, recursiveId) VALUES(?,?,?,?,?,?,?,?)", [taskId, username, summary, location, date, startTime, endTime, recursiveId]);
         DatabaseHandler.current.enqueueOperation(statement);
         //await DatabaseHandler.current.exec("INSERT INTO tasks (taskId, username, summary, location, date, startTime, endTime, recursiveId) VALUES(?,?,?,?,?,?,?,-1)", [taskId, username, summary, location, date, startTime, endTime]);
 
@@ -329,7 +346,7 @@ module.exports = class taskHandler {
      * @param {*} endTime 
      * @returns true if succesful
      */
-    async updateTask(id, username, summary, date, location, startTime, endTime) {
+    async updateTask(id, username, summary, date, location, startTime, endTime, recursiveId) {
 
         //check if task is in database
         if (!await this.taskExists(id)) {
@@ -340,10 +357,13 @@ module.exports = class taskHandler {
             return false;
         }
 
-        var rescursiveId = -1;
+        var newRecursiveId = recursiveId;
+        if(newRecursiveId === null){
+            newRecursiveId = -1;
+        }
 
         //perform update to database
-        var statement = new Statement(2,"UPDATE tasks SET username = ?, summary = ?, location =?, date=?, startTime =?, endTime =?, recursiveId = ? WHERE taskId =?", [username, summary, location, date, startTime, endTime, rescursiveId, id] );
+        var statement = new Statement(1,"UPDATE tasks SET username = ?, summary = ?, location =?, date=?, startTime =?, endTime =?, recursiveId = ? WHERE taskId =?", [username, summary, location, date, startTime, endTime, newRecursiveId, id] );
         DatabaseHandler.current.enqueueOperation(statement);
         //DatabaseHandler.current.exec("UPDATE tasks SET username = ?, summary = ?, location =?, date=?, startTime =?, endTime =?, recursiveId = ? WHERE taskId =?", [username, summary, location, date, startTime, endTime, rescursiveId, id]);
 
