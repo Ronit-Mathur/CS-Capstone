@@ -70,6 +70,11 @@ module.exports = {
     return parts.join(':');
   },
 
+  /**
+   * verify mm dd yyyy format
+   * @param {*} s 
+   * @returns 
+   */
   verifyMMDDYYYYformat(s){
     var parts = s.split('/');
     if (parts[0].length == 1) {
@@ -117,7 +122,15 @@ module.exports = {
   epochToMMDDYYY(epoch) {
     var date = new Date(Math.round(Number(epoch)));
     var formattedDate = + (date.getUTCMonth() + 1) + '/' + date.getUTCDate() + "/" + date.getUTCFullYear();
-    return this.verifyMMDDYYYYformat(formattedDate);
+
+    var parts = formattedDate.split('/');
+    if (parts[0].length == 1) {
+      parts[0] = '0' + parts[0];
+    }
+    if (parts[1].length == 1) {
+      parts[1] = '0' + parts[1];
+    }
+    return parts.join('/');
 
 
   },
@@ -152,6 +165,7 @@ module.exports = {
     if (mm < 10) mm = '0' + mm;
 
     const formattedToday = mm + '/' + dd + '/' + yyyy;
+    
     return formattedToday;
   },
 
