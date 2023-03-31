@@ -70,7 +70,7 @@ module.exports = {
     return parts.join(':');
   },
 
-  verifyMMDDYYYformat(s){
+  verifyMMDDYYYYformat(s){
     var parts = s.split('/');
     if (parts[0].length == 1) {
       parts[0] = '0' + parts[0];
@@ -117,7 +117,7 @@ module.exports = {
   epochToMMDDYYY(epoch) {
     var date = new Date(Math.round(Number(epoch)));
     var formattedDate = + (date.getUTCMonth() + 1) + '/' + date.getUTCDate() + "/" + date.getUTCFullYear();
-    return helpers.verifyMMDDYYYformat(formattedDate);
+    return this.verifyMMDDYYYYformat(formattedDate);
 
 
   },
