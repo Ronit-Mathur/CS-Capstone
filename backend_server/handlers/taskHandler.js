@@ -504,7 +504,7 @@ module.exports = class taskHandler {
         console.log(year);
         console.log(mm);
 
-        var q = new Query(1, "SELECT DISTINCT taskId, date FROM tasks WHERE username=? AND (date != ? || (date == ? && endTime < ?)) AND taskId NOT IN (SELECT taskId FROM ratedTasks)", [username, date,date, hhmm]);
+        var q = new Query(1, "SELECT DISTINCT taskId, date FROM tasks WHERE username=? AND (date != ? OR (date == ? AND endTime < ?)) AND taskId NOT IN (SELECT taskId FROM ratedTasks)", [username, date,date, hhmm]);
         var oppId = DatabaseHandler.current.enqueueOperation(q);
         var tasks = await DatabaseHandler.current.waitForOperationToFinish(oppId);
 

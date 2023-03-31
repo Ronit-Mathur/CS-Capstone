@@ -79,16 +79,13 @@ module.exports = {
    */
   MMDDYYYYbeforeMMDDYYYY(d1, d2) {
     var parts = d1.split("/");
-    var dt1 = new Date(parseInt(parts[2], 10),
-      parseInt(parts[1], 10) - 1,
-      parseInt(parts[0], 10));
+    var dt1 = new Date(parts[2], parts[0] - 1, parts[1]);
+    
 
     parts = d2.split("/");
-    var dt2 = new Date(parseInt(parts[2], 10),
-      parseInt(parts[1], 10) - 1,
-      parseInt(parts[0], 10));
+    var dt2 = new Date(parts[2], parts[0] - 1, parts[1]);
 
-    return d1 < d2;
+    return dt1 < dt2;
 
   },
 
