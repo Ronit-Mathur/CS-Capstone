@@ -16,7 +16,7 @@ import { TaskCreation } from './tasks'
 import CalImportPage from './CalImportPage';
 import helpers from '../backend_server/lib/helpers';
 import StylingConstants from './StylingConstants';
-
+import serverHandler from '../lib/server/serverHandler';
 
 var user = ''
 
@@ -431,6 +431,10 @@ async function addNewTask() {
   const currentDate = Helpers.getTodaysDate()
   const addNew = await addTask('kway66', 'Test', currentDate, 'Lumen Field', '18:00', '24:00')
 
+  async function addNewTask (){
+    const currentDate = Helpers.getTodaysDate()
+    const addNew = await addTask(serverHandler.current.userState.username, 'Test2', currentDate, 'Lumen', '10:00', '13:00')
+    console.log(addNew);
 }
 
 
