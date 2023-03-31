@@ -534,7 +534,7 @@ module.exports = class taskHandler {
 
             var taskDate = tasks[i].date;
             if(taskDate && helpers.MMDDYYYYbeforeMMDDYYYY(taskDate, date)){
-                if(taskDatedate == taskDate){
+                if(date == taskDate){
                     console.log(task[i].endTime);
                     console.log(hhmm);
                     if(isHourMinuteBefore(task[i].endTime, hhmm)){
