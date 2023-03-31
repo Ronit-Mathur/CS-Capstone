@@ -502,7 +502,7 @@ module.exports = class taskHandler {
         var mm =  date.substring(0, 2) + "/??/" + date.substring(6, 10);;
         var year = "??/??/" + date.substring(6, 10);
 
-        var q = new Query(1, "SELECT DISTINCT taskId, date FROM tasks WHERE username=? AND taskId NOT IN (SELECT taskId FROM ratedTasks)", [username]);
+        var q = new Query(1, "SELECT DISTINCT * FROM tasks WHERE username=? AND taskId NOT IN (SELECT taskId FROM ratedTasks)", [username]);
         var oppId = DatabaseHandler.current.enqueueOperation(q);
         var tasks = await DatabaseHandler.current.waitForOperationToFinish(oppId);
 
