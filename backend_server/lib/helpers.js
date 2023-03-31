@@ -70,6 +70,17 @@ module.exports = {
     return parts.join(':');
   },
 
+  verifyMMDDYYYformat(s){
+    var parts = s.split('/');
+    if (parts[0].length == 1) {
+      parts[0] = '0' + parts[0];
+    }
+    if (parts[1].length == 1) {
+      parts[1] = '0' + parts[1];
+    }
+    return parts.join('/');
+  },
+
 
   /**
    * checks if a date is before another
@@ -106,7 +117,7 @@ module.exports = {
   epochToMMDDYYY(epoch) {
     var date = new Date(Math.round(Number(epoch)));
     var formattedDate = + (date.getUTCMonth() + 1) + '/' + date.getUTCDate() + "/" + date.getUTCFullYear();
-    return formattedDate;
+    return verifyMMDDYYYformat(formattedDate);
 
 
   },
