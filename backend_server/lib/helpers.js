@@ -75,7 +75,7 @@ module.exports = {
    * @param {*} s 
    * @returns 
    */
-  verifyMMDDYYYYformat(s){
+  verifyMMDDYYYYformat(s) {
     var parts = s.split('/');
     if (parts[0].length == 1) {
       parts[0] = '0' + parts[0];
@@ -95,7 +95,7 @@ module.exports = {
   MMDDYYYYbeforeMMDDYYYY(d1, d2) {
     var parts = d1.split("/");
     var dt1 = new Date(parts[2], parts[0] - 1, parts[1]);
-    
+
 
     parts = d2.split("/");
     var dt2 = new Date(parts[2], parts[0] - 1, parts[1]);
@@ -106,16 +106,16 @@ module.exports = {
 
   /**
    * converts an epoch timestamp to the hh:mm format
-   * https://stackoverflow.com/questions/41015272/display-epoch-time-as-hhmm-format-in-javascript
+   * https://stackoverflow.com/questions/4631928/convert-utc-epoch-to-local-date
    * @param {*} epoch 
    * @returns 
    */
   epochToHHMM(epoch) {
-    let epoch_time = 1234567890 * 1000;
-    var date_obj = new Date(epoch_time);
-    const hrs = date_obj.getHours();
-    const mins = date_obj.getMinutes();
-    let hhmm = (hrs < 10 ? "0" + hrs : hrs) + ":" + (mins < 10 ? "0" + mins : mins);
+
+    var utcSeconds = 1234567890;
+    var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
+    d.setUTCSeconds(utcSeconds);
+    hhmm = d.getHours() + ":" + d.getMinutes();
     return hhmm;
   },
 
@@ -165,7 +165,7 @@ module.exports = {
     if (mm < 10) mm = '0' + mm;
 
     const formattedToday = mm + '/' + dd + '/' + yyyy;
-    
+
     return formattedToday;
   },
 

@@ -518,6 +518,7 @@ module.exports = class taskHandler {
         }
 
         var hhmm = helpers.epochToHHMM(epoch);
+        hhmm = helpers.verifyHourMinuteTimeFormat(hhmm);
         var date = epochToMMDDYYY(epoch);
         var mm =  date.substring(0, 2) + "/??/" + date.substring(6, 10);;
         var year = "??/??/" + date.substring(6, 10);
