@@ -34,7 +34,7 @@ function HomeScreenNav({ Name }: any) {
         <StackNavigator.Screen name='RankTask' component={HSH.RankTask} options={{ presentation: 'modal', headerStyle: { backgroundColor: 'transparent', }, title: '', contentStyle: { backgroundColor: 'transparent' } }} />
         <StackNavigator.Screen name='Settings' component={Settings} options={{ presentation: 'containedModal', }} />
         <StackNavigator.Screen name='calImport' component={CalImportPage} options={{ presentation: 'containedModal', }} />
-        <StackNavigator.Screen name='AddTask' component={TaskCreation} options={{ presentation: 'modal' }} />
+        <StackNavigator.Screen name='AddTask' children={ () => <TaskCreation Name={user} />} options={{ presentation: 'modal' }} />
         
       </StackNavigator.Group>
 
@@ -136,7 +136,7 @@ function DailyMood() {
         alignSelf: 'center',
         fontSize: StylingConstants.normalFontSize,
         fontWeight: "bold"
-      }}>Your Tasks Todays</Text>
+      }}>Your Tasks Today</Text>
 
     </View>
   );
@@ -406,7 +406,7 @@ function Home() {
 
         position='right'
         size={75}
-        buttonColor="blue"
+        buttonColor={StylingConstants.highlightColor}
         onPress={() => navigation.navigate('AddTask')}
         style={{ marginRight: 0, marginBottom: '3%' }}
       />

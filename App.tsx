@@ -7,7 +7,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { HomeScreenNav } from './components/homescreen';
 import { CalendarNav } from './components/calendarscreen'
 import Stats from './components/statscreen';
-import TaskCreation from './components/tasks';
+import {TaskCreation} from './components/tasks';
 import serverHandler from './lib/server/serverHandler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { CreateAccount } from './components/createaccount';

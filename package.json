@@ -38,7 +38,7 @@
 		"googleapis": "^110.0.0",
 		"material-ui-community-icons": "^0.15.0",
 		"moment": "^2.29.4",
-		"node-outlook": "^1.1.8",
+		"node-outlook": "^1.0.2",
 		"node-pre-gyp": "^0.17.0",
 		"path": "^0.12.7",
 		"priority-queue-node": "^1.0.2",
