@@ -117,7 +117,7 @@ module.exports = {
   epochToMMDDYYY(epoch) {
     var date = new Date(Math.round(Number(epoch)));
     var formattedDate = + (date.getUTCMonth() + 1) + '/' + date.getUTCDate() + "/" + date.getUTCFullYear();
-    return verifyMMDDYYYformat(formattedDate);
+    return helpers.verifyMMDDYYYformat(formattedDate);
 
 
   },
