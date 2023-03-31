@@ -38,6 +38,50 @@ module.exports = class taskHandler {
 
 
     /**
+     * generates an unused recursive id for a task
+     * @return unused recursive id
+     */
+    async _getNewRecursiveTaskId(){
+        const taskIds = await this.getAllRecursiveTaskIds();
+        var currentRecursiveId = 0;
+        for (var i = 0; i < taskIds.length; i++) {
+            //go through all ids, incrementing the current id. when they do not match we have an unused id
+            if (currentRecursiveId != taskIds[i]) {
+                break;
+            }
+            currentRecursiveId++;
+        }
+
+        return currentRecursiveId;
+    }
+
+
+    async getAllRecursiveTaskIds(){
+        var oppId = DatabaseHandler.current.enqueueOperation(new Query(1, "SELECT DISTINCT recursiveId FROM tasks ORDER BY recursiveId", []));
+       var result =  await DatabaseHandler.current.waitForOperationToFinish(oppId);
+        //convert from objects to a list of ints
+        var idLs = [];
+        for (var i = 0; i < result.length; i++) {
+            idLs.push(result[i].taskId);
+        }
+
+        return idLs;
+    }
+
+
+
+    /**
+     * finds all tasks in the database which share a recursive id
+     * @param {*} recursiveId recursve id of the linked tasks
+     * @return a list of tasks
+     */
+    async getAllLinkedTasks(recursiveId){
+        var oppId = DatabaseHandler.current.enqueueOperation(new Query(1, "SELECT * FROM tasks ORDER BY taskId WHERE recursiveId = ?", [recursiveId]));
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+        return result;
+    }
+
+    /**
      * @return a list of all task ids in the database
      */
     async getAllTaskIds() {
@@ -431,7 +475,7 @@ module.exports = class taskHandler {
         var monthNum = month.substring(0, 2);
         var yearNum = month.substring(3, 7);
         var glob = monthNum + "/??/" + yearNum;
-        var q = new Query(1, "SELECT taskId, date FROM ratedTasks WHERE date GLOB ? AND username = ?", [glob, username]);
+        var q = new Query(1, "SELECT DISTINCT taskId, date FROM ratedTasks WHERE date GLOB ? AND username = ?", [glob, username]);
         var oppId = DatabaseHandler.current.enqueueOperation(q);
         var tasks = await DatabaseHandler.current.waitForOperationToFinish(oppId);
         //var tasks = await DatabaseHandler.current.query("SELECT taskId, date FROM ratedTasks WHERE date GLOB ? AND username = ?", [glob, username]);
@@ -444,14 +488,21 @@ module.exports = class taskHandler {
      * @param {*} username the username which the tasks belong
      * @returns a list of all a user's unrated, completed tasks
      */
-    async getUnratedCompletedTasks(username){
+    async getUnratedCompletedTasks(username, epoch){
         if (!await UserHandler.current.userExists(username)) {
             return [];
         }
 
-        var q = new Query(1, "SELECT taskId, date FROM tasks WHERE username=? AND taskId NOT IN (SELECT taskId FROM ratedTasks)", [username]);
+        var hhmm = helpers.epochToHHMM(epoch);
+       
+
+        var q = new Query(1, "SELECT DISTINCT taskId, date FROM tasks WHERE username=? AND endTime < ? AND taskId NOT IN (SELECT taskId FROM ratedTasks)", [username, hhmm]);
         var oppId = DatabaseHandler.current.enqueueOperation(q);
         var tasks = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+
+
+
+
         //var tasks = await DatabaseHandler.current.query("SELECT taskId, date FROM tasks WHERE username=? AND taskId NOT IN (SELECT taskId FROM ratedTasks)", [username]);
         return tasks;
 

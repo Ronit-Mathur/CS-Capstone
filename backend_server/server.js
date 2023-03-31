@@ -407,8 +407,8 @@ module.exports = class Server {
                 return;
             }
 
-            if ( req.query.username) {
-                var tasks = await this.taskHandler.getUnratedCompletedTasks( req.query.username);
+            if ( req.query.username, req.query.epoch) {
+                var tasks = await this.taskHandler.getUnratedCompletedTasks( req.query.username, req.query.epoch);
                 res.status(200).send(tasks);
                 return;
             }

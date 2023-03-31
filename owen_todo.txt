@@ -5,6 +5,7 @@ switch google and outlook api keys to username not ip
 switch dates over to epoch
 recursive tasks
 figure out android lag
+delete operations in operationmanager with no return type
 
 wrappers left:
 get next task that will be completed based on endTime

@@ -71,6 +71,21 @@ module.exports = {
   },
 
   /**
+   * converts an epoch timestamp to the hh:mm format
+   * https://stackoverflow.com/questions/41015272/display-epoch-time-as-hhmm-format-in-javascript
+   * @param {*} epoch 
+   * @returns 
+   */
+  epochToHHMM(epoch){
+    let epoch_time = 1234567890 * 1000;
+    var date_obj = new Date(epoch_time);
+    const hrs = date_obj.getHours();
+    const mins = date_obj.getMinutes();
+    let hhmm = (hrs < 10 ? "0" + hrs : hrs) + ":" + (mins < 10 ? "0" + mins : mins);
+    return hhmm;
+  },
+
+  /**
    *
    * @param {*} a time in the hh:mm format
    * @param {*} b time in the hh:mm format
