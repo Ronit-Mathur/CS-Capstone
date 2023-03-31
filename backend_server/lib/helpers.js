@@ -73,7 +73,6 @@ module.exports = {
 
   /**
    * checks if a date is before another
-   * https://stackoverflow.com/questions/10430321/how-to-parse-a-dd-mm-yyyy-or-dd-mm-yyyy-or-dd-mmm-yyyy-formatted-date-stri
    * @param {*} d1 
    * @param {*} d2 
    */
@@ -85,7 +84,7 @@ module.exports = {
     parts = d2.split("/");
     var dt2 = new Date(parts[2], parts[0] - 1, parts[1]);
 
-    return dt1 < dt2;
+    return dt1 <= dt2;
 
   },
 

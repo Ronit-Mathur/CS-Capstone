@@ -8,7 +8,7 @@ const Server = require("../server");
 const UserHandler = require("./userHandler");
 const Query = require("./database/query");
 const Statement =require("./database/statement");
-const { epochToMMDDYYY } = require("../lib/helpers");
+const { epochToMMDDYYY, isHourMinuteBefore } = require("../lib/helpers");
 
 module.exports = class taskHandler {
 
@@ -501,20 +501,28 @@ module.exports = class taskHandler {
         var date = epochToMMDDYYY(epoch);
         var mm =  date.substring(0, 2) + "/??/" + date.substring(6, 10);;
         var year = "??/??/" + date.substring(6, 10);
-        console.log(year);
-        console.log(mm);
 
-        var q = new Query(1, "SELECT DISTINCT taskId, date FROM tasks WHERE username=? AND (date != ? OR (date == ? AND endTime < ?)) AND taskId NOT IN (SELECT taskId FROM ratedTasks)", [username, date,date, hhmm]);
+        var q = new Query(1, "SELECT DISTINCT taskId, date FROM tasks WHERE username=? AND taskId NOT IN (SELECT taskId FROM ratedTasks)", [username]);
         var oppId = DatabaseHandler.current.enqueueOperation(q);
         var tasks = await DatabaseHandler.current.waitForOperationToFinish(oppId);
 
+        console.log(tasks);
 
         var tasksOut = [];
         for(var i = 0; i<tasks.length; i++){
 
             var taskDate = tasks[i].date;
             if(taskDate && helpers.MMDDYYYYbeforeMMDDYYYY(date, taskDate)){
-                tasksOut.push(tasks[i]);
+                if(date == taskDate){
+                    if(isHourMinuteBefore(taskDate.endTime, hhmm)){
+                        tasksOut.push(tasks[i]);
+                    }
+                }
+                else{
+                    tasksOut.push(tasks[i]);
+                }
+   
+              
             }
         }
 
