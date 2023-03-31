@@ -70,6 +70,58 @@ module.exports = {
     return parts.join(':');
   },
 
+  verifyMMDDYYYYformat(s){
+    var parts = s.split('/');
+    if (parts[0].length == 1) {
+      parts[0] = '0' + parts[0];
+    }
+    if (parts[1].length == 1) {
+      parts[1] = '0' + parts[1];
+    }
+    return parts.join('/');
+  },
+
+
+  /**
+   * checks if a date is before another
+   * @param {*} d1 
+   * @param {*} d2 
+   */
+  MMDDYYYYbeforeMMDDYYYY(d1, d2) {
+    var parts = d1.split("/");
+    var dt1 = new Date(parts[2], parts[0] - 1, parts[1]);
+    
+
+    parts = d2.split("/");
+    var dt2 = new Date(parts[2], parts[0] - 1, parts[1]);
+
+    return dt1 <= dt2;
+
+  },
+
+  /**
+   * converts an epoch timestamp to the hh:mm format
+   * https://stackoverflow.com/questions/41015272/display-epoch-time-as-hhmm-format-in-javascript
+   * @param {*} epoch 
+   * @returns 
+   */
+  epochToHHMM(epoch) {
+    let epoch_time = 1234567890 * 1000;
+    var date_obj = new Date(epoch_time);
+    const hrs = date_obj.getHours();
+    const mins = date_obj.getMinutes();
+    let hhmm = (hrs < 10 ? "0" + hrs : hrs) + ":" + (mins < 10 ? "0" + mins : mins);
+    return hhmm;
+  },
+
+  epochToMMDDYYY(epoch) {
+    var date = new Date(Math.round(Number(epoch)));
+    var formattedDate = + (date.getUTCMonth() + 1) + '/' + date.getUTCDate() + "/" + date.getUTCFullYear();
+    return this.verifyMMDDYYYYformat(formattedDate);
+
+
+  },
+
   /**
    *
    * @param {*} a time in the hh:mm format
@@ -125,7 +177,50 @@ module.exports = {
    */
   getCurrentTime() {
     var date = new Date();
-    var stringed =  '' + date.getHours() + ':' + date.getMinutes();
+    var stringed = '' + date.getHours() + ':' + date.getMinutes();
     return this.verifyHourMinuteTimeFormat(stringed);
   },
+
+  getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+  },
+
+
+  /**
+   * allows the program to sleep for milliseconds. await this function  
+   * @param {*} ms 
+   * @returns 
+   */
+  sleep(ms) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+  },
+
+
+  /**
+   * capitalizes the first letter of a string
+   * @param {*} s 
+   * @return capitalized string
+   */
+  capitalizeFirstLetter(s) {
+    if (s.length == 0) {
+      return s;
+    }
+    return s.charAt(0).toUpperCase() + s.slice(1); //https://stackoverflow.com/questions/1026069/how-do-i-make-the-first-letter-of-a-string-uppercase-in-javascript
+
+  },
+
+
+  //https://stackoverflow.com/questions/196972/convert-string-to-title-case-with-javascript
+  toTitleCase(str) {
+    return str.replace(
+      /\w\S*/g,
+      function (txt) {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+      }
+    );
+  }
 };
+
+

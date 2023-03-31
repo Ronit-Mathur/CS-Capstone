@@ -3,22 +3,25 @@ Owen's todo list:
 import using timezones from google calendar
 switch google and outlook api keys to username not ip
 switch dates over to epoch
+create db manager operation queue
 recursive tasks
-figure out android lag
-delete operations in operationmanager with no return type
 
 wrappers left:
+
+
 get next task that will be completed based on endTime
 update user email
 update username
 change password
+<<<<<<< HEAD
 return list of users completed tasks that have not yet been rated
 delte user
+=======
+>>>>>>> 52ce438f240d782880b53712bea62e74f46ef6c9
 
 
 error code: 
 daily mood already input
 task already rated
 during login/account creation: user already exists
-
 

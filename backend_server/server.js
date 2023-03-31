@@ -154,6 +154,23 @@ module.exports = class Server {
             }
         });
 
+
+        /**
+         * tries to log in using a sesison token
+         */
+        app.get(SERVER_ENDPOINTS.USER_SESSION_LOGIN, async (req, res) =>{
+            if (req.query.username && req.query.sessionToken) {
+
+                ///try and get api key from the user handler
+                var apiKey = await this.userHandler.isValidSessionLogin(req.query.username, req.query.sessionToken);
+                res.status(200).send(JSON.stringify(apiKey));
+            }
+            else {
+                res.status(400).send("invalid parameters");
+                return;
+            }
+        })
+
         /**
          * task methods
          */
@@ -265,8 +282,8 @@ module.exports = class Server {
             }
 
             if (req.query.username && req.query.day && helpers.isDateFormat(req.query.day) && req.query.summary && req.query.startTime && helpers.isTimeFormat(req.query.startTime) && req.query.endTime && helpers.isTimeFormat(req.query.endTime) && req.query.location) {
-                const taskId = await this.taskHandler.addTask(req.query.username, req.query.summary, req.query.day, req.query.location, req.query.startTime, req.query.endTime);
-                res.status(200).send(JSON.stringify(taskId));
+                await this.taskHandler.addTask(req.query.username, req.query.summary, req.query.day, req.query.location, req.query.startTime, req.query.endTime, 2);
+                res.status(200).send(JSON.stringify("done"));
                 return;
             }
             else {
@@ -372,6 +389,48 @@ module.exports = class Server {
 
             if (req.query.month && req.query.username) {
                 var tasks = await this.taskHandler.getMonthsRatedTasks(req.query.month, req.query.username);
+                res.status(200).send(tasks);
+                return;
+            }
+            else {
+                res.status(400).send(JSON.stringify("invalid parameters"));
+                return;
+            }
+
+        });
+        /**
+         * get all unrated tasks from a user
+         */
+        app.get(SERVER_ENDPOINTS.USER_TASKS_NOT_RATED, async (req, res) => {
+            if (!await this.authenticateQuery(req, res)) {
+                res.status(400).send("invalid auth key");
+                return;
+            }
+
+            if ( req.query.username, req.query.epoch) {
+                var tasks = await this.taskHandler.getUnratedCompletedTasks( req.query.username, req.query.epoch);
+                res.status(200).send(tasks);
+                return;
+            }
+            else {
+                res.status(400).send(JSON.stringify("invalid parameters"));
+                return;
+            }
+
+        });
+
+
+        /**
+         * get all rated tasks from a user by the engagement value
+         */
+        app.get(SERVER_ENDPOINTS.USER_GET_RATED_TASKS_BY_ENGAGEMENT, async (req, res) => {
+            if (!await this.authenticateQuery(req, res)) {
+                res.status(400).send("invalid auth key");
+                return;
+            }
+
+            if ( req.query.username && req.query.engagement) {
+                var tasks = await this.taskHandler.getRatedByEngagement( req.query.username, req.query.engagement);
                 res.status(200).send(tasks);
                 return;
             }
@@ -589,17 +648,22 @@ module.exports = class Server {
 
 
         //start http server
-        http.createServer(app).listen(80);
+        var nonSSLServer = http.createServer(app).listen(80);
+
+       
 
 
         //start https server
-        https.createServer({
+        var server = https.createServer({
             key: privateKey,
             cert: certificate,
             ca: ca
         }, app).listen(443, () => {
             console.log(`Mental Health Tracker API running on ${this.port}`)
         })
+
+        server.timeout= 4000;
+        nonSSLServer.timeout = 4000; 
 
 
 

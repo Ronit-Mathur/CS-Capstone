@@ -6,6 +6,9 @@ const DatabaseHandler = require("./databaseHandler");
 const helpers = require("../lib/helpers");
 const Server = require("../server");
 const UserHandler = require("./userHandler");
+const Query = require("./database/query");
+const Statement =require("./database/statement");
+const { epochToMMDDYYY, isHourMinuteBefore } = require("../lib/helpers");
 
 module.exports = class taskHandler {
 
@@ -36,11 +39,55 @@ module.exports = class taskHandler {
 
 
     /**
+     * generates an unused recursive id for a task
+     * @return unused recursive id
+     */
+    async _getNewRecursiveTaskId(){
+        const taskIds = await this.getAllRecursiveTaskIds();
+        var currentRecursiveId = 0;
+        for (var i = 0; i < taskIds.length; i++) {
+            //go through all ids, incrementing the current id. when they do not match we have an unused id
+            if (currentRecursiveId != taskIds[i]) {
+                break;
+            }
+            currentRecursiveId++;
+        }
+
+        return currentRecursiveId;
+    }
+
+
+    async getAllRecursiveTaskIds(){
+        var oppId = DatabaseHandler.current.enqueueOperation(new Query(1, "SELECT DISTINCT recursiveId FROM tasks ORDER BY recursiveId", []));
+       var result =  await DatabaseHandler.current.waitForOperationToFinish(oppId);
+        //convert from objects to a list of ints
+        var idLs = [];
+        for (var i = 0; i < result.length; i++) {
+            idLs.push(result[i].taskId);
+        }
+
+        return idLs;
+    }
+
+
+
+    /**
+     * finds all tasks in the database which share a recursive id
+     * @param {*} recursiveId recursve id of the linked tasks
+     * @return a list of tasks
+     */
+    async getAllLinkedTasks(recursiveId){
+        var oppId = DatabaseHandler.current.enqueueOperation(new Query(1, "SELECT * FROM tasks ORDER BY taskId WHERE recursiveId = ?", [recursiveId]));
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+        return result;
+    }
+
+    /**
      * @return a list of all task ids in the database
      */
     async getAllTaskIds() {
-        var result = await DatabaseHandler.current.query("SELECT taskId FROM tasks ORDER BY taskId");
-
+       var oppId = DatabaseHandler.current.enqueueOperation(new Query(1, "SELECT taskId FROM tasks ORDER BY taskId", []));
+       var result =  await DatabaseHandler.current.waitForOperationToFinish(oppId);
         //convert from objects to a list of ints
         var idLs = [];
         for (var i = 0; i < result.length; i++) {
@@ -58,9 +105,8 @@ module.exports = class taskHandler {
      * @param {*} date date of the task in the string format mm/dd/yyyy
      * @param {*} startTime start time of the task in the string format hh:mm
      * @param {*} endTime end time of the task in the string format hh:mm
-     * @return the new id of the task or -1 if it wasn't added
      */
-    async addTask(username, summary, date, location, startTime, endTime) {
+    async addTask(username, summary, date, location, startTime, endTime, priority) {
         if (!await this._areTaskParametersValid(username, summary, date, location, startTime, endTime)) {
             return -1;
         }
@@ -70,13 +116,35 @@ module.exports = class taskHandler {
             return -1;
         }
 
+        //find all tasks which share the same summary and link them with a recursive id
+        var query = new Query(priority, "SELECT * FROM tasks WHERE username = ? AND summary =?", [username, summary]);``
+        var oppId =DatabaseHandler.current.enqueueOperation(query);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+
+
+        var recursiveId = -1;
+        if(result.length == 1){
+            //give both tasks a new recursive id
+            var newRId = await this._getNewRecursiveTaskId();
+
+            //update the existing task
+            await this.updateTask(result[0].taskId, username, summary, result[0].date, result[0].location, result[0].startTime, result[0].endTime, newRId);
+            recursiveId = newRId;
+        }
+        else if(result.length > 1){
+            //give current task the same recursive id
+            recursiveId = result[0].recursiveId; 
+        }
+
 
         //everything is valid, add to database
         var taskId = await this._getNewTaskId();
-        await DatabaseHandler.current.exec("INSERT INTO tasks (taskId, username, summary, location, date, startTime, endTime, recursiveId) VALUES(?,?,?,?,?,?,?,-1)", [taskId, username, summary, location, date, startTime, endTime]);
+        var statement = new Statement(priority, "INSERT INTO tasks (taskId, username, summary, location, date, startTime, endTime, recursiveId) VALUES(?,?,?,?,?,?,?,?)", [taskId, username, summary, location, date, startTime, endTime, recursiveId]);
+        DatabaseHandler.current.enqueueOperation(statement);
+        //await DatabaseHandler.current.exec("INSERT INTO tasks (taskId, username, summary, location, date, startTime, endTime, recursiveId) VALUES(?,?,?,?,?,?,?,-1)", [taskId, username, summary, location, date, startTime, endTime]);
 
 
-        return taskId;
+        return;
 
     }
 
@@ -92,7 +160,10 @@ module.exports = class taskHandler {
      * @returns true if a task with similar parameters exists.
      */
     async _similarTaskExist(username, summary, date, location, startTime, endTime) {
-        var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE username = ? AND summary = ? AND date = ? AND location = ? AND startTime = ? AND endTime = ?", [username, summary, date, location, startTime, endTime]);
+        var q = new Query(1, "SELECT * FROM tasks WHERE username = ? AND summary = ? AND date = ? AND location = ? AND startTime = ? AND endTime = ?", [username, summary, date, location, startTime, endTime]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+        //var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE username = ? AND summary = ? AND date = ? AND location = ? AND startTime = ? AND endTime = ?", [username, summary, date, location, startTime, endTime]);
         return result.length > 0;
     }
 
@@ -132,7 +203,7 @@ module.exports = class taskHandler {
             }
             var endTime = helpers.verifyHourMinuteTimeFormat(parsedEndDate.getHours() + ":" + parsedEndDate.getMinutes());
             var location = "none";
-            await this.addTask(username, summary, date, location, startTime, endTime);
+            await this.addTask(username, summary, date, location, startTime, endTime, 5);
         }
     }
 
@@ -158,7 +229,7 @@ module.exports = class taskHandler {
 
             var endTime = helpers.verifyHourMinuteTimeFormat(parsedEndDate.getHours() + ":" + parsedEndDate.getMinutes());
             var location = "none";
-            await this.addTask(username, summary, date, location, startTime, endTime);
+            await this.addTask(username, summary, date, location, startTime, endTime, 5);
         }
 
     }
@@ -171,7 +242,12 @@ module.exports = class taskHandler {
      * @returns a days tasks for a given user
      */
     async getDaysTasks(username, day) {
-        var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE date = ? AND username = ?", [day, username]);
+        var query = new Query(1, "SELECT * FROM tasks WHERE date = ? AND username = ?", [day, username]);
+        var id = DatabaseHandler.current.enqueueOperation(query);
+       
+
+        var result = await DatabaseHandler.current.waitForOperationToFinish(id);
+        //var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE date = ? AND username = ?", [day, username]);
 
         return result;
     }
@@ -227,7 +303,10 @@ module.exports = class taskHandler {
      * @param {*} id 
      */
     async getTask(id) {
-        var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE taskId = ?", [id]);
+        var q = new Query(1, "SELECT * FROM tasks WHERE taskId = ?", [id]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+        //var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE taskId = ?", [id]);
         if (result) {
             return result[0];
         }
@@ -235,7 +314,10 @@ module.exports = class taskHandler {
     }
 
     async getUserTask(username, id){
-        var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE taskId = ? && username = ?", [id, username]);
+        var q = new Query(1, "SELECT * FROM tasks WHERE taskId = ? && username = ?", [id, username]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+        //var result = await DatabaseHandler.current.query("SELECT * FROM tasks WHERE taskId = ? && username = ?", [id, username]);
         if (result) {
             return result[0];
         }
@@ -264,7 +346,7 @@ module.exports = class taskHandler {
      * @param {*} endTime 
      * @returns true if succesful
      */
-    async updateTask(id, username, summary, date, location, startTime, endTime) {
+    async updateTask(id, username, summary, date, location, startTime, endTime, recursiveId) {
 
         //check if task is in database
         if (!await this.taskExists(id)) {
@@ -275,10 +357,15 @@ module.exports = class taskHandler {
             return false;
         }
 
-        var rescursiveId = -1;
+        var newRecursiveId = recursiveId;
+        if(newRecursiveId === null){
+            newRecursiveId = -1;
+        }
 
         //perform update to database
-        DatabaseHandler.current.exec("UPDATE tasks SET username = ?, summary = ?, location =?, date=?, startTime =?, endTime =?, recursiveId = ? WHERE taskId =?", [username, summary, location, date, startTime, endTime, rescursiveId, id]);
+        var statement = new Statement(1,"UPDATE tasks SET username = ?, summary = ?, location =?, date=?, startTime =?, endTime =?, recursiveId = ? WHERE taskId =?", [username, summary, location, date, startTime, endTime, newRecursiveId, id] );
+        DatabaseHandler.current.enqueueOperation(statement);
+        //DatabaseHandler.current.exec("UPDATE tasks SET username = ?, summary = ?, location =?, date=?, startTime =?, endTime =?, recursiveId = ? WHERE taskId =?", [username, summary, location, date, startTime, endTime, rescursiveId, id]);
 
         return true;
     }
@@ -304,7 +391,8 @@ module.exports = class taskHandler {
      * @param {*} id id of the task to delete
      */
     async deleteTask(id) {
-        await DatabaseHandler.current.exec("DELETE FROM tasks WHERE taskId = ?", [id]);
+        var s = new Statement(2,"DELETE FROM tasks WHERE taskId = ?", [id] );
+        DatabaseHandler.current.enqueueOperation(s);
     }
 
     /**
@@ -312,7 +400,10 @@ module.exports = class taskHandler {
      * @returns the rated task object or null if task is not completed
      */
     async getRatedTask(id) {
-        var result = await DatabaseHandler.current.query("SELECT * FROM ratedTasks WHERE taskId = ?", [id]);
+        var q = new Query(1, "SELECT * FROM ratedTasks WHERE taskId = ?", [id]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+        //var result = await DatabaseHandler.current.query("SELECT * FROM ratedTasks WHERE taskId = ?", [id]);
         if (result) {
             return result[0];
         }
@@ -326,7 +417,7 @@ module.exports = class taskHandler {
      * @returns if the task has been completed in the database
      */
     async isTaskRated(id) {
-        return await this.getRatedTasks(id) != null;
+        return await this.getRatedTask(id) != null;
     }
 
     /**
@@ -346,7 +437,9 @@ module.exports = class taskHandler {
         }
 
         //insert into database
-        await DatabaseHandler.current.exec("INSERT INTO ratedTasks (taskId, enjoyment, phyiscalActivity, engagement, mentalDifficulty) VALUES(?,?,?,?,?)", [id, enjoyment, physicalActivity, engagement, mentalDifficulty]);
+        var statement = new Statement(2, "INSERT INTO ratedTasks (taskId, enjoyment, phyiscalActivity, engagement, mentalDifficulty) VALUES(?,?,?,?,?)", [id, enjoyment, physicalActivity, engagement, mentalDifficulty]);
+        DatabaseHandler.current.enqueueOperation(statement);
+        //await DatabaseHandler.current.exec("INSERT INTO ratedTasks (taskId, enjoyment, phyiscalActivity, engagement, mentalDifficulty) VALUES(?,?,?,?,?)", [id, enjoyment, physicalActivity, engagement, mentalDifficulty]);
 
 
 
@@ -378,7 +471,10 @@ module.exports = class taskHandler {
         var monthNum = month.substring(0, 2);
         var yearNum = month.substring(3, 7);
         var glob = monthNum + "/??/" + yearNum;
-        var tasks = await DatabaseHandler.current.exec("SELECT taskId, date FROM tasks WHERE date GLOB ? AND username = ?", [glob, username]);
+        var q = new Query(1, "SELECT taskId, date FROM tasks WHERE date GLOB ? AND username = ?", [glob, username]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var tasks = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+        //var tasks = await DatabaseHandler.current.query("SELECT taskId, date FROM tasks WHERE date GLOB ? AND username = ?", [glob, username]);
         return tasks;
     }
 
@@ -403,9 +499,83 @@ module.exports = class taskHandler {
         var monthNum = month.substring(0, 2);
         var yearNum = month.substring(3, 7);
         var glob = monthNum + "/??/" + yearNum;
-        var tasks = await DatabaseHandler.current.exec("SELECT taskId, date FROM ratedTasks WHERE date GLOB ? AND username = ?", [glob, username]);
+        var q = new Query(1, "SELECT DISTINCT taskId, date FROM ratedTasks WHERE date GLOB ? AND username = ?", [glob, username]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var tasks = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+        //var tasks = await DatabaseHandler.current.query("SELECT taskId, date FROM ratedTasks WHERE date GLOB ? AND username = ?", [glob, username]);
         return tasks;
     }
+
+
+    /**
+     * 
+     * @param {*} username the username which the tasks belong
+     * @returns a list of all a user's unrated, completed tasks
+     */
+    async getUnratedCompletedTasks(username, epoch){
+        if (!await UserHandler.current.userExists(username)) {
+            return [];
+        }
+
+        var hhmm = helpers.epochToHHMM(epoch);
+        var date = epochToMMDDYYY(epoch);
+        var mm =  date.substring(0, 2) + "/??/" + date.substring(6, 10);;
+        var year = "??/??/" + date.substring(6, 10);
+
+        var q = new Query(1, "SELECT DISTINCT * FROM tasks WHERE username=? AND taskId NOT IN (SELECT taskId FROM ratedTasks)", [username]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var tasks = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+
+        console.log(tasks);
+
+        var tasksOut = [];
+        for(var i = 0; i<tasks.length; i++){
+
+            var taskDate = tasks[i].date;
+            if(taskDate && helpers.MMDDYYYYbeforeMMDDYYYY(taskDate, date)){
+                if(date == taskDate){
+                    console.log(hhmm);
+                    if(isHourMinuteBefore(taskDate.endTime, hhmm)){
+                        tasksOut.push(tasks[i]);
+                    }
+                }
+                else{
+                    tasksOut.push(tasks[i]);
+                }
+   
+              
+            }
+        }
+
+        console.log(tasks);
+
+
+
+
+        //var tasks = await DatabaseHandler.current.query("SELECT taskId, date FROM tasks WHERE username=? AND taskId NOT IN (SELECT taskId FROM ratedTasks)", [username]);
+        return tasksOut;
+
+    }
+
+    /**
+     * 
+     * @param {*} username 
+     * @param {*} engagement 
+     * @returns a list of a user's rated tasks {taskId, date} with the given engagement vaulue 
+     */
+    async getRatedByEngagement(username, engagement){
+        if (!await UserHandler.current.userExists(username)) {
+            return [];
+        }
+
+        var q = new Query(1, "SELECT taskId, date FROM tasks WHERE username=? AND taskId IN (SELECT taskId from ratesTasks WHERE engagement =?)",[username, engagement]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var tasks = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+        //var tasks = await DatabaseHandler.current.query("SELECT taskId, date FROM tasks WHERE username=? AND taskId IN (SELECT taskId from ratesTasks WHERE engagement =?)",[username, engagement]);
+        return tasks;
+
+    }
+
 
 
 }

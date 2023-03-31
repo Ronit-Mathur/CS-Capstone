@@ -4,16 +4,17 @@ import { DefaultTheme, NavigationContainer, useNavigation } from '@react-navigat
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {HomeScreenNav} from './components/homescreen';
-import {CalendarNav} from './components/calendarscreen'
+import { HomeScreenNav } from './components/homescreen';
+import { CalendarNav } from './components/calendarscreen'
 import Stats from './components/statscreen';
-import TaskCreation from './components/tasks';
+import {TaskCreation} from './components/tasks';
 import serverHandler from './lib/server/serverHandler';
-import { SafeAreaProvider} from 'react-native-safe-area-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { CreateAccount } from './components/createaccount';
+import { loginUserSession } from "./lib/server/users";
 
 
-import  { SignInScreen } from './components/SignInScreen';
+import { SignInScreen } from './components/SignInScreen';
 
 /* 
   Create Tabs to switch between Screens
@@ -30,35 +31,46 @@ const SERVER_PORT = 80;
 const ServerHandler = new serverHandler(SERVER_IP, SERVER_PORT);
 
 
-var userName = ''
 
-function MainStack(){
+var userName = '';
 
-  const[isSignedIn, setIsSignedIn] = React.useState(false)
-  
-  function verifySignIn(uName:string){
+function MainStack() {
+
+  const [isSignedIn, setIsSignedIn] = React.useState(false)
+
+
+  function verifySignIn(uName: string) {
     userName = uName
-    
+
     setIsSignedIn(true)
   }
 
- 
-  
+  if (!isSignedIn) {
+    loginUserSession((result: boolean, username: string) => {
+      if (!result) {
+        return;
+      }
+      verifySignIn(username);
+    });
+  }
+
+
+
   return (
-    <StackNavigator.Navigator >
-          {!isSignedIn ? (
-      <>
-      <StackNavigator.Screen
-        name="SignIn" children={()=> <SignInScreen signIn={verifySignIn} />}  options={{headerShown:false}}/>
-      <StackNavigator.Screen name='CreateAccount' children={() => <CreateAccount signIn={verifySignIn} />} options={{presentation:'modal'}} />
-     </>
-     
-     ) : (
-      // User is signed in
-      <StackNavigator.Screen name="MainApp" component={MaterialTabs} options={{
-        headerShown:false
-      }} />
-    )}
+    <StackNavigator.Navigator  >
+      {!isSignedIn ? (
+        <>
+          <StackNavigator.Screen
+            name="SignIn" children={() => <SignInScreen signIn={verifySignIn} />} options={{ headerShown: false }} />
+          <StackNavigator.Screen name='CreateAccount' children={() => <CreateAccount signIn={verifySignIn} />} options={{ presentation: 'modal' }} />
+        </>
+
+      ) : (
+        // User is signed in
+        <StackNavigator.Screen name="MainApp" component={MaterialTabs} options={{
+          headerShown: false
+        }} />
+      )}
 
 
 
@@ -69,21 +81,21 @@ function MainStack(){
 
 function MaterialTabs() {
   return (
-    <MaterialTab.Navigator initialRouteName='Home' tabBarPosition='bottom'  style={{}} screenOptions={{
+    <MaterialTab.Navigator initialRouteName='Home' tabBarPosition='bottom' style={{}} screenOptions={{
 
       tabBarStyle: { bottom: 25 },
-      tabBarIndicatorStyle:{
-        backgroundColor:'maroon'
+      tabBarIndicatorStyle: {
+        backgroundColor: 'maroon'
       }
     }}>
-      <MaterialTab.Screen name='Calendar' children={()=> <CalendarNav Name={userName} />} options={{
+      <MaterialTab.Screen name='Calendar' children={() => <CalendarNav Name={userName} />} options={{
         tabBarIcon: ({ color, focused }) => (
           <MaterialCommunityIcons name="calendar-month" color='black' size={24} />
         ),
 
       }} />
 
-      <MaterialTab.Screen name='Home' children={()=> <HomeScreenNav Name= {userName}/>} options={{
+      <MaterialTab.Screen name='Home' children={() => <HomeScreenNav Name={userName} />} options={{
         tabBarIcon: ({ color, focused }) => (
           <MaterialCommunityIcons name="home" color='black' size={24} />
         ),
@@ -102,14 +114,15 @@ const MyTheme = {
   colors: {
     ...DefaultTheme.colors,
     primary: 'rgb(255, 45, 85)',
-    background:'white'
+    background: 'white'
   },
 };
 
 
 //Main Application Function
 const App = () => {
- 
+
+
   return (
     <SafeAreaProvider>
       <NavigationContainer theme={MyTheme} >
