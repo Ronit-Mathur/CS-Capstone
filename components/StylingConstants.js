@@ -3,6 +3,6 @@ module.exports = {
     subFontSize:15,
     tinyFontSize:12,
 
-    highlightColor: "#ffbb29",
+    highlightColor: "#ff8800",
     lightBackgroundColor: "#dedede"
 }
