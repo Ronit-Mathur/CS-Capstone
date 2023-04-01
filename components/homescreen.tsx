@@ -417,10 +417,6 @@ function Home() {
 
 
 async function addNewTask() {
-  const currentDate = Helpers.getTodaysDate()
-  const addNew = await addTask('kway66', 'Test', currentDate, 'Lumen Field', '18:00', '24:00')
-
-  async function addNewTask (){
     const currentDate = Helpers.getTodaysDate()
     const addNew = await addTask(serverHandler.current.userState.username, 'Test2', currentDate, 'Lumen', '10:00', '13:00')
     console.log(addNew);
@@ -430,4 +426,4 @@ async function addNewTask() {
 
 
 
-export { HomeScreenNav, getUser }; 
+export { HomeScreenNav, getUser }
