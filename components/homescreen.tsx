@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Text, View, SafeAreaView, RefreshControl, Alert, Button } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { DefaultTheme, NavigationContainer, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/core';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Daily from '../lib/server/daily';
 import { getDaysTasks, addTask } from '../lib/server/tasks';
