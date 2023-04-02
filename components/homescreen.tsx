@@ -98,7 +98,7 @@ function DailyMood() {
         paddingTop:" 2%",
         borderRadius: 8,
         shadowRadius: 5,
-        shadowOpacity: 1,
+        shadowOpacity: .85,
         shadowColor: "black",
         
       }}>
@@ -220,9 +220,6 @@ function TopTabs() {
 }
 
 
-const demoProgress = [
-  { summary: 'Demo Scheduled Task', startTime: '15:00', endTime: '17:00', location: 'Thompson 399' }
-]
 
 function InProgress() {
   const [refreshing, setRefreshing] = React.useState(false)
@@ -235,7 +232,6 @@ function InProgress() {
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
     setList(await HSH.getCurrentTasks(user))
-    //setList(list)
     setRefreshing(false);
   }, [refreshing])
 
@@ -263,9 +259,6 @@ function InProgress() {
   );
 }
 
-const demoCompleted = [
-  { summary: 'Demo Completed Task', starTime: '11:00', endTime: '12:00', location: 'Thompson 399' }
-]
 
 
 function Completed() {
