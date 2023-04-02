@@ -305,7 +305,7 @@ const getUser = () => {
 
 function TaskWidget({ item }: any, Nav: any, isCompleted:boolean ) {
   var bool = false
-  if (item.summary.length > 17) {
+  if (item.summary.length > 24) {
     bool = true
   } else {
     bool = false
@@ -318,7 +318,7 @@ function TaskWidget({ item }: any, Nav: any, isCompleted:boolean ) {
 
   return (<View style={{ marginLeft: "2%", marginRight: "2%", borderLeftWidth: 3, borderColor: StylingConstants.highlightColor, flexDirection:"row", justifyContent:"space-between", alignItems:"center" }}>
     <View style={{ marginLeft: "2%" }}>
-      <Text style={{ color: 'black', fontWeight: "bold", fontSize: StylingConstants.subFontSize }}>{helpers.toTitleCase(item.summary.substring(0, 18))} {bool ? '...' : ''}</Text>
+      <Text style={{ color: 'black', fontWeight: "bold", fontSize: StylingConstants.subFontSize }}>{helpers.toTitleCase(item.summary.substring(0, 25))} {bool ? '...' : ''}</Text>
       <Text style={{ color: 'black', fontSize: StylingConstants.tinyFontSize }}>Start Time: {item.startTime}</Text>
       <Text style={{ color: 'black', fontSize: StylingConstants.tinyFontSize }}>End Time: {item.endTime}</Text>
       <Text style={{ color: 'black', fontSize: StylingConstants.tinyFontSize }}>Location: {item.location}</Text>
@@ -379,10 +379,39 @@ function TaskWidget({ item }: any, Nav: any, isCompleted:boolean ) {
 }
 
 function Home() {
-
+  const[unratedTaskList,setUnratedTaskList] = React.useState([]); 
   const navigation = useNavigation();
+  const message = 'You have unrated Tasks! Would you like to rate them now?'
+  React.useEffect(() => {
+    const check = async () => {
+      const list = await HSH.checkForUnRatedTasks()
+      
+      setUnratedTaskList(list)
+    }
+    check()
+    
+  }, [])
+  
+  const unRatedTasks = () => {
+    Alert.alert('UnRated Tasks', message, [
+      {
+        text: 'Dismiss',
+        onPress: () => console.log('Dismissed'),
+
+      },
+
+    ])
+  }
+
+  
+ if(Object.keys(unratedTaskList).length != 0){
+   unRatedTasks()
+ }
+
+ 
+
   return (
-    <View style={{
+    <SafeAreaView style={{
       flex: 1,
       marginTop: '2%',
     }}>
@@ -410,7 +439,7 @@ function Home() {
         onPress={() => navigation.navigate('AddTask')}
         style={{ marginRight: 0, marginBottom: '3%' }}
       />
-    </View>
+    </SafeAreaView>
 
   );
 }
