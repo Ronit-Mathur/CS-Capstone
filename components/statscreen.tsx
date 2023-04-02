@@ -9,7 +9,8 @@ import calImportPage from './CalImportPage';
 import { ContributionGraph } from 'react-native-chart-kit';
 import { Dimensions } from 'react-native';
 import { screenHeight, screenWidth } from 'react-native-calendars/src/expandableCalendar/commons';
-import { calcDayMood } from './statsHelpers';
+import { calcDayMood, rateManualTask } from './statsHelpers';
+import serverHandler from '../lib/server/serverHandler';
 const StackNavigator = createNativeStackNavigator();
 var  user = ''
 
@@ -54,7 +55,9 @@ function Stats({Name}:any) {
       width={screenWidth}
       height={225}
       endDate={new Date("2023-08-01")}/>
-      <Button title='calcDayMood' onPress={() => calcDayMood('testuser1', '03/2023')}></Button>
+      <Text># of Rated Tasks:</Text>
+      <Button title='calcDayMood' onPress={() => calcDayMood(serverHandler.current.userState.username, '03/26/2023')}></Button>
+      <Button title='rateTask' onPress={() => rateManualTask(260)} ></Button>
       <ImportCalendar></ImportCalendar>
       
     
