@@ -100,7 +100,6 @@ function DailyMood() {
         shadowRadius: 5,
         shadowOpacity: 1,
         shadowColor: "black",
-        shadowOffset: 2
         
       }}>
         <Text style={{
@@ -147,6 +146,7 @@ function DailyMood() {
         alignSelf: 'center',
         fontSize: StylingConstants.normalFontSize,
         fontWeight: "bold",
+        marginTop:'5%',
 
       }}>Your Tasks Today</Text>
 
