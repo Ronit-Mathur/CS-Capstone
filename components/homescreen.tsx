@@ -98,9 +98,8 @@ function DailyMood() {
         paddingTop:" 2%",
         borderRadius: 8,
         shadowRadius: 5,
-        shadowOpacity: 1,
+        shadowOpacity: .85,
         shadowColor: "black",
-        shadowOffset: 2
         
       }}>
         <Text style={{
@@ -147,6 +146,7 @@ function DailyMood() {
         alignSelf: 'center',
         fontSize: StylingConstants.normalFontSize,
         fontWeight: "bold",
+        marginTop:'5%',
 
       }}>Your Tasks Today</Text>
 
@@ -220,9 +220,6 @@ function TopTabs() {
 }
 
 
-const demoProgress = [
-  { summary: 'Demo Scheduled Task', startTime: '15:00', endTime: '17:00', location: 'Thompson 399' }
-]
 
 function InProgress() {
   const [refreshing, setRefreshing] = React.useState(false)
@@ -235,7 +232,6 @@ function InProgress() {
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
     setList(await HSH.getCurrentTasks(user))
-    //setList(list)
     setRefreshing(false);
   }, [refreshing])
 
@@ -263,9 +259,6 @@ function InProgress() {
   );
 }
 
-const demoCompleted = [
-  { summary: 'Demo Completed Task', starTime: '11:00', endTime: '12:00', location: 'Thompson 399' }
-]
 
 
 function Completed() {
@@ -316,7 +309,7 @@ const getUser = () => {
 
 function TaskWidget({ item }: any, Nav: any, isCompleted: boolean) {
   var bool = false
-  if (item.summary.length > 17) {
+  if (item.summary.length > 24) {
     bool = true
   } else {
     bool = false
@@ -329,7 +322,7 @@ function TaskWidget({ item }: any, Nav: any, isCompleted: boolean) {
 
   return (<View style={{ marginLeft: "2%", marginRight: "2%", marginBottom: 5, borderLeftWidth: 3, borderColor: StylingConstants.highlightColor, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
     <View style={{ marginLeft: "2%" }}>
-      <Text style={{ color: 'black', fontWeight: "bold", fontSize: StylingConstants.subFontSize }}>{helpers.toTitleCase(item.summary.substring(0, 18))} {bool ? '...' : ''}</Text>
+      <Text style={{ color: 'black', fontWeight: "bold", fontSize: StylingConstants.subFontSize }}>{helpers.toTitleCase(item.summary.substring(0, 25))} {bool ? '...' : ''}</Text>
       <Text style={{ color: 'black', fontSize: StylingConstants.tinyFontSize }}>Start Time: {item.startTime}</Text>
       <Text style={{ color: 'black', fontSize: StylingConstants.tinyFontSize }}>End Time: {item.endTime}</Text>
       <Text style={{ color: 'black', fontSize: StylingConstants.tinyFontSize }}>Location: {item.location}</Text>
@@ -390,10 +383,39 @@ function TaskWidget({ item }: any, Nav: any, isCompleted: boolean) {
 }
 
 function Home() {
-
+  const[unratedTaskList,setUnratedTaskList] = React.useState([]); 
   const navigation = useNavigation();
+  const message = 'You have unrated Tasks! Would you like to rate them now?'
+  React.useEffect(() => {
+    const check = async () => {
+      const list = await HSH.checkForUnRatedTasks()
+      
+      setUnratedTaskList(list)
+    }
+    check()
+    
+  }, [])
+  
+  const unRatedTasks = () => {
+    Alert.alert('UnRated Tasks', message, [
+      {
+        text: 'Dismiss',
+        onPress: () => console.log('Dismissed'),
+
+      },
+
+    ])
+  }
+
+  
+ if(Object.keys(unratedTaskList).length != 0){
+   unRatedTasks()
+ }
+
+ 
+
   return (
-    <View style={{
+    <SafeAreaView style={{
       flex: 1,
       marginTop: '2%',
     }}>
@@ -421,7 +443,7 @@ function Home() {
         onPress={() => navigation.navigate('AddTask')}
         style={{ marginRight: 0, marginBottom: '3%' }}
       />
-    </View>
+    </SafeAreaView>
 
   );
 }
@@ -431,10 +453,11 @@ async function addNewTask() {
   const currentDate = Helpers.getTodaysDate()
   const addNew = await addTask('kway66', 'Test', currentDate, 'Lumen Field', '18:00', '24:00')
 
+  console.log(addNew);
 }
 
 
 
 
 
-export { HomeScreenNav, getUser };
+export { HomeScreenNav, getUser }; 

@@ -55,6 +55,7 @@ function Stats({Name}:any) {
       width={screenWidth}
       height={225}
       endDate={new Date("2023-08-01")}/>
+      <Text># of Rated Tasks:</Text>
       <Button title='calcDayMood' onPress={() => calcDayMood(serverHandler.current.userState.username, '03/26/2023')}></Button>
       <Button title='rateTask' onPress={() => rateManualTask(260)} ></Button>
       <ImportCalendar></ImportCalendar>

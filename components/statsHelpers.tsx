@@ -38,6 +38,10 @@ async function calcDayMood(user: any, day: any) {
     return dayAvgMood;
 }
 
+async function getNumRated(user: any) {
+    
+}
+
 async function rateManualTask(taskID: any) {
     rateTask(taskID, 4, 3, 4, 4);
 }
@@ -47,4 +51,4 @@ async function rateManualTask(taskID: any) {
 //     return tmp
 // }
 
-export {calcDayMood, rateManualTask};
+export {getNumRated, calcDayMood, rateManualTask};

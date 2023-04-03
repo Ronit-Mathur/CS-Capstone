@@ -1,7 +1,7 @@
 import { useState, } from 'react';
 import {View,Text, TextInput, Button} from 'react-native';
 import * as Helpers from '../backend_server/lib/helpers';
-import{getTodaysActiveTasks, getTodaysFinishedTasks, updateTask, completeTask} from '../lib/server/tasks';
+import{getTodaysActiveTasks, getTodaysFinishedTasks, updateTask, rateTask, getUnratedCompletedTasks} from '../lib/server/tasks';
 import { useNavigation} from '@react-navigation/native';
 import {getUser} from './homescreen'
 
@@ -299,7 +299,7 @@ function RankTask (task:any){
     const numMental = Number(mentalDifficulty)
 
 
-    const addRank = await completeTask(id,numEnjoy,numPhysical,numEngage,numMental)
+    const addRank = await rateTask(id,numEnjoy,numPhysical,numEngage,numMental)
  }
 
 async function updateT ( user:string, summary:string, startTime:string, endTime:string, location:string, taskId:any){
@@ -350,4 +350,10 @@ async function getCompletedTasks (user:string){
     return completedTaskList;
 }
 
-export {getCurrentTasks,getCompletedTasks, EditTask, RankTask};
+async function checkForUnRatedTasks (){
+    const unRatedTasks = await getUnratedCompletedTasks()
+    
+    return unRatedTasks
+}
+
+export {getCurrentTasks,getCompletedTasks, EditTask, RankTask, checkForUnRatedTasks};
