@@ -527,7 +527,7 @@ module.exports = class taskHandler {
         var oppId = DatabaseHandler.current.enqueueOperation(q);
         var tasks = await DatabaseHandler.current.waitForOperationToFinish(oppId);
 
-        console.log(tasks);
+       
 
         var tasksOut = [];
         for(var i = 0; i<tasks.length; i++){
@@ -535,8 +535,6 @@ module.exports = class taskHandler {
             var taskDate = tasks[i].date;
             if(taskDate && helpers.MMDDYYYYbeforeMMDDYYYY(taskDate, date)){
                 if(date == taskDate){
-                    console.log(tasks[i].endTime);
-                    console.log(hhmm);
                     if(isHourMinuteBefore(tasks[i].endTime, hhmm)){
                         tasksOut.push(tasks[i]);
                     }
@@ -549,7 +547,7 @@ module.exports = class taskHandler {
             }
         }
 
-        console.log(tasks);
+
 
 
 

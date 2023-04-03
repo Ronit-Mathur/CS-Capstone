@@ -499,13 +499,13 @@ module.exports = class Server {
          * then closes the window
          */
         app.get(SERVER_ENDPOINTS.GOOGLE_CALENDAR_OAUTH_RESPONSE, async (req, res) => {
-            if (req.query.code) {
+            if (req.query.code && req.query.username) {
 
 
                 res.status(200).send(serverConstants.DUMMY_PAGES.FINISHED_PAGE); //tell the client to close the window
 
                 //store the data in the user handler
-                await this.userHandler.completeGoogleAuthentication(req.ip, req.query.code);
+                await this.userHandler.completeGoogleAuthentication(req.query.username, req.query.code);
                 return;
             }
             else {
@@ -526,12 +526,12 @@ module.exports = class Server {
             }
 
             //check if user is authenticated
-            if (!this.userHandler.hasGoogleAuthentication(req.ip)) {
+            if (!this.userHandler.hasGoogleAuthentication(req.query.username)) {
                 res.status(400);
             }
 
             //get calendars
-            const calendars = await this.userHandler.getGoogleCalendars(req.ip);
+            const calendars = await this.userHandler.getGoogleCalendars(req.query.username);
             res.status(200).send(calendars);
             return;
 
@@ -555,7 +555,7 @@ module.exports = class Server {
 
             try {
                 //import calendar
-                await this.userHandler.importGoogleCalendar(req.query.id, req.ip, req.query.username);
+                await this.userHandler.importGoogleCalendar(req.query.id, req.query.username);
                 res.status(200).send(JSON.stringify("ok"));
             } catch (e) {
                 console.log("Error importing from google calendar");
@@ -586,7 +586,7 @@ module.exports = class Server {
                 res.status(200).send(serverConstants.DUMMY_PAGES.FINISHED_PAGE); //tell the client to close the window
 
                 //store the data in the user handler
-                await this.userHandler.completeOutlookAuthentication(req.ip, req.query.code);
+                await this.userHandler.completeOutlookAuthentication(req.query.username, req.query.code);
                 return;
             }
             else {
@@ -603,12 +603,12 @@ module.exports = class Server {
             }
 
             //check if user is authenticated
-            if (!this.userHandler.hasOutlookAuthentication(req.ip)) {
+            if (!this.userHandler.hasOutlookAuthentication(req.query.username)) {
                 res.status(400);
             }
 
             //get calendars
-            const calendars = await this.userHandler.getOutlookCalendars(req.ip);
+            const calendars = await this.userHandler.getOutlookCalendars(req.query.username);
             res.status(200).send(calendars);
             return;
         });
@@ -623,13 +623,13 @@ module.exports = class Server {
                 return;
             }
 
-            if (!req.query.id || !req.query.username || !this.userHandler.hasOutlookAuthentication(req.ip)) {
+            if (!req.query.id || !req.query.username || !this.userHandler.hasOutlookAuthentication(req.query.username)) {
                 res.status(400); //invalid query
             }
 
             //import calendar
             try {
-                await this.userHandler.importOutlookCalendar(req.query.id, req.ip, req.query.username);
+                await this.userHandler.importOutlookCalendar(req.query.id, req.query.username);
                 res.status(200).send(JSON.stringify("ok"));
             }
             catch (e) {

@@ -327,7 +327,7 @@ function TaskWidget({ item }: any, Nav: any, isCompleted: boolean) {
     navPath = 'RankTask';
   }
 
-  return (<View style={{ marginLeft: "2%", marginRight: "2%", borderLeftWidth: 3, borderColor: StylingConstants.highlightColor, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+  return (<View style={{ marginLeft: "2%", marginRight: "2%", marginBottom: 5, borderLeftWidth: 3, borderColor: StylingConstants.highlightColor, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
     <View style={{ marginLeft: "2%" }}>
       <Text style={{ color: 'black', fontWeight: "bold", fontSize: StylingConstants.subFontSize }}>{helpers.toTitleCase(item.summary.substring(0, 18))} {bool ? '...' : ''}</Text>
       <Text style={{ color: 'black', fontSize: StylingConstants.tinyFontSize }}>Start Time: {item.startTime}</Text>
@@ -431,14 +431,10 @@ async function addNewTask() {
   const currentDate = Helpers.getTodaysDate()
   const addNew = await addTask('kway66', 'Test', currentDate, 'Lumen Field', '18:00', '24:00')
 
-  async function addNewTask (){
-    const currentDate = Helpers.getTodaysDate()
-    const addNew = await addTask(serverHandler.current.userState.username, 'Test2', currentDate, 'Lumen', '10:00', '13:00')
-    console.log(addNew);
 }
 
 
 
 
 
-export { HomeScreenNav, getUser }; 
+export { HomeScreenNav, getUser };
