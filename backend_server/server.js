@@ -504,7 +504,7 @@ module.exports = class Server {
             const uri = createGoogleCalenderOAuthUri();
 
             //store the ip temporarily under the userbane
-            this.userHandler.current.storeUsernameUnderIp(req.query.username, req.ip);
+            this.userHandler.storeUsernameUnderIp(req.query.username, req.ip);
             res.status(200).send(JSON.stringify(uri));
         });
 
@@ -519,7 +519,7 @@ module.exports = class Server {
                 res.status(200).send(serverConstants.DUMMY_PAGES.FINISHED_PAGE); //tell the client to close the window
 
                 //store the data in the user handler
-                await this.userHandler.completeGoogleAuthentication(req.ip && req.query.code);
+                await this.userHandler.completeGoogleAuthentication(req.ip, req.query.code);
                 return;
             }
             else {
