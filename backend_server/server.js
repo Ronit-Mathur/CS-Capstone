@@ -219,6 +219,29 @@ module.exports = class Server {
         });
 
         /**
+         * counts a users completed tasks
+         */
+        app.get(SERVER_ENDPOINTS.USER_TASKS_COUNT_COMPLETED, async (req, res) =>{
+            if (!await this.authenticateQuery(req, res)) {
+                res.status(400).send("invalid auth key");
+                return;
+            }
+            
+
+            if (req.query.time && req.query.username) {
+                var count = await this.taskHandler.totalCompletedTasks(req.query.username, req.query.time);
+                res.status(200).send(JSON.stringify(count));
+                return;
+            }
+            else {
+                res.status(400).send("invalid parameters");
+                return;
+            }
+
+       
+        })
+
+        /**
          * access a users tasks by day
          */
         app.get(SERVER_ENDPOINTS.USER_TASKS_BY_DAY, async (req, res) => {

@@ -38,6 +38,13 @@ module.exports = class taskHandler {
     }
 
 
+    async _getAllTasks(username){
+        var q = new Query(1, "SELECT * FROM tasks WHERE username = ?" , [username]);
+        var id = DatabaseHandler.current.enqueueOperation(q);
+        return DatabaseHandler.current.waitForOperationToFinish(id);
+    }
+
+
     /**
      * generates an unused recursive id for a task
      * @return unused recursive id
@@ -574,6 +581,28 @@ module.exports = class taskHandler {
         //var tasks = await DatabaseHandler.current.query("SELECT taskId, date FROM tasks WHERE username=? AND taskId IN (SELECT taskId from ratesTasks WHERE engagement =?)",[username, engagement]);
         return tasks;
 
+    }
+
+
+
+    /**
+     * 
+     * @param {*} username 
+     * @returns the total number of completed tasks belonging to a user
+     */
+    async totalCompletedTasks(username, epoch){
+        var tasks = await this._getAllTasks(username);
+        var count = 0;
+        var now = new Date();
+
+        tasks.forEach(task => {
+            var taskDate = Helpers.MMDDYYYYAndHHMMtoDate(task.date, task.endTime);
+            if(taskDate <= now){
+                count++;
+            }
+        });
+
+        return count;
     }
 
 

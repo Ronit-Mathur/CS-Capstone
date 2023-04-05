@@ -22,6 +22,7 @@ module.exports = {
         USER_TASKS_BY_MONTH: "/api/user/tasks/month",
         USER_TASK_BY_ID: "/api/user/tasks/id",
         USER_TASKS_NOT_RATED: "/api/user/tasks/unrated",
+        USER_TASKS_COUNT_COMPLETED: "/api/user/tasks/count/completed",
         
         
     

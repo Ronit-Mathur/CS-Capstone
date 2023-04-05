@@ -104,6 +104,12 @@ module.exports = {
 
   },
 
+  MMDDYYYYAndHHMMtoDate(d, time){
+    var parts = d.split("/");
+    var timeParts = time.split(":");
+    return new Date(parts[2], parts[0] - 1, parts[1], timeParts[0], timeParts[1]);
+  },
+
   /**
    * converts an epoch timestamp to the hh:mm format
    * https://stackoverflow.com/questions/4631928/convert-utc-epoch-to-local-date
