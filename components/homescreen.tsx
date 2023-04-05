@@ -29,15 +29,14 @@ function HomeScreenNav({ Name }: any) {
   return (
     <StackNavigator.Navigator initialRouteName='Home' >
       <StackNavigator.Screen name='HomeScreen' component={Home} options={{ title: 'Home', headerShown: false }} />
+      
       <StackNavigator.Group  >
-        <StackNavigator.Screen name='EditTask' component={HSH.EditTask} options={{ presentation: 'modal', headerStyle: { backgroundColor: 'transparent', }, title: '', contentStyle: { backgroundColor: 'transparent' } }} />
+      <StackNavigator.Screen name='EditTask' component={HSH.EditTask} options={{ presentation: 'modal', headerStyle: { backgroundColor: 'transparent', }, title: '', contentStyle: { backgroundColor: 'transparent' } }} />
         <StackNavigator.Screen name='RankTask' component={HSH.RankTask} options={{ presentation: 'modal', headerStyle: { backgroundColor: 'transparent', }, title: '', contentStyle: { backgroundColor: 'transparent' } }} />
         <StackNavigator.Screen name='Settings' component={Settings} options={{ presentation: 'containedModal', }} />
         <StackNavigator.Screen name='calImport' component={CalImportPage} options={{ presentation: 'containedModal', }} />
         <StackNavigator.Screen name='AddTask' children={() => <TaskCreation Name={user} />} options={{ presentation: 'modal' }} />
-
       </StackNavigator.Group>
-
     </StackNavigator.Navigator>
   );
 }
@@ -386,6 +385,8 @@ function Home() {
   const[unratedTaskList,setUnratedTaskList] = React.useState([]); 
   const navigation = useNavigation();
   const message = 'You have unrated Tasks! Would you like to rate them now?'
+
+  /** 
   React.useEffect(() => {
     const check = async () => {
       const list = await HSH.checkForUnRatedTasks()
@@ -395,6 +396,7 @@ function Home() {
     check()
     
   }, [])
+  **/
   
   const unRatedTasks = () => {
     Alert.alert('UnRated Tasks', message, [
@@ -408,12 +410,13 @@ function Home() {
   }
 
   
+  /** 
  if(Object.keys(unratedTaskList).length != 0){
    unRatedTasks()
  }
+ **/
 
  
-
   return (
     <SafeAreaView style={{
       flex: 1,
@@ -435,6 +438,7 @@ function Home() {
 
       </View>
 
+        {/** 
       <ActionButton
 
         position='right'
@@ -443,6 +447,7 @@ function Home() {
         onPress={() => navigation.navigate('AddTask')}
         style={{ marginRight: 0, marginBottom: '3%' }}
       />
+    **/}
     </SafeAreaView>
 
   );

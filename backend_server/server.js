@@ -489,8 +489,22 @@ module.exports = class Server {
          * begins the oauth login process for google calendar
          * sends a google oauth link back to the user to begin login
          */
-        app.get(SERVER_ENDPOINTS.GOOGLE_CALENDAR_OAUTH_BEGIN, (req, res) => {
+        app.get(SERVER_ENDPOINTS.GOOGLE_CALENDAR_OAUTH_BEGIN, async (req, res) => {
+
+            if (!await this.authenticateQuery(req, res)) {
+                res.status(400).send("invalid auth key");
+                return;
+            }
+            
+            if(!req.query.username || !req.ip){
+                res.status(400).send("missing params");
+                return;
+            }
+
             const uri = createGoogleCalenderOAuthUri();
+
+            //store the ip temporarily under the userbane
+            this.userHandler.current.storeUsernameUnderIp(req.query.username, req.ip);
             res.status(200).send(JSON.stringify(uri));
         });
 
@@ -499,13 +513,13 @@ module.exports = class Server {
          * then closes the window
          */
         app.get(SERVER_ENDPOINTS.GOOGLE_CALENDAR_OAUTH_RESPONSE, async (req, res) => {
-            if (req.query.code && req.query.username) {
+            if (req.query.code) {
 
 
                 res.status(200).send(serverConstants.DUMMY_PAGES.FINISHED_PAGE); //tell the client to close the window
 
                 //store the data in the user handler
-                await this.userHandler.completeGoogleAuthentication(req.query.username, req.query.code);
+                await this.userHandler.completeGoogleAuthentication(req.ip && req.query.code);
                 return;
             }
             else {
