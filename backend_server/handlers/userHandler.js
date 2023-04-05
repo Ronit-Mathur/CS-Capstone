@@ -308,7 +308,7 @@ module.exports = class UserHandler {
         var token = await getOutlookOAuth2Token(key);
 
         //swap the ip with the username
-        username = this.ipToUsername[ip];
+        var username = this.ipToUsername[ip];
         this._clearUsernameFromIp(ip);
 
         this.outlookOAuthCredentials[username] = token;
@@ -332,7 +332,7 @@ module.exports = class UserHandler {
         const client = await getAuthorizedGoogleOAuth2Client(key);
 
         //swap the ip with the username
-        username = this.ipToUsername[ip];
+        var username = this.ipToUsername[ip];
         this._clearUsernameFromIp(ip);
 
 
