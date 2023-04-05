@@ -586,6 +586,19 @@ module.exports = class Server {
          */
 
         app.get(SERVER_ENDPOINTS.OUTLOOK_CALENDAR_OAUTH_BEGIN, async (req, res) => {
+
+            if (!await this.authenticateQuery(req, res)) {
+                res.status(400).send("invalid auth key");
+                return;
+            }
+            
+            if(!req.query.username || !req.ip){
+                res.status(400).send("missing params");
+                return;
+            }
+
+            this.userHandler.storeUsernameUnderIp(req.query.username, req.ip);
+
             var url = calendarImports.createOutlookCalendarOAuthUri();
             res.status(200).send(JSON.stringify(url));
         });
@@ -600,7 +613,7 @@ module.exports = class Server {
                 res.status(200).send(serverConstants.DUMMY_PAGES.FINISHED_PAGE); //tell the client to close the window
 
                 //store the data in the user handler
-                await this.userHandler.completeOutlookAuthentication(req.query.username, req.query.code);
+                await this.userHandler.completeOutlookAuthentication(req.ip, req.query.code);
                 return;
             }
             else {
