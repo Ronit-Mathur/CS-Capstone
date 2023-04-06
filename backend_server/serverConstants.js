@@ -23,6 +23,7 @@ module.exports = {
         USER_TASK_BY_ID: "/api/user/tasks/id",
         USER_TASKS_NOT_RATED: "/api/user/tasks/unrated",
         USER_TASKS_COUNT_COMPLETED: "/api/user/tasks/count/completed",
+       
         
         
     
@@ -35,6 +36,7 @@ module.exports = {
         USER_EXISTS: "/api/user/exists",
         USER_LOGIN: "/api/user/login",
         USER_SESSION_LOGIN: "/api/user/session",
+        USER_INFO: "/api/user/info",
 
         USER_RATE_DAY: "/api/user/day/rate",
         USER_GET_DAY_RATING: "/api/user/day/rating"

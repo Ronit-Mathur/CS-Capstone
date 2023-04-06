@@ -104,12 +104,33 @@ module.exports = {
 
   },
 
-  MMDDYYYYAndHHMMtoDate(d, time){
+  MMDDYYYYAndHHMMtoDate(d, time) {
     var parts = d.split("/");
     var timeParts = time.split(":");
     return new Date(parts[2], parts[0] - 1, parts[1], timeParts[0], timeParts[1]);
   },
 
+  MMDDYYYYtoDate(d){
+    var parts = d.split("/");
+    return new Date(parts[2], parts[0] - 1, parts[1]);
+  },
+
+  dateToMMDDYYYY(date) {
+    const yyyy = date.getFullYear();
+    let mm = date.getMonth() + 1; // Months start at 0!
+    let dd = date.getDate();
+
+    if (dd < 10) dd = '0' + dd;
+    if (mm < 10) mm = '0' + mm;
+
+    return mm + '/' + dd + '/' + yyyy;
+  },
+
+  
+  dateToDayOfWeek(date){
+    const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    return weekday[date.getDay()];
+  },
   /**
    * converts an epoch timestamp to the hh:mm format
    * https://stackoverflow.com/questions/4631928/convert-utc-epoch-to-local-date

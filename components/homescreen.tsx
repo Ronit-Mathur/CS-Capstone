@@ -5,7 +5,7 @@ import { DefaultTheme, NavigationContainer, useNavigation } from '@react-navigat
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Daily from '../lib/server/daily';
 import { getDaysTasks, addTask } from '../lib/server/tasks';
-import { FlatList } from 'react-native-gesture-handler';
+import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import ActionButton from 'react-native-action-button';
 import * as Helpers from '../backend_server/lib/helpers';
 import * as HSH from './homescreenhelpers';
@@ -17,6 +17,9 @@ import CalImportPage from './CalImportPage';
 import helpers from '../backend_server/lib/helpers';
 import StylingConstants from './StylingConstants';
 import serverHandler from '../lib/server/serverHandler';
+import { useState } from 'react';
+import { getDay } from "../lib/server/daily";
+import FiveDayMoodHistoryWidget from './widgets/fiveDayMoodHistoryWidget.js';
 
 var user = ''
 
@@ -47,31 +50,37 @@ function Header() {
   return (
     <View style={{
       flexDirection: "column",
-      borderRadius: 8,
       overflow: "hidden",
       height: "30%",
-      marginLeft: "2%",
-      marginRight: "2%",
-      paddingLeft: "2%"
+      paddingTop: "2%",
+      paddingLeft: "4%",
+      backgroundColor: StylingConstants.highlightColor,
+      borderBottomLeftRadius: 12,
+      borderBottomRightRadius: 12,
+      elevation: 1,
+      shadowOpacity: 1,
+      shadowColor: "gray"
     }}>
       <Text style={{
         flex: 1,
         fontSize: 24,
-        color: StylingConstants.darkFontColor,
-        marginTop: "0.5%",
+        color: "black",
         fontFamily: StylingConstants.defaultFontBold
 
       }}>Welcome {helpers.capitalizeFirstLetter(user)}</Text>
+
+      
       <Text style={{
         flex: 1,
         fontSize: StylingConstants.normalFontSize,
         color: StylingConstants.darkFontColor,
         fontFamily: StylingConstants.defaultFont
       }} >{date}</Text>
+  
 
-      <View style={{ position: 'absolute', right: 0, width: 55, height: 55 }}>
+      <View style={{ position: 'absolute', right: 3, top: 10, width: 55, height: 55 }}>
         <View style={{
-          backgroundColor: StylingConstants.highlightColor, position: 'absolute', zIndex: 1, elevation: 1, width: 50, height: 50, borderRadius: 50 / 2
+          backgroundColor: "white", position: 'absolute', zIndex: 1, elevation: 1, width: 50, height: 50, borderRadius: 50 / 2
         }}></View>
         <View style={{
           backgroundColor: 'white', position: 'absolute', zIndex: 2, elevation: 2, width: 40, height: 40, borderRadius: 40 / 2, marginLeft: 5, marginRight: 5, marginTop: 5
@@ -100,6 +109,7 @@ function Header() {
 function DailyMood() {
 
   const date = Helpers.getTodaysDate()
+  const [dayAlreadyRated, SetDayAlreadyRated] = useState(false);
 
   const message = 'Your mood for ' + date + ' has been recorded!'
   const moodRated = () => {
@@ -110,7 +120,61 @@ function DailyMood() {
 
       },
 
-    ])
+    ]);
+
+    SetDayAlreadyRated(true);
+  }
+
+  if (!dayAlreadyRated) {
+    getDay(helpers.getTodaysDate()).then((rating) => {
+      if (rating != null) {
+        SetDayAlreadyRated(true);
+      }
+    });
+  }
+
+  var content = <FiveDayMoodHistoryWidget />
+  if (!dayAlreadyRated) {
+    content = <View><Text style={{
+      fontSize: StylingConstants.normalFontSize,
+      color: StylingConstants.darkFontColor,
+      fontFamily: StylingConstants.defaultFont,
+      marginBottom: "2%",
+    }}>How are you Feeling Today?</Text>
+
+      <View style={{
+        flexDirection: 'row',
+        borderWidth: 0,
+
+
+      }}>
+        <MaterialCommunityIcons name='emoticon-frown-outline' color="#f55a42" size={60} style={{
+          flex: 1,
+        }}
+          onPress={async () => { await Daily.rateDay(user, 1); moodRated(); }}
+        />
+        <MaterialCommunityIcons name='emoticon-sad-outline' color="#f58a42" size={60} style={{
+          flex: 1,
+        }}
+          onPress={async () => { await Daily.rateDay(user, 2); moodRated() }}
+        />
+        <MaterialCommunityIcons name='emoticon-neutral-outline' color="#f5e942" size={60} style={{
+          flex: 1,
+        }}
+          onPress={async () => { await Daily.rateDay(user, 3); moodRated() }}
+        />
+        <MaterialCommunityIcons name='emoticon-happy-outline' color="#cfff30" size={60} style={{
+          flex: 1,
+        }}
+          onPress={async () => { await Daily.rateDay(user, 4); moodRated() }}
+        />
+        <MaterialCommunityIcons name='emoticon-outline' color="#7ef763" size={60} style={{
+          flex: 1,
+        }}
+          onPress={async () => { await Daily.rateDay(user, 5); moodRated() }}
+        />
+      </View>
+    </View>;
   }
 
   return (
@@ -129,54 +193,17 @@ function DailyMood() {
 
     }}>
 
+      {content}
 
 
 
 
-      <Text style={{
-        fontSize: StylingConstants.normalFontSize,
-        color: StylingConstants.darkFontColor,
-        fontFamily: StylingConstants.defaultFont,
-        marginBottom: "2%",
-      }}>How are you Feeling Today?</Text>
-
-      <View style={{
-        flexDirection: 'row',
-        borderWidth: 0,
-
-
-      }}>
-        <MaterialCommunityIcons name='emoticon-frown-outline' color={StylingConstants.darkFontColor} size={60} style={{
-          flex: 1,
-        }}
-          onPress={async () => { await Daily.rateDay(user, 1); moodRated() }}
-        />
-        <MaterialCommunityIcons name='emoticon-sad-outline' color={StylingConstants.darkFontColor} size={60} style={{
-          flex: 1,
-        }}
-          onPress={async () => { await Daily.rateDay(user, 2); moodRated() }}
-        />
-        <MaterialCommunityIcons name='emoticon-neutral-outline' color={StylingConstants.darkFontColor} size={60} style={{
-          flex: 1,
-        }}
-          onPress={async () => { await Daily.rateDay(user, 3); moodRated() }}
-        />
-        <MaterialCommunityIcons name='emoticon-happy-outline' color={StylingConstants.darkFontColor} size={60} style={{
-          flex: 1,
-        }}
-          onPress={async () => { await Daily.rateDay(user, 4); moodRated() }}
-        />
-        <MaterialCommunityIcons name='emoticon-outline' color={StylingConstants.darkFontColor} size={60} style={{
-          flex: 1,
-        }}
-          onPress={async () => { await Daily.rateDay(user, 5); moodRated() }}
-        />
-      </View>
 
 
 
     </View>
   );
+
 }
 
 const CurrentTasksTabs = createMaterialTopTabNavigator()
@@ -412,6 +439,7 @@ function TaskWidget({ item }: any, Nav: any, isCompleted: boolean) {
   **/
 }
 
+
 function Home() {
   const [unratedTaskList, setUnratedTaskList] = React.useState([]);
   const navigation = useNavigation();
@@ -448,14 +476,23 @@ function Home() {
  **/
 
 
+  //var result = await getCurrentTaskProgressAndMax();
+
+  const getCurrentTaskProgressAndMax = async (callback: any) => {
+    var completed = await HSH.getCompletedTasks(user);
+    var left = await HSH.getCurrentTasks(user);
+    callback(completed.length, completed.length + left.length);
+  }
+
+
   return (
     <SafeAreaView style={{
       flex: 1,
-      marginTop: '2%',
 
     }}>
       <View style={{
-        flex: 1.2,
+        flex: 1.5,
+
 
       }}>
         <Header />
@@ -465,12 +502,12 @@ function Home() {
         flex: 3,
         width: '90%',
         alignSelf: 'center',
-        
+
 
       }}>
         <Text style={{
           alignSelf: "center",
-          
+
           fontSize: StylingConstants.normalFontSize,
           color: StylingConstants.darkFontColor,
           fontFamily: StylingConstants.defaultFontBold,
@@ -482,6 +519,7 @@ function Home() {
 
       </View>
 
+
       {/** 
       <ActionButton
 
@@ -492,6 +530,7 @@ function Home() {
         style={{ marginRight: 0, marginBottom: '3%' }}
       />
     **/}
+
     </SafeAreaView>
 
   );

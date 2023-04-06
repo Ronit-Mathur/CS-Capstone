@@ -154,6 +154,18 @@ module.exports = class Server {
             }
         });
 
+        app.get(SERVER_ENDPOINTS.USER_INFO, async (req, res) =>{
+            //authenticate
+            if (!await this.authenticateQuery(req, res)) {
+                res.status(400).send("invalid auth key");
+                return;
+            }
+
+            //get the user's info
+            var userinfo = await this.userHandler.getUserInfo(req.query.username);
+            res.status(200).send(JSON.stringify(userinfo));
+        })
+
 
         /**
          * tries to log in using a sesison token

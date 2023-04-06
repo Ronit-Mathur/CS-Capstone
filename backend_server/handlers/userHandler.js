@@ -436,6 +436,18 @@ module.exports = class UserHandler {
         //hand off events to task handler to parse
         await Server.current.getTaskHandler().parseAndImportOutlookEvents(events, username);
     }
+
+    /**
+     * 
+     * @param {*} username 
+     * @returns the users info
+     */
+    async getUserInfo(username) {
+        var q = new Query(1, "SELECT username,email FROM users WHERE username = ?", [username]);
+        var id = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(id);
+        return result;
+    }
 }
 
 

@@ -1,54 +1,60 @@
 import * as React from 'react';
-import {useNavigation} from '@react-navigation/native';
-import {Text, TextInput, View, Image, SafeAreaView, StyleSheet } from 'react-native';
-import {Calendar, CalendarList} from 'react-native-calendars'
+import { useNavigation } from '@react-navigation/native';
+import { Text, TextInput, View, Image, SafeAreaView, StyleSheet } from 'react-native';
+import { Calendar, CalendarList } from 'react-native-calendars'
 import TaskCreation from './tasks';
-import {createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ActionButton from 'react-native-action-button';
-import {CustomAgenda} from './customAgenda';
+import { CustomAgenda } from './customAgenda';
 
 const StackNavigator = createNativeStackNavigator();
 
-var  user = ''
+var user = ''
 
-function CalendarNav ({Name}:any){
+function CalendarNav({ Name }: any) {
   user = Name
-  
-  return(
+
+  return (
     <StackNavigator.Navigator >
-      <StackNavigator.Screen name='CalendarScreen' component={CalendarScreen} options={{title:'Calendar'}}/>
-    
-      <StackNavigator.Screen name='CalAgenda' component={CustomAgenda} options={{presentation:'modal', title: 'Daily Agenda'}}/>
+
+      <StackNavigator.Screen name='CalendarScreen' component={CalendarScreen} options={{ title: 'Calendar' }} />
+
+      <StackNavigator.Screen name='CalAgenda' component={CustomAgenda} options={{ presentation: 'modal', title: 'Daily Agenda' }} />
+
     </StackNavigator.Navigator>
   );
 }
 
-const sendUserName = () =>{
+const sendUserName = () => {
   return user
 }
 
-function CreateCalendar () {
-  
+function CreateCalendar() {
+
 
 
   const navigation = useNavigation();
-  return(
-    <CalendarList style={{borderTopRightRadius:20,
-      borderTopLeftRadius:20, 
-      overflow:'hidden', 
-      borderBottomLeftRadius:20, 
-      borderBottomRightRadius:20, 
-       
-     }} 
-     onDayPress={ (day) =>{navigation.navigate('CalAgenda', day)}}
-     />
+  return (
+    <CalendarList
+
+    style={{
+      borderTopRightRadius: 20,
+      borderTopLeftRadius: 20,
+      //overflow: 'hidden',
+      borderBottomLeftRadius: 20,
+      borderBottomRightRadius: 20,
+
+    }} 
+   
+      onDayPress={(day) => { navigation.navigate('CalAgenda', day) }}
+    />
     // <Calendar  style={{
     //   borderTopRightRadius:20,
     //   borderTopLeftRadius:20, 
     //   overflow:'hidden', 
     //   borderBottomLeftRadius:20, 
     //   borderBottomRightRadius:20, 
-       
+
     //  }} 
     //  theme={{
     //    'stylesheet.day.basic':{
@@ -59,19 +65,19 @@ function CreateCalendar () {
     //    }
     //  }}
     //  onDayPress={ day =>{navigation.navigate('CalAgenda')}}
-     
+
     // />
   );
 }
 
 function CalendarScreen() {
   const navigation = useNavigation();
-    return (
-      
-        <View style ={{flex:0, position:'relative'}}>
-          <CreateCalendar />
-        </View>
-    );
-  }
+  return (
 
-  export  {CalendarNav, sendUserName};
+    <View style={{ flex: 0, position: 'relative' }}>
+      <CreateCalendar />
+    </View>
+  );
+}
+
+export { CalendarNav, sendUserName };
