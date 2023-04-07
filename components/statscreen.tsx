@@ -58,7 +58,7 @@ function Stats({Name}:any) {
       <Text># of Rated Tasks:</Text>
       <Button title='calcDayMood' onPress={() => calcDayMood(serverHandler.current.userState.username, '03/26/2023')}></Button>
       <Button title='rateTask' onPress={() => rateManualTask(260)} ></Button>
-      <ImportCalendar></ImportCalendar>
+   
       
     
     </SafeAreaView>

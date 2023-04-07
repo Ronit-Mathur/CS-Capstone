@@ -21,6 +21,7 @@ import { AddToOnPhotoUpdated } from './external_integration/importUserPhoto';
 
 function Settings() {
 
+    console.log(serverHandler.current.userState);
     const [userName, setUserName] = React.useState(serverHandler.current.userState.username);
     const [userNameEdit, setUserNameEdit] = React.useState(false)
     const [email, setEmail] = React.useState(serverHandler.current.userState.email);
@@ -138,8 +139,8 @@ function Settings() {
 
 
                 <View style={{ flexDirection: "column", marginTop: "5%", marginLeft: "5%", }}>
-                    <Text style={{ fontSize: StylingConstants.hugeFontSize, color: "black", alignSelf: "flex-start", fontFamily: StylingConstants.defaultFontBold }}>{userName}</Text>
-                    <Text style={{ fontSize: StylingConstants.subFontSize, color: StylingConstants.darkFontColor, alignSelf: "flex-start", fontFamily: StylingConstants.defaultFont }}>{email}</Text>
+                    <Text style={{ fontSize: StylingConstants.hugeFontSize, color: "white", alignSelf: "flex-start", fontFamily: StylingConstants.defaultFontBold }}>{userName}</Text>
+                    <Text style={{ fontSize: StylingConstants.subFontSize, color: StylingConstants.lightFontColor, alignSelf: "flex-start", fontFamily: StylingConstants.defaultFont }}>{email}</Text>
                 </View>
 
             </View>

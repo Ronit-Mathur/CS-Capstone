@@ -34,22 +34,24 @@ const StackNavigator = createNativeStackNavigator();
 function HomeScreenNav({ Name }: any) {
   user = Name
   return (
-    <StackNavigator.Navigator initialRouteName='Home' >
-      <StackNavigator.Screen name='HomeScreen' component={Home} options={{ title: 'Home', headerShown: false }} />
+    <StackNavigator.Navigator initialRouteName='Home'>
+      <StackNavigator.Screen name='HomeScreen' component={Home} options={{ title: 'Home', headerShown: false, }} />
 
       <StackNavigator.Group  >
         <StackNavigator.Screen name='EditTask' component={HSH.EditTask} options={{ presentation: 'modal', headerStyle: { backgroundColor: 'transparent', }, title: '', contentStyle: { backgroundColor: 'transparent' } }} />
         <StackNavigator.Screen name='RankTask' component={HSH.RankTask} options={{ presentation: 'modal', headerStyle: { backgroundColor: 'transparent', }, title: '', contentStyle: { backgroundColor: 'transparent' } }} />
         <StackNavigator.Screen name='Settings' component={Settings} options={{
-          presentation: 'containedModal', headerStyle: { backgroundColor: StylingConstants.highlightColor, },headerShadowVisible: false, // applied here
-          headerBackTitleVisible: false
+          presentation: 'containedModal', headerTintColor:"white", headerTitleStyle:{color:"white"} ,headerStyle: {backgroundColor: StylingConstants.highlightColor, }, headerShadowVisible: false, // applied here
+          headerBackTitleVisible: false, 
         }} />
         <StackNavigator.Screen name='calImport' component={CalImportPage} options={{ presentation: 'containedModal' }} />
         <StackNavigator.Screen name='AddTask' children={() => <TaskCreation Name={user} />} options={{ presentation: 'modal' }} />
-        <StackNavigator.Screen name="ImportUserPhoto" component={ImportUserPhotoScreen} options={{ presentation: 'containedModal', headerStyle: { backgroundColor: 'transparent', }, title: "Edit Photo", contentStyle: { backgroundColor: 'transparent' } }}></StackNavigator.Screen>
-        <StackNavigator.Screen name="ImportCalendar" component={ImportCalendarScreen} options={{ presentation: 'containedModal', headerStyle: { backgroundColor: 'transparent', }, title: "Import Calendar" ,headerShadowVisible: false, // applied here
-          headerBackTitleVisible: false}}></StackNavigator.Screen>
-      
+        <StackNavigator.Screen name="ImportUserPhoto" component={ImportUserPhotoScreen} options={{  headerTintColor:"white", headerTitleStyle:{color:"white"}, presentation: 'containedModal', headerStyle: { backgroundColor: 'transparent', }, title: "Edit Photo", contentStyle: { backgroundColor: 'transparent' } }}></StackNavigator.Screen>
+        <StackNavigator.Screen name="ImportCalendar" component={ImportCalendarScreen} options={{ headerTintColor:"white", headerTitleStyle:{color:"white"},
+          presentation: 'containedModal', headerStyle: { backgroundColor: 'transparent', }, title: "Import Calendar", headerShadowVisible: false, // applied here
+          headerBackTitleVisible: false
+        }}></StackNavigator.Screen>
+
       </StackNavigator.Group>
     </StackNavigator.Navigator>
   );
@@ -125,8 +127,8 @@ function Header() {
     }}>
       <Text style={{
         flex: 1,
-        fontSize: 28,
-        color: "black",
+        fontSize: StylingConstants.massiveFontSize,
+        color: "white",
         fontFamily: StylingConstants.defaultFontBold
 
       }}>Welcome {helpers.capitalizeFirstLetter(user)}</Text>
@@ -135,7 +137,7 @@ function Header() {
       <Text style={{
         flex: 1,
         fontSize: StylingConstants.normalFontSize,
-        color: StylingConstants.darkFontColor,
+        color: StylingConstants.lightFontColor,
         fontFamily: StylingConstants.defaultFont
       }} >{date}</Text>
 
@@ -187,7 +189,7 @@ function DailyMood() {
   if (!dayAlreadyRated) {
     content = <View><Text style={{
       fontSize: StylingConstants.normalFontSize,
-      color: StylingConstants.darkFontColor,
+      color:"black",
       fontFamily: StylingConstants.defaultFont,
       marginBottom: "2%",
     }}>How are you Feeling Today?</Text>
@@ -277,18 +279,19 @@ function TopTabs() {
 
           width: '85%',
           alignSelf: 'center',
-          backgroundColor: 'white',
+       
           borderRadius: 8,
           shadowOpacity: 1,
+          backgroundColor: StylingConstants.lighterHighlightColor
 
 
 
         },
-        tabBarLabelStyle: { fontWeight: "bold", color: "#333333", fontFamily: StylingConstants.defaultFont, alignSelf: "center", },
+        tabBarLabelStyle: {  fontWeight: "bold", color: "white", fontFamily: StylingConstants.defaultFont, alignSelf: "center", },
 
         tabBarContentContainerStyle: {
           flex: 1,
-          backgroundColor: 'transparent',
+          backgroundColor: "transparent",
           borderRadius: 8,
 
 
@@ -559,7 +562,7 @@ function Home() {
           alignSelf: "center",
 
           fontSize: StylingConstants.normalFontSize,
-          color: StylingConstants.darkFontColor,
+          color: "black",
           fontFamily: StylingConstants.defaultFontBold,
           marginBottom: "2%"
 
