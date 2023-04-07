@@ -20,6 +20,7 @@ import serverHandler from '../lib/server/serverHandler';
 import { useState } from 'react';
 import { getDay } from "../lib/server/daily";
 import FiveDayMoodHistoryWidget from './widgets/fiveDayMoodHistoryWidget.js';
+import ImportUserPhotoScreen from './external_integration/importUserPhoto';
 
 var user = ''
 
@@ -39,6 +40,7 @@ function HomeScreenNav({ Name }: any) {
         <StackNavigator.Screen name='Settings' component={Settings} options={{ presentation: 'containedModal', }} />
         <StackNavigator.Screen name='calImport' component={CalImportPage} options={{ presentation: 'containedModal', }} />
         <StackNavigator.Screen name='AddTask' children={() => <TaskCreation Name={user} />} options={{ presentation: 'modal' }} />
+        <StackNavigator.Screen name="ImportUserPhoto" component={ImportUserPhotoScreen} options={{ presentation: 'containedModal', headerStyle: { backgroundColor: 'transparent', }, title: "Edit Photo", contentStyle: { backgroundColor: 'transparent' }  }}></StackNavigator.Screen>
       </StackNavigator.Group>
     </StackNavigator.Navigator>
   );
@@ -58,6 +60,7 @@ function Header() {
       borderBottomLeftRadius: 12,
       borderBottomRightRadius: 12,
       elevation: 1,
+      zIndex: 2,
       shadowOpacity: 1,
       shadowColor: "gray"
     }}>

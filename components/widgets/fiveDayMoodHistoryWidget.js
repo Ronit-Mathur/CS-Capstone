@@ -23,6 +23,8 @@ export default function FiveDayMoodHistoryWidget() {
 
     }
 
+    dayData = dayData.reverse();
+
 
     return (
         <View style={{ flexDirection: "row",  alignItems: "center", justifyContent: "center" }}>
@@ -90,6 +92,7 @@ function DayHistoryWidget(dateResult) {
                 shadowOpacity: 0.22,
                 padding: 8,
                 elevation: 2,
+                zIndex: 2,
                 alignSelf: "center",
                 height:"90%",
                 
