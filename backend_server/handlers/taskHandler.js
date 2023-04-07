@@ -506,7 +506,8 @@ module.exports = class taskHandler {
         var monthNum = month.substring(0, 2);
         var yearNum = month.substring(3, 7);
         var glob = monthNum + "/??/" + yearNum;
-        var q = new Query(1, "SELECT DISTINCT taskId, date FROM ratedTasks WHERE date GLOB ? AND username = ?", [glob, username]);
+        var q = new Query(1, "SELECT DISTINCT ratedTasks.taskId, date FROM (ratedTasks INNER JOIN tasks ON ratedTasks.taskId = tasks.taskId) WHERE  username = ? AND date GLOB ?",  [username, glob]);
+        //var q = new Query(1, "SELECT DISTINCT taskId, date FROM ratedTasks WHERE date GLOB ? AND username = ?", [glob, username]);
         var oppId = DatabaseHandler.current.enqueueOperation(q);
         var tasks = await DatabaseHandler.current.waitForOperationToFinish(oppId);
         //var tasks = await DatabaseHandler.current.query("SELECT taskId, date FROM ratedTasks WHERE date GLOB ? AND username = ?", [glob, username]);

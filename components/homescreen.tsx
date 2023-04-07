@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, View, SafeAreaView, RefreshControl, Alert, Button } from 'react-native';
+import { Text, View, SafeAreaView, RefreshControl, Alert, Button, Pressable } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { DefaultTheme, NavigationContainer, useNavigation } from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -20,6 +20,10 @@ import serverHandler from '../lib/server/serverHandler';
 import { useState } from 'react';
 import { getDay } from "../lib/server/daily";
 import FiveDayMoodHistoryWidget from './widgets/fiveDayMoodHistoryWidget.js';
+import ImportUserPhotoScreen, { AddToOnPhotoUpdated } from './external_integration/importUserPhoto';
+import { GetUserPhoto } from './external_integration/importUserPhoto';
+import RoundImage from './RoundImage';
+import ImportCalendarScreen from './external_integration/importCalendarScreen';
 
 var user = ''
 
@@ -36,9 +40,16 @@ function HomeScreenNav({ Name }: any) {
       <StackNavigator.Group  >
         <StackNavigator.Screen name='EditTask' component={HSH.EditTask} options={{ presentation: 'modal', headerStyle: { backgroundColor: 'transparent', }, title: '', contentStyle: { backgroundColor: 'transparent' } }} />
         <StackNavigator.Screen name='RankTask' component={HSH.RankTask} options={{ presentation: 'modal', headerStyle: { backgroundColor: 'transparent', }, title: '', contentStyle: { backgroundColor: 'transparent' } }} />
-        <StackNavigator.Screen name='Settings' component={Settings} options={{ presentation: 'containedModal', }} />
-        <StackNavigator.Screen name='calImport' component={CalImportPage} options={{ presentation: 'containedModal', }} />
+        <StackNavigator.Screen name='Settings' component={Settings} options={{
+          presentation: 'containedModal', headerStyle: { backgroundColor: StylingConstants.highlightColor, },headerShadowVisible: false, // applied here
+          headerBackTitleVisible: false
+        }} />
+        <StackNavigator.Screen name='calImport' component={CalImportPage} options={{ presentation: 'containedModal' }} />
         <StackNavigator.Screen name='AddTask' children={() => <TaskCreation Name={user} />} options={{ presentation: 'modal' }} />
+        <StackNavigator.Screen name="ImportUserPhoto" component={ImportUserPhotoScreen} options={{ presentation: 'containedModal', headerStyle: { backgroundColor: 'transparent', }, title: "Edit Photo", contentStyle: { backgroundColor: 'transparent' } }}></StackNavigator.Screen>
+        <StackNavigator.Screen name="ImportCalendar" component={ImportCalendarScreen} options={{ presentation: 'containedModal', headerStyle: { backgroundColor: 'transparent', }, title: "Import Calendar" ,headerShadowVisible: false, // applied here
+          headerBackTitleVisible: false}}></StackNavigator.Screen>
+      
       </StackNavigator.Group>
     </StackNavigator.Navigator>
   );
@@ -47,57 +58,96 @@ function HomeScreenNav({ Name }: any) {
 function Header() {
   const date = Helpers.getTodaysDate()
   const navigation = useNavigation()
+
+  const [base64Image, setBase64Image] = useState("");
+
+  AddToOnPhotoUpdated((base64: string) => {
+    setBase64Image(base64);
+  });
+
+  var photo =
+    <MaterialCommunityIcons name='account-circle-outline' color='black' size={70} style={{
+
+      position: 'absolute',
+      padding: 0,
+      zIndex: 3,
+      elevation: 3,
+      marginLeft: -2.5,
+      marginTop: -3.5
+    }}
+
+
+      onPress={() => navigation.navigate('Settings')}
+    />
+
+  if (base64Image == "") {
+    GetUserPhoto((base64: any) => {
+      if (base64 == null) {
+        setBase64Image("null");
+      }
+      else {
+        setBase64Image(base64);
+      }
+    })
+  }
+
+  if (base64Image != "null" && base64Image != "") {
+    photo =
+      <Pressable onPress={() => navigation.navigate('Settings')} style={{
+
+        position: 'absolute',
+        padding: 0,
+        zIndex: 3,
+        elevation: 3,
+        marginLeft: 2.5,
+        marginTop: 2.5
+      }}>{RoundImage({ uri: "data:image/png;base64," + base64Image }, 60)}
+      </Pressable>
+
+  }
+
   return (
     <View style={{
+
       flexDirection: "column",
       overflow: "hidden",
-      height: "30%",
-      paddingTop: "2%",
+      height: "50%",
+      paddingTop: "8%",
+      paddingBottom: "8%",
       paddingLeft: "4%",
       backgroundColor: StylingConstants.highlightColor,
       borderBottomLeftRadius: 12,
       borderBottomRightRadius: 12,
       elevation: 1,
+      zIndex: 2,
       shadowOpacity: 1,
       shadowColor: "gray"
     }}>
       <Text style={{
         flex: 1,
-        fontSize: 24,
+        fontSize: 28,
         color: "black",
         fontFamily: StylingConstants.defaultFontBold
 
       }}>Welcome {helpers.capitalizeFirstLetter(user)}</Text>
 
-      
+
       <Text style={{
         flex: 1,
         fontSize: StylingConstants.normalFontSize,
         color: StylingConstants.darkFontColor,
         fontFamily: StylingConstants.defaultFont
       }} >{date}</Text>
-  
 
-      <View style={{ position: 'absolute', right: 3, top: 10, width: 55, height: 55 }}>
+
+      <View style={{ position: 'absolute', right: "5%", top: "40%", width: 70, height: 70 }}>
         <View style={{
-          backgroundColor: "white", position: 'absolute', zIndex: 1, elevation: 1, width: 50, height: 50, borderRadius: 50 / 2
+          backgroundColor: "white", position: 'absolute', zIndex: 1, elevation: 1, width: 65, height: 65, borderRadius: 65 / 2
         }}></View>
         <View style={{
-          backgroundColor: 'white', position: 'absolute', zIndex: 2, elevation: 2, width: 40, height: 40, borderRadius: 40 / 2, marginLeft: 5, marginRight: 5, marginTop: 5
+          backgroundColor: 'white', position: 'absolute', zIndex: 2, elevation: 2, width: 50, height: 50, borderRadius: 50 / 2, marginLeft: 5, marginRight: 5, marginTop: 5
         }}></View>
-        <MaterialCommunityIcons name='account-circle-outline' color='black' size={55} style={{
-
-          position: 'absolute',
-          padding: 0,
-          zIndex: 3,
-          elevation: 3,
-          marginLeft: -2.5,
-          marginTop: -3.5
-        }}
-
-
-          onPress={() => navigation.navigate('Settings')}
-        />
+        {photo}
       </View>
     </View>
 
@@ -224,7 +274,7 @@ function TopTabs() {
       screenOptions={{
 
         tabBarStyle: {
-          flex: .1,
+
           width: '85%',
           alignSelf: 'center',
           backgroundColor: 'white',
@@ -234,7 +284,7 @@ function TopTabs() {
 
 
         },
-        tabBarLabelStyle: { fontWeight: "bold", color: "#333333", fontFamily: StylingConstants.defaultFont },
+        tabBarLabelStyle: { fontWeight: "bold", color: "#333333", fontFamily: StylingConstants.defaultFont, alignSelf: "center", },
 
         tabBarContentContainerStyle: {
           flex: 1,
@@ -491,7 +541,7 @@ function Home() {
 
     }}>
       <View style={{
-        flex: 1.5,
+        flex: 2,
 
 
       }}>

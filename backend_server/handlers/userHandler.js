@@ -446,7 +446,7 @@ module.exports = class UserHandler {
         var q = new Query(1, "SELECT username,email FROM users WHERE username = ?", [username]);
         var id = DatabaseHandler.current.enqueueOperation(q);
         var result = await DatabaseHandler.current.waitForOperationToFinish(id);
-        return result;
+        return result[0];
     }
 }
 
