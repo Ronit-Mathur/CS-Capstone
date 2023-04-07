@@ -9,7 +9,7 @@ import calImportPage from './CalImportPage';
 import { ContributionGraph } from 'react-native-chart-kit';
 import { Dimensions } from 'react-native';
 import { screenHeight, screenWidth } from 'react-native-calendars/src/expandableCalendar/commons';
-import { calcDayMood, rateManualTask } from './statsHelpers';
+import { calcDayMood, getTaskRatingsMonth, rateManualTask } from './statsHelpers';
 import serverHandler from '../lib/server/serverHandler';
 const StackNavigator = createNativeStackNavigator();
 var  user = ''
@@ -55,8 +55,27 @@ function Stats({Name}:any) {
       width={screenWidth}
       height={225}
       endDate={new Date("2023-08-01")}/>
-      <Text># of Rated Tasks:</Text>
-      <Button title='calcDayMood' onPress={() => calcDayMood(serverHandler.current.userState.username, '03/26/2023')}></Button>
+      
+      <Text style={{padding: 10}}># of Rated Tasks:</Text>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <View style={{flex: 1, height: 5, backgroundColor: 'black'}} />
+          <View>
+            <Text style={{width: 50, textAlign: 'center'}}>13</Text>
+          </View>
+        <View style={{flex: 1, height: 5, backgroundColor: 'black'}} />
+      </View>
+
+      <Text style={{padding: 10}}># of Days Rated</Text>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <View style={{flex: 1, height: 5, backgroundColor: 'black'}} />
+          <View>
+            <Text style={{width: 50, textAlign: 'center'}}>5</Text>
+          </View>
+        <View style={{flex: 1, height: 5, backgroundColor: 'black'}} />
+      </View>
+
+      <Button title='calcDayMood' onPress={() => calcDayMood(serverHandler.current.userState.username, '04/06/2023')}></Button>
+      <Button title='monthRatedTasks' onPress={() => getTaskRatingsMonth(serverHandler.current.userState.username, '04/2023')}></Button>
       <Button title='rateTask' onPress={() => rateManualTask(260)} ></Button>
       <ImportCalendar></ImportCalendar>
       
