@@ -91,10 +91,11 @@ function DayHistoryWidget(dateResult) {
                 shadowColor: "gray",
                 borderRadius: 1,
                 shadowOffset: { width: 5, height: 5 },
-                shadowRadius: 30,
+                shadowRadius: 5,
 
-                shadowOpacity: 0.22,
+                shadowOpacity: .22,
                 padding: 8,
+                backgroundColor: "white",
                 elevation: 2,
                 zIndex: 2,
                 alignSelf: "center",
