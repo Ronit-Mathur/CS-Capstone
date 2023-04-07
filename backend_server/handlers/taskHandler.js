@@ -597,7 +597,7 @@ module.exports = class taskHandler {
         var now = new Date();
 
         tasks.forEach(task => {
-            var taskDate = Helpers.MMDDYYYYAndHHMMtoDate(task.date, task.endTime);
+            var taskDate = helpers.MMDDYYYYAndHHMMtoDate(task.date, task.endTime);
             if(taskDate <= now){
                 count++;
             }

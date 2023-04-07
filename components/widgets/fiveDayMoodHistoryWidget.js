@@ -96,7 +96,7 @@ function DayHistoryWidget(dateResult) {
                 shadowOpacity: .22,
                 padding: 8,
                 backgroundColor: "white",
-                elevation: 2,
+                elevation: 8,
                 zIndex: 2,
                 alignSelf: "center",
                 height: "90%",
