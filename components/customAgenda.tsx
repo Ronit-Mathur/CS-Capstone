@@ -82,7 +82,13 @@ function Completed({date}:any){
   const[refreshing, setRefreshing] = React.useState(false)
   const[list, setList] = React.useState([])
 
-
+  React.useEffect(() => {
+    const check = async () => {
+      setList(await getTasks(date))
+    }
+    check()
+    
+  }, [])
   
 
   const onRefresh = React.useCallback(async() =>{

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Text, View, SafeAreaView, RefreshControl, Alert, Button } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation } from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Daily from '../lib/server/daily';
 import { getDaysTasks, addTask } from '../lib/server/tasks';
@@ -227,7 +227,13 @@ function InProgress() {
 
   const nav = useNavigation()
 
-
+  React.useEffect(() => {
+    const check = async () => {
+      setList(await HSH.getCurrentTasks(user))
+    }
+    check()
+    
+  }, [])
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
@@ -265,7 +271,13 @@ function Completed() {
   const [refreshing, setRefreshing] = React.useState(false)
   const [list, setList] = React.useState([])
 
-
+  React.useEffect(() => {
+    const check = async () => {
+      setList(await HSH.getCompletedTasks(user))
+    }
+    check()
+    
+  }, [])
   const nav = useNavigation()
 
   const onRefresh = React.useCallback(async () => {
@@ -335,67 +347,23 @@ function TaskWidget({ item }: any, Nav: any, isCompleted: boolean) {
       onPress={() => Nav.navigate(navPath, { task: { item } })}
     />
   </View>)
-
-  /** 
-  return(
-  <View style={{
-      flex:1,
-      backgroundColor:StylingConstants.highlightColor,
-      marginTop:'2%',
-      alignItems:'center', 
-      borderRadius:30,
-      width:'95%',
-      alignSelf:'center',
-     }} >
-       { <MaterialCommunityIcons name ='pencil' color='black' size={45} style={{
-          alignSelf:'baseline',
-          top:'20%',
-          borderWidth:1,
-          left:'5%',
-          borderRadius:10,
-          flex:1, 
-          position:'absolute',
-          
-          }} 
-         
-          onPress={()=> Nav.navigate('EditTask',{task:{item}})}
-           />}
-       <Text style={{color:'white',}}>Title: {item.summary.substring(0,18)} {bool ? '...' : ''}</Text>
-       <Text style={{color:'white'}}>Start Time: {item.startTime}</Text>
-       <Text style={{color:'white'}}>End Time: {item.endTime}</Text>
-       <Text style={{color:'white'}}>Location: {item.location}</Text>
-      
-       { <MaterialCommunityIcons name ='star' color='black' size={45} style={{
-          alignSelf:'baseline',
-          top:'20%',
-          borderWidth:1,
-          right:'5%',
-          borderRadius:10,
-          flex:1,
-          position:'absolute',
-          }} 
-          onPress={()=>Nav.navigate('RankTask',{task:{item}})}
-           />}
-      
-    </View>
-  );
-  **/
 }
-
+var alerted = false
 function Home() {
   const[unratedTaskList,setUnratedTaskList] = React.useState([]); 
+ 
   const navigation = useNavigation();
   const message = 'You have unrated Tasks! Would you like to rate them now?'
-  React.useEffect(() => {
+  
+  const getUnratedTasksCheck = () => React.useEffect(() => {
     const check = async () => {
       const list = await HSH.checkForUnRatedTasks()
-      
       setUnratedTaskList(list)
+      
     }
     check()
     
   }, [])
-  
   const unRatedTasks = () => {
     Alert.alert('UnRated Tasks', message, [
       {
@@ -408,10 +376,15 @@ function Home() {
   }
 
   
- if(Object.keys(unratedTaskList).length != 0){
-   unRatedTasks()
- }
+    if(Object.keys(unratedTaskList).length != 0 && !alerted){
+      alerted = true 
+      unRatedTasks()
+    }
+  
 
+const test = React.useCallback(() => {getUnratedTasksCheck()
+console.log("Running...")}, [unratedTaskList])
+test()
  
 
   return (
@@ -435,28 +408,17 @@ function Home() {
 
       </View>
 
-      <ActionButton
+  {/*     <ActionButton
 
         position='right'
         size={75}
         buttonColor={StylingConstants.highlightColor}
         onPress={() => navigation.navigate('AddTask')}
         style={{ marginRight: 0, marginBottom: '3%' }}
-      />
+      /> */}
     </SafeAreaView>
 
   );
 }
-
-
-async function addNewTask() {
-    const currentDate = Helpers.getTodaysDate()
-    const addNew = await addTask(serverHandler.current.userState.username, 'Test2', currentDate, 'Lumen', '10:00', '13:00')
-    console.log(addNew);
-}
-
-
-
-
 
 export { HomeScreenNav, getUser }
