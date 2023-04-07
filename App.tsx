@@ -87,23 +87,28 @@ function MaterialTabs() {
         backgroundColor: 'maroon'
       }
     }}>
+      {
       <MaterialTab.Screen name='Calendar' children={() => <CalendarNav Name={userName} />} options={{
         tabBarIcon: ({ color, focused }) => (
           <MaterialCommunityIcons name="calendar-month" color='black' size={24} />
         ),
 
       }} />
+    }
 
       <MaterialTab.Screen name='Home' children={() => <HomeScreenNav Name={userName} />} options={{
         tabBarIcon: ({ color, focused }) => (
           <MaterialCommunityIcons name="home" color='black' size={24} />
         ),
       }} />
+     
+
       <MaterialTab.Screen name='Stats' component={Stats} options={{
         tabBarIcon: ({ color, focused }) => (
           <MaterialCommunityIcons name="chart-bar" color='black' size={24} />
         ),
       }} />
+   
     </MaterialTab.Navigator>
   );
 }

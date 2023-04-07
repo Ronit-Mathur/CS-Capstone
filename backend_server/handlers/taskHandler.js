@@ -38,6 +38,13 @@ module.exports = class taskHandler {
     }
 
 
+    async _getAllTasks(username){
+        var q = new Query(1, "SELECT * FROM tasks WHERE username = ?" , [username]);
+        var id = DatabaseHandler.current.enqueueOperation(q);
+        return DatabaseHandler.current.waitForOperationToFinish(id);
+    }
+
+
     /**
      * generates an unused recursive id for a task
      * @return unused recursive id
@@ -499,7 +506,8 @@ module.exports = class taskHandler {
         var monthNum = month.substring(0, 2);
         var yearNum = month.substring(3, 7);
         var glob = monthNum + "/??/" + yearNum;
-        var q = new Query(1, "SELECT DISTINCT taskId, date FROM ratedTasks WHERE date GLOB ? AND username = ?", [glob, username]);
+        var q = new Query(1, "SELECT DISTINCT ratedTasks.taskId, date FROM (ratedTasks INNER JOIN tasks ON ratedTasks.taskId = tasks.taskId) WHERE  username = ? AND date GLOB ?",  [username, glob]);
+        //var q = new Query(1, "SELECT DISTINCT taskId, date FROM ratedTasks WHERE date GLOB ? AND username = ?", [glob, username]);
         var oppId = DatabaseHandler.current.enqueueOperation(q);
         var tasks = await DatabaseHandler.current.waitForOperationToFinish(oppId);
         //var tasks = await DatabaseHandler.current.query("SELECT taskId, date FROM ratedTasks WHERE date GLOB ? AND username = ?", [glob, username]);
@@ -527,7 +535,7 @@ module.exports = class taskHandler {
         var oppId = DatabaseHandler.current.enqueueOperation(q);
         var tasks = await DatabaseHandler.current.waitForOperationToFinish(oppId);
 
-        console.log(tasks);
+       
 
         var tasksOut = [];
         for(var i = 0; i<tasks.length; i++){
@@ -535,8 +543,6 @@ module.exports = class taskHandler {
             var taskDate = tasks[i].date;
             if(taskDate && helpers.MMDDYYYYbeforeMMDDYYYY(taskDate, date)){
                 if(date == taskDate){
-                    console.log(tasks[i].endTime);
-                    console.log(hhmm);
                     if(isHourMinuteBefore(tasks[i].endTime, hhmm)){
                         tasksOut.push(tasks[i]);
                     }
@@ -549,7 +555,7 @@ module.exports = class taskHandler {
             }
         }
 
-        console.log(tasks);
+
 
 
 
@@ -576,6 +582,28 @@ module.exports = class taskHandler {
         //var tasks = await DatabaseHandler.current.query("SELECT taskId, date FROM tasks WHERE username=? AND taskId IN (SELECT taskId from ratesTasks WHERE engagement =?)",[username, engagement]);
         return tasks;
 
+    }
+
+
+
+    /**
+     * 
+     * @param {*} username 
+     * @returns the total number of completed tasks belonging to a user
+     */
+    async totalCompletedTasks(username, epoch){
+        var tasks = await this._getAllTasks(username);
+        var count = 0;
+        var now = new Date();
+
+        tasks.forEach(task => {
+            var taskDate = Helpers.MMDDYYYYAndHHMMtoDate(task.date, task.endTime);
+            if(taskDate <= now){
+                count++;
+            }
+        });
+
+        return count;
     }
 
 

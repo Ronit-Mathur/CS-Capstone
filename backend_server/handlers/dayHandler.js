@@ -44,7 +44,7 @@ module.exports = class dayHandler {
      * @returns a daily object or null if the day has not been rated
      */
     async getDaily(username, date){
-        var q = new Query(1, "SELECT * FROM daily WHERE username = ? && date = ?", [username, date]);
+        var q = new Query(1, "SELECT * FROM daily WHERE username = ? AND date = ?", [username, date]);
         var oppID = DatabaseHandler.current.enqueueOperation(q);
         var result = await DatabaseHandler.current.waitForOperationToFinish(oppID);
 
