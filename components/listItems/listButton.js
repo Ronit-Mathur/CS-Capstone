@@ -14,6 +14,7 @@ export default function ListButton(iconName, text, onclick) {
             SetBgColor("transparent");
             clearInterval(inter);
         }, 120);
+ 
     }
 
     return (
