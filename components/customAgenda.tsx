@@ -1,14 +1,35 @@
 import * as React from 'react';
 import {View, Text, RefreshControl} from 'react-native';
-
+import { useNavigation } from '@react-navigation/native';
+import StylingConstants from './StylingConstants';
 import { Agenda, DateData, } from 'react-native-calendars';
 import { FlatList } from 'react-native-gesture-handler';
 import {getDaysTasks} from '../lib/server/tasks';
 import { sendUserName } from './calendarscreen';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import * as HSH from './homescreenhelpers';
+import { TaskCreation } from './tasks'
+import ActionButton from 'react-native-action-button';
+import { getUser } from './homescreen';
+
+const stack = createNativeStackNavigator()
+var user = getUser()
+var currentDay = ''
+function AgendaNav (day:any){
+  
+currentDay = day
+  return(
+    <stack.Navigator>
+      <stack.Screen name='Agen' component={CustomAgenda} options={{headerShown:false}} />
+      <stack.Screen name='EditAgen' component={HSH.EditTask} />
+      <stack.Screen name='RankAgen' component={HSH.RankTask}  options={{title:'Rank Task'}}/>
+      <stack.Screen name = 'AddAgen' component={TaskCreation} />
 
 
-
-
+    </stack.Navigator>
+  );
+}
 
 const months = {
   1: 'JAN',
@@ -26,16 +47,18 @@ const months = {
 }
 
 
-let user = ''
+
+let globalDate = ''
 
 
-function CustomAgenda (day:any) {
+function CustomAgenda () {
+const nav = useNavigation()
 
- user = sendUserName()
- let date = day.route.params.dateString
- let month = day.route.params.month
- let numDay = day.route.params.day
- let year = day.route.params.year
+ let date = currentDay.route.params.dateString
+ globalDate = date
+ let month = currentDay.route.params.month
+ let numDay = currentDay.route.params.day
+ let year = currentDay.route.params.year
 
   
   return (
@@ -46,7 +69,7 @@ function CustomAgenda (day:any) {
       <View style={{
         flex: 1,
         borderBottomWidth:1,
-        borderColor:'blue',
+        borderColor:StylingConstants.highlightColor,
         width:'50%',
         alignSelf:'center',
       }}>
@@ -70,6 +93,14 @@ function CustomAgenda (day:any) {
         
       }}>
         <Completed date={date}/>
+        <ActionButton
+
+        position='right'
+        size={75}
+        buttonColor={StylingConstants.highlightColor}
+        onPress={() => nav.navigate('AddAgen', {Name: {user}})}
+        style={{ marginRight: 0, marginBottom: '3%' }}
+      />
       </View>
 
     </View>
@@ -81,6 +112,7 @@ function CustomAgenda (day:any) {
 function Completed({date}:any){
   const[refreshing, setRefreshing] = React.useState(false)
   const[list, setList] = React.useState([])
+  const nav = useNavigation()
 
   React.useEffect(() => {
     const check = async () => {
@@ -105,11 +137,12 @@ function Completed({date}:any){
     }}>
       <FlatList  
       data={list}
-      renderItem={({item}) => testRender(item)} 
+      renderItem={({item}) => testRender(item,nav)} 
       style={{flexGrow:1,
         marginBottom:'10%',
         marginTop:'3%',
         shadowOpacity:.5,
+        backgroundColor:'white'
       }} 
       contentContainerStyle={{
 
@@ -124,34 +157,43 @@ function Completed({date}:any){
 
 
 
-function testRender (item:any){
+function testRender (item:any, nav:any){
+
   var bool = false
   if(item.summary.length > 17){
     bool = true
   }else{
     bool = false
   }
-  
+
+var navPath = 'EditAgen'
+  if (globalDate > new Date().toISOString().substring(0,10)){
+    navPath = 'EditAgen'
+  }else{
+    navPath = 'RankAgen'
+  }
   
   
   return(
-  <View style={{
-      flex:1,
-      backgroundColor:'red',
-      marginTop:'2%',
-      alignItems:'center', 
-      borderRadius:30,
-      width:'80%',
-      alignSelf:'center',
-     }} >
+  <View style={{ marginLeft: "2%", marginRight: "2%", marginBottom: 5, borderLeftWidth: 3, borderColor: StylingConstants.highlightColor, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+    <View style={{
+      marginLeft:'2%',
+      }} >
    
-       <Text style={{color:'white',}}>Title: {item.summary.substring(0,18)} {bool ? '...' : ''}</Text>
-       <Text style={{color:'white'}}>Start Time: {item.startTime}</Text>
-       <Text style={{color:'white'}}>End Time: {item.endTime}</Text>
-       <Text style={{color:'white'}}>Location: {item.location}</Text>
-      
-      
-      
+        <Text style={{color:'black', fontWeight:'bold'}}>Title: {item.summary.substring(0,18)} {bool ? '...' : ''}</Text>
+        <Text style={{color:'black'}}>Start Time: {item.startTime}</Text>
+        <Text style={{color:'black'}}>End Time: {item.endTime}</Text>
+        <Text style={{color:'black'}}>Location: {item.location}</Text>
+      </View>
+
+
+      <MaterialCommunityIcons name='chevron-right' color="white" size={40} style={{
+      backgroundColor: StylingConstants.highlightColor,
+      borderRadius: 8,
+    }}
+
+      onPress={() => nav.navigate(navPath, { task: {item}  })}
+    />
     </View>
   );
   
@@ -247,4 +289,4 @@ async function getSelectedDayTasks (rawDate:string, user:any) : Promise <any[]> 
 } */
 
 
-export {CustomAgenda}
+export {CustomAgenda, AgendaNav}

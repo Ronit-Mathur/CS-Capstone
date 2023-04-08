@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Text, View, SafeAreaView, RefreshControl, Alert, Button } from 'react-native';
 import { Text, View, SafeAreaView, RefreshControl, Alert, Button, Pressable } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { DefaultTheme, NavigationContainer, useNavigation } from '@react-navigation/native';
@@ -107,6 +106,7 @@ function Header() {
 
   }
 
+ 
   return (
     <View style={{
 
@@ -501,7 +501,7 @@ function Home() {
     var left = await HSH.getCurrentTasks(user);
     callback(completed.length, completed.length + left.length);
   }
-
+  
 
   return (
     <SafeAreaView style={{
@@ -538,7 +538,7 @@ function Home() {
       </View>
 
 
-      {/** 
+      
       <ActionButton
 
         position='right'
@@ -547,7 +547,7 @@ function Home() {
         onPress={() => navigation.navigate('AddTask')}
         style={{ marginRight: 0, marginBottom: '3%' }}
       />
-    **/}
+    
 
     </SafeAreaView>
 

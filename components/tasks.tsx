@@ -3,13 +3,15 @@ import {Text, TextInput, SafeAreaView,View, Button} from 'react-native';
 import RNDateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { addTask } from '../lib/server/tasks';
 import { format } from 'path/posix';
+import { getUser } from './homescreen';
+import serverHandler from '../lib/server/serverHandler';
 
 
-var user = ''
+var user = serverHandler.current.userState.username
 
 
-function TaskCreation ({Name}:any){
-    user = Name
+function TaskCreation (){
+    
     const [taskTitle, setTaskTitle] = React.useState("");
     const [startTime, setStarttime] = React.useState(new Date());
     const [endTime, setEndTime] = React.useState(new Date());
@@ -17,10 +19,10 @@ function TaskCreation ({Name}:any){
     const [showEndTime, setShowEndTime] = React.useState(false);
     const [date, setDate] = React.useState(new Date());
     const [location, setLocation] = React.useState(""); 
-
+    
     
     const addTaskServer = () => {
-        console.log(user)
+        
         const newTaskDate = formatDate()
         const newTaskStartTime = formatTime(startTime.toLocaleTimeString('EN-en', {hourCycle:'h23'}))
         const newTaskEndTime = formatTime(endTime.toLocaleTimeString('EN-en', {hourCycle:'h23'}))

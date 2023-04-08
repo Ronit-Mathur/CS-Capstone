@@ -6,7 +6,7 @@ import { useNavigation} from '@react-navigation/native';
 import {getUser} from './homescreen'
 
 function EditTask (task:any){
-    console.log(task)
+    
    const navigation = useNavigation()
    const [sum, setSum] = useState(task.route.params.task.item.summary)
    const [start, setStart] = useState(task.route.params.task.item.startTime)
@@ -148,13 +148,14 @@ function EditTask (task:any){
 
 
 function RankTask (task:any){
+  
     const navigation = useNavigation()
     const id = task.route.params.task.item.taskId
     const [enjoyment, setEnjoyment] = useState('1')
     const [physcialActivity, setPhysicalActivity] = useState('1')
     const [engagement, setEngagement] = useState('1')
     const [mentalDifficulty, setMentalDifficulty] = useState('1')
-
+   
      return(
          <View style={{
              flex:1,
@@ -297,7 +298,7 @@ function RankTask (task:any){
     const numPhysical = Number(physcialActivity)
     const numEngage = Number(engagement)
     const numMental = Number(mentalDifficulty)
-
+    
 
     const addRank = await rateTask(id,numEnjoy,numPhysical,numEngage,numMental)
  }

@@ -2,10 +2,12 @@ import * as React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Text, TextInput, View, Image, SafeAreaView, StyleSheet } from 'react-native';
 import { Calendar, CalendarList } from 'react-native-calendars'
-import TaskCreation from './tasks';
+import {TaskCreation} from './tasks';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ActionButton from 'react-native-action-button';
-import { CustomAgenda } from './customAgenda';
+import { CustomAgenda, AgendaNav } from './customAgenda';
+import { getUser } from './homescreen';
+import serverHandler from '../lib/server/serverHandler';
 
 const StackNavigator = createNativeStackNavigator();
 
@@ -13,13 +15,13 @@ var user = ''
 
 function CalendarNav({ Name }: any) {
   user = Name
-
+ 
   return (
     <StackNavigator.Navigator >
 
       <StackNavigator.Screen name='CalendarScreen' component={CalendarScreen} options={{ title: 'Calendar' }} />
 
-      <StackNavigator.Screen name='CalAgenda' component={CustomAgenda} options={{ presentation: 'modal', title: 'Daily Agenda' }} />
+      <StackNavigator.Screen name='CalAgenda' component={AgendaNav} options={{ presentation: 'modal', title: 'Daily Agenda' }} />
 
     </StackNavigator.Navigator>
   );
@@ -46,7 +48,7 @@ function CreateCalendar() {
 
     }} 
    
-      onDayPress={(day) => { navigation.navigate('CalAgenda', day) }}
+      onDayPress={(day) => { navigation.navigate('CalAgenda', day )}}
     />
     // <Calendar  style={{
     //   borderTopRightRadius:20,
