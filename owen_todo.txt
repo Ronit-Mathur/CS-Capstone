@@ -1,14 +1,11 @@
 Owen's todo list:
 
-clean up homepage and settings page
 rename recursiveId to groupId
-implement logout and delete user
+implement delete user
 import using timezones from google calendar
-switch google and outlook api keys to username not ip
 switch dates over to epoch
 figure out android lag
 delete operations in operationmanager with no return type
-implement user images
 
 wrappers left:
 get # of rated tasks a user has
