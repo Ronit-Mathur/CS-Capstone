@@ -23,6 +23,8 @@ module.exports = {
         USER_TASK_BY_ID: "/api/user/tasks/id",
         USER_TASKS_NOT_RATED: "/api/user/tasks/unrated",
         USER_TASKS_COUNT_COMPLETED: "/api/user/tasks/count/completed",
+        USER_TASKS_COUNT_RATED: "/api/user/tasks/count/rated",
+        
        
         
         
@@ -31,6 +33,7 @@ module.exports = {
         USER_GET_TASK_RATING: "/api/user/tasks/rated/day",
         USER_GET_TASK_RATINGS_BY_MONTH: "/api/user/tasks/rated/month",
         USER_GET_RATED_TASKS_BY_ENGAGEMENT: "/api/user/tasks/rated/engagement",
+        
 
         USER_CREATE: "/api/user/create",
         USER_EXISTS: "/api/user/exists",
@@ -39,7 +42,8 @@ module.exports = {
         USER_INFO: "/api/user/info",
 
         USER_RATE_DAY: "/api/user/day/rate",
-        USER_GET_DAY_RATING: "/api/user/day/rating"
+        USER_GET_DAY_RATING: "/api/user/day/rating",
+        USER_DAILY_COUNT: "/api/user/day/count",
 
 
     },

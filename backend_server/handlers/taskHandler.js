@@ -597,7 +597,7 @@ module.exports = class taskHandler {
         var now = new Date();
 
         tasks.forEach(task => {
-            var taskDate = Helpers.MMDDYYYYAndHHMMtoDate(task.date, task.endTime);
+            var taskDate = helpers.MMDDYYYYAndHHMMtoDate(task.date, task.endTime);
             if(taskDate <= now){
                 count++;
             }
@@ -606,6 +606,13 @@ module.exports = class taskHandler {
         return count;
     }
 
+
+    async totalRatedTasks(username){
+        var q = new Query(1, "SELECT DISTINCT COUNT(*) FROM tasks WHERE username=? AND taskId IN (SELECT taskId FROM ratedTasks)")
+        var id = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(id);
+        return result[0];
+    }
 
 
 }

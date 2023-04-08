@@ -27,12 +27,16 @@ export default function FiveDayMoodHistoryWidget() {
 
 
     return (
-        <View style={{ flexDirection: "row",  alignItems: "center", justifyContent: "center" }}>
-            {DayHistoryWidget(dayData[0])}
-            {DayHistoryWidget(dayData[1])}
-            {DayHistoryWidget(dayData[2])}
-            {DayHistoryWidget(dayData[3])}
-            {DayHistoryWidget(dayData[4])}
+        <View style={{width:"100%", marginTop:"2%"}}>
+            <Text style={{ paddingLeft:5, color:"black",fontFamily:StylingConstants.defaultFontBold, fontSize: StylingConstants.normalFontSize}}>Your Last 5 Days</Text>
+            <View style={{ width:"100%", flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
+
+                {DayHistoryWidget(dayData[0])}
+                {DayHistoryWidget(dayData[1])}
+                {DayHistoryWidget(dayData[2])}
+                {DayHistoryWidget(dayData[3])}
+                {DayHistoryWidget(dayData[4])}
+            </View>
         </View>
     )
 
@@ -87,15 +91,16 @@ function DayHistoryWidget(dateResult) {
                 shadowColor: "gray",
                 borderRadius: 1,
                 shadowOffset: { width: 5, height: 5 },
-                shadowRadius: 30,
+                shadowRadius: 5,
 
-                shadowOpacity: 0.22,
+                shadowOpacity: .22,
                 padding: 8,
-                elevation: 2,
+                backgroundColor: "white",
+                elevation: 8,
                 zIndex: 2,
                 alignSelf: "center",
-                height:"90%",
-                
+                height: "90%",
+
             }}>
                 <View style={{ backgroundColor: StylingConstants.highlightColor, height: "80%", width: 3, alignSelf: "center", marginRight: 5 }}></View>
 

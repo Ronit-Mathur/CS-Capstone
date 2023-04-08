@@ -454,6 +454,26 @@ module.exports = class Server {
 
         });
 
+        /**
+         * count all of a users rated tasks
+         */
+        app.get(SERVER_ENDPOINTS.USER_TASKS_COUNT_RATED, async (req, res) =>{
+            if (!await this.authenticateQuery(req, res)) {
+                res.status(400).send("invalid auth key");
+                return;
+            }
+
+            if ( req.query.usernameh) {
+                var total = await this.taskHandler.totalRatedTasks( req.query.username);
+                res.status(200).send(JSON.stringify(total));
+                return;
+            }
+            else {
+                res.status(400).send(JSON.stringify("invalid parameters"));
+                return;
+            }
+        })
+
 
         /**
          * get all rated tasks from a user by the engagement value
@@ -506,6 +526,22 @@ module.exports = class Server {
             if (req.query.username && req.query.day) {
                 var dailyObj = await this.dayHandler.getDaily(req.query.username, req.query.day);
                 res.status(200).send(dailyObj);
+                return;
+            }
+            else {
+                res.status(400).send("invalid parameters");
+                return;
+            }
+        });
+
+        app.get(SERVER_ENDPOINTS.USER_DAILY_COUNT, async (req, res) =>{
+            if (!await this.authenticateQuery(req, res)) {
+                res.status(400).send("invalid auth key");
+                return;
+            }
+            if (req.query.username) {
+                var total = await this.dayHandler.totalRated(req.query.username);
+                res.status(200).send(JSON.stringify(total));
                 return;
             }
             else {

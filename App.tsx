@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, TextInput, View, Image } from 'react-native';
+import { Text, TextInput, View, Image, StatusBar } from 'react-native';
 import { DefaultTheme, NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -14,6 +14,8 @@ import { loginUserSession } from "./lib/server/users";
 
 
 import { SignInScreen } from './components/SignInScreen';
+import StylingConstants from './components/StylingConstants';
+import StatsScreen from './components/newStatsScreen';
 
 /* 
   Create Tabs to switch between Screens
@@ -88,27 +90,27 @@ function MaterialTabs() {
       }
     }}>
       {
-      <MaterialTab.Screen name='Calendar' children={() => <CalendarNav Name={userName} />} options={{
-        tabBarIcon: ({ color, focused }) => (
-          <MaterialCommunityIcons name="calendar-month" color='black' size={24} />
-        ),
+        <MaterialTab.Screen name='Calendar' children={() => <CalendarNav Name={userName} />} options={{
+          tabBarIcon: ({ color, focused }) => (
+            <MaterialCommunityIcons name="calendar-month" color='black' size={24} />
+          ),
 
-      }} />
-    }
+        }} />
+      }
 
       <MaterialTab.Screen name='Home' children={() => <HomeScreenNav Name={userName} />} options={{
         tabBarIcon: ({ color, focused }) => (
           <MaterialCommunityIcons name="home" color='black' size={24} />
         ),
       }} />
-     
 
-      <MaterialTab.Screen name='Stats' component={Stats} options={{
+
+      <MaterialTab.Screen name='Stats' children={() => <StatsScreen />} options={{
         tabBarIcon: ({ color, focused }) => (
           <MaterialCommunityIcons name="chart-bar" color='black' size={24} />
         ),
       }} />
-   
+
     </MaterialTab.Navigator>
   );
 }
@@ -130,6 +132,7 @@ const App = () => {
   return (
     <SafeAreaProvider>
       <NavigationContainer theme={MyTheme} >
+        <StatusBar backgroundColor={StylingConstants.highlightColor} barStyle="light-content" />
         <MainStack />
       </NavigationContainer>
     </SafeAreaProvider>
