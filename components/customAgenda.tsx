@@ -5,16 +5,16 @@ import StylingConstants from './StylingConstants';
 import { Agenda, DateData, } from 'react-native-calendars';
 import { FlatList } from 'react-native-gesture-handler';
 import {getDaysTasks} from '../lib/server/tasks';
-import { sendUserName } from './calendarscreen';
+
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as HSH from './homescreenhelpers';
 import { TaskCreation } from './tasks'
 import ActionButton from 'react-native-action-button';
-import { getUser } from './homescreen';
+import serverHandler from '../lib/server/serverHandler';
 
 const stack = createNativeStackNavigator()
-var user = getUser()
+
 var currentDay = ''
 function AgendaNav (day:any){
   
@@ -98,7 +98,7 @@ const nav = useNavigation()
         position='right'
         size={75}
         buttonColor={StylingConstants.highlightColor}
-        onPress={() => nav.navigate('AddAgen', {Name: {user}})}
+        onPress={() => nav.navigate('AddAgen')}
         style={{ marginRight: 0, marginBottom: '3%' }}
       />
       </View>
@@ -210,7 +210,7 @@ async function  getTasks(date:string) {
 
 
   var taskList: never[] = [];
-    const tasks = await getDaysTasks(user, dateFormatted);
+    const tasks = await getDaysTasks(serverHandler.current.userState.username, dateFormatted);
     var convertTasks = Object.values(tasks);
      
 

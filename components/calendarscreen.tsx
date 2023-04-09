@@ -1,20 +1,18 @@
 import * as React from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { Text, TextInput, View, Image, SafeAreaView, StyleSheet } from 'react-native';
-import { Calendar, CalendarList } from 'react-native-calendars'
-import {TaskCreation} from './tasks';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import ActionButton from 'react-native-action-button';
-import { CustomAgenda, AgendaNav } from './customAgenda';
-import { getUser } from './homescreen';
+import {useNavigation} from '@react-navigation/native';
+import {View} from 'react-native';
+import {CalendarList} from 'react-native-calendars'
+import { createNativeStackNavigator} from '@react-navigation/native-stack';
+import {AgendaNav} from './customAgenda';
+
 import serverHandler from '../lib/server/serverHandler';
 
 const StackNavigator = createNativeStackNavigator();
 
-var user = ''
 
-function CalendarNav({ Name }: any) {
-  user = Name
+
+function CalendarNav() {
+  
  
   return (
     <StackNavigator.Navigator >
@@ -27,9 +25,7 @@ function CalendarNav({ Name }: any) {
   );
 }
 
-const sendUserName = () => {
-  return user
-}
+
 
 function CreateCalendar() {
 
@@ -82,4 +78,4 @@ function CalendarScreen() {
   );
 }
 
-export { CalendarNav, sendUserName };
+export { CalendarNav};

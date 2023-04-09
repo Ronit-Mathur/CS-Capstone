@@ -90,7 +90,7 @@ function MaterialTabs() {
       }
     }}>
       {
-        <MaterialTab.Screen name='Calendar' children={() => <CalendarNav Name={userName} />} options={{
+        <MaterialTab.Screen name='Calendar' component={CalendarNav} options={{
           tabBarIcon: ({ color, focused }) => (
             <MaterialCommunityIcons name="calendar-month" color='black' size={24} />
           ),
@@ -98,7 +98,7 @@ function MaterialTabs() {
         }} />
       }
 
-      <MaterialTab.Screen name='Home' children={() => <HomeScreenNav Name={userName} />} options={{
+      <MaterialTab.Screen name='Home' component={HomeScreenNav} options={{
         tabBarIcon: ({ color, focused }) => (
           <MaterialCommunityIcons name="home" color='black' size={24} />
         ),

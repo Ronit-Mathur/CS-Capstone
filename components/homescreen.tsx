@@ -25,14 +25,14 @@ import { GetUserPhoto } from './external_integration/importUserPhoto';
 import RoundImage from './RoundImage';
 import ImportCalendarScreen from './external_integration/importCalendarScreen';
 
-var user = ''
+
 
 
 
 const StackNavigator = createNativeStackNavigator();
 
-function HomeScreenNav({ Name }: any) {
-  user = Name
+function HomeScreenNav() {
+  
   return (
     <StackNavigator.Navigator initialRouteName='Home'>
       <StackNavigator.Screen name='HomeScreen' component={Home} options={{ title: 'Home', headerShown: false, }} />
@@ -45,7 +45,7 @@ function HomeScreenNav({ Name }: any) {
           headerBackTitleVisible: false, 
         }} />
         <StackNavigator.Screen name='calImport' component={CalImportPage} options={{ presentation: 'containedModal' }} />
-        <StackNavigator.Screen name='AddTask' children={() => <TaskCreation Name={user} />} options={{ presentation: 'modal' }} />
+        <StackNavigator.Screen name='AddTask' component={TaskCreation} options={{ presentation: 'modal' }} />
         <StackNavigator.Screen name="ImportUserPhoto" component={ImportUserPhotoScreen} options={{  headerTintColor:"white", headerTitleStyle:{color:"white"}, presentation: 'containedModal', headerStyle: { backgroundColor: 'transparent', }, title: "Edit Photo", contentStyle: { backgroundColor: 'transparent' } }}></StackNavigator.Screen>
         <StackNavigator.Screen name="ImportCalendar" component={ImportCalendarScreen} options={{ headerTintColor:"white", headerTitleStyle:{color:"white"},
           presentation: 'containedModal', headerStyle: { backgroundColor: 'transparent', }, title: "Import Calendar", headerShadowVisible: false, // applied here
@@ -132,7 +132,7 @@ function Header() {
         color: "white",
         fontFamily: StylingConstants.defaultFontBold
 
-      }}>Welcome {helpers.capitalizeFirstLetter(user)}</Text>
+      }}>Welcome {helpers.capitalizeFirstLetter(serverHandler.current.userState.username)}</Text>
 
 
       <Text style={{
@@ -204,27 +204,27 @@ function DailyMood() {
         <MaterialCommunityIcons name='emoticon-frown-outline' color="#f55a42" size={60} style={{
           flex: 1,
         }}
-          onPress={async () => { await Daily.rateDay(user, 1); moodRated(); }}
+          onPress={async () => { await Daily.rateDay(serverHandler.current.userState.username, 1); moodRated(); }}
         />
         <MaterialCommunityIcons name='emoticon-sad-outline' color="#f58a42" size={60} style={{
           flex: 1,
         }}
-          onPress={async () => { await Daily.rateDay(user, 2); moodRated() }}
+          onPress={async () => { await Daily.rateDay(serverHandler.current.userState.username, 2); moodRated() }}
         />
         <MaterialCommunityIcons name='emoticon-neutral-outline' color="#f5e942" size={60} style={{
           flex: 1,
         }}
-          onPress={async () => { await Daily.rateDay(user, 3); moodRated() }}
+          onPress={async () => { await Daily.rateDay(serverHandler.current.userState.username, 3); moodRated() }}
         />
         <MaterialCommunityIcons name='emoticon-happy-outline' color="#cfff30" size={60} style={{
           flex: 1,
         }}
-          onPress={async () => { await Daily.rateDay(user, 4); moodRated() }}
+          onPress={async () => { await Daily.rateDay(serverHandler.current.userState.username, 4); moodRated() }}
         />
         <MaterialCommunityIcons name='emoticon-outline' color="#7ef763" size={60} style={{
           flex: 1,
         }}
-          onPress={async () => { await Daily.rateDay(user, 5); moodRated() }}
+          onPress={async () => { await Daily.rateDay(serverHandler.current.userState.username, 5); moodRated() }}
         />
       </View>
     </View>;
@@ -340,7 +340,7 @@ function InProgress() {
 
   React.useEffect(() => {
     const check = async () => {
-      setList(await HSH.getCurrentTasks(user))
+      setList(await HSH.getCurrentTasks())
     }
     check()
     
@@ -348,7 +348,7 @@ function InProgress() {
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
-    setList(await HSH.getCurrentTasks(user))
+    setList(await HSH.getCurrentTasks())
     setRefreshing(false);
   }, [refreshing])
 
@@ -365,6 +365,7 @@ function InProgress() {
           marginBottom: '10%',
           marginTop: '7%',
           shadowOpacity: .5,
+          backgroundColor:'white'
 
         }}
 
@@ -384,7 +385,7 @@ function Completed() {
 
   React.useEffect(() => {
     const check = async () => {
-      setList(await HSH.getCompletedTasks(user))
+      setList(await HSH.getCompletedTasks(serverHandler.current.userState.username))
     }
     check()
     
@@ -393,7 +394,7 @@ function Completed() {
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true)
-    setList(await HSH.getCompletedTasks(user))
+    setList(await HSH.getCompletedTasks(serverHandler.current.userState.username))
     //setList(list)
     setRefreshing(false)
   }, [refreshing])
@@ -402,6 +403,7 @@ function Completed() {
   return (
     <View style={{
       flexGrow: 1,
+      
     }}>
       <FlatList
         data={list}
@@ -410,7 +412,8 @@ function Completed() {
           flexGrow: 1,
           marginBottom: '10%',
           marginTop: '5%',
-          shadowOpacity: .5,
+          shadowOpacity: 1,
+          backgroundColor:'white'
         }}
         contentContainerStyle={{
 
@@ -425,9 +428,6 @@ function Completed() {
 
 const todaysDate = Helpers.getTodaysDate()
 
-const getUser = () => {
-  return user
-}
 
 
 function TaskWidget({ item }: any, Nav: any, isCompleted: boolean) {
@@ -443,7 +443,7 @@ function TaskWidget({ item }: any, Nav: any, isCompleted: boolean) {
     navPath = 'RankTask';
   }
 
-  return (<View style={{ marginLeft: "2%", marginRight: "2%", marginBottom: 5, borderLeftWidth: 3, borderColor: StylingConstants.highlightColor, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+  return (<View style={{ marginLeft: "2%", marginRight: "2%", marginBottom: 5, borderLeftWidth: 3, borderColor: StylingConstants.highlightColor, flexDirection: "row", justifyContent: "space-between", alignItems: "center",  }}>
     <View style={{ marginLeft: "2%" }}>
       <Text style={{ color: 'black', fontWeight: "bold", fontSize: StylingConstants.subFontSize }}>{helpers.toTitleCase(item.summary.substring(0, 25))} {bool ? '...' : ''}</Text>
       <Text style={{ color: 'black', fontSize: StylingConstants.tinyFontSize }}>Start Time: {item.startTime}</Text>
@@ -569,4 +569,4 @@ async function addNewTask() {
 
 
 
-export { HomeScreenNav, getUser }; 
+export { HomeScreenNav}; 

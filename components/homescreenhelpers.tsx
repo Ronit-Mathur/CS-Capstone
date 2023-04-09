@@ -4,6 +4,7 @@ import * as Helpers from '../backend_server/lib/helpers';
 import{getTodaysActiveTasks, getTodaysFinishedTasks, updateTask, rateTask, getUnratedCompletedTasks} from '../lib/server/tasks';
 import { useNavigation} from '@react-navigation/native';
 import {getUser} from './homescreen'
+import serverHandler from '../lib/server/serverHandler';
 
 function EditTask (task:any){
     
@@ -13,7 +14,7 @@ function EditTask (task:any){
    const [end, setEnd] = useState(task.route.params.task.item.endTime)
    const [loc, setLoc] = useState(task.route.params.task.item.location)
    const id = task.route.params.task.item.taskId
-   const user = getUser()
+   const user = serverHandler.current.userState.user
     
     return(
         <View style={{
@@ -135,7 +136,7 @@ function EditTask (task:any){
                     
                 }}>
                     <Button  title='Cancel'  onPress={()=> navigation.navigate('HomeScreen')}/>
-                    <Button title='Submit' onPress ={async()=> {updateT(user, sum, start, end, loc, id); navigation.navigate('HomeScreen')}} />
+                    <Button title='Submit' onPress ={async()=> {updateT(sum, start, end, loc, id); navigation.navigate('HomeScreen')}} />
                 </View>
             
 
@@ -303,17 +304,17 @@ function RankTask (task:any){
     const addRank = await rateTask(id,numEnjoy,numPhysical,numEngage,numMental)
  }
 
-async function updateT ( user:string, summary:string, startTime:string, endTime:string, location:string, taskId:any){
+async function updateT (summary:string, startTime:string, endTime:string, location:string, taskId:any){
 
     const day = Helpers.getTodaysDate()
-    const update = await updateTask(user, taskId, summary, day, location, startTime, endTime) 
+    const update = await updateTask(serverHandler.current.userState.username, taskId, summary, day, location, startTime, endTime) 
 
 }
 
 
-async function getCurrentTasks (user:string){
+async function getCurrentTasks (){
     var currentTaskList: never[] = [];
-    const currentTasks = await getTodaysActiveTasks(user);
+    const currentTasks = await getTodaysActiveTasks(serverHandler.current.userState.username);
     var convertCurrentTasks = Object.values(currentTasks);
      
 
