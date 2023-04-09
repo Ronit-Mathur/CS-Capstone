@@ -4,7 +4,6 @@ rename recursiveId to groupId
 implement delete user
 import using timezones from google calendar
 switch dates over to epoch
-figure out android lag
 delete operations in operationmanager with no return type
 
 wrappers left:

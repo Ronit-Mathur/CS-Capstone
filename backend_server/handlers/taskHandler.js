@@ -615,6 +615,21 @@ module.exports = class taskHandler {
     }
 
 
+    /**
+     * 
+     * @param {*} username 
+     * @returns a list of all dates with a task for a user
+     */
+    async datesWithTask(username){
+        
+
+        var q = new Query(1, "SELECT DISTINCT date FROM tasks WHERE username =?",[username]);
+        var id = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(id);
+        return result;
+    }
+
+
 }
 
 

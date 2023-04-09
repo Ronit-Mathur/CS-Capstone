@@ -24,6 +24,7 @@ module.exports = {
         USER_TASKS_NOT_RATED: "/api/user/tasks/unrated",
         USER_TASKS_COUNT_COMPLETED: "/api/user/tasks/count/completed",
         USER_TASKS_COUNT_RATED: "/api/user/tasks/count/rated",
+        USER_TASKS_DATES: "/api/user/tasks/dates",
         
        
         

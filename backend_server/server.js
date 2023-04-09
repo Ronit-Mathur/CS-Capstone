@@ -496,6 +496,28 @@ module.exports = class Server {
 
         });
 
+
+        /**
+         * gets all the dates for a user which contains a task
+         */
+        app.get(SERVER_ENDPOINTS.USER_TASKS_DATES, async (req, res) =>{
+            if (!await this.authenticateQuery(req, res)) {
+                res.status(400).send("invalid auth key");
+                return;
+            }
+
+            if ( req.query.username) {
+                var dates = await this.taskHandler.datesWithTask( req.query.username);
+                res.status(200).send(dates);
+                return;
+            }
+            else {
+                res.status(400).send(JSON.stringify("invalid parameters"));
+                return;
+            }
+
+        });
+
         /**
          * daily methods
          */
