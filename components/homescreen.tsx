@@ -527,7 +527,7 @@ function Home() {
     
   }
 
-
+  
   if (!alerted && checkUnrated()){
     unRatedTasks()
     setAlerted(true)

@@ -41,6 +41,8 @@ function CreateCalendar() {
 
   }
 
+  
+
   function formatDates(dateString:string) {
     let [month, day, year] = dateString.split('/');
     month = month.length === 1 ? '0' + month : month;
