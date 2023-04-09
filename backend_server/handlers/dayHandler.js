@@ -79,9 +79,9 @@ module.exports = class dayHandler {
      * @returns the total number of daily rates for a user
      */
     async totalRated(username) {
-        var q = new Query(1, "SELECT COUNT(*) FROM daily WHERE username = ?", [username]);
+        var q = new Query(1, "SELECT COUNT(*) as c FROM daily WHERE username = ?", [username]);
         var oppId = DatabaseHandler.current.enqueueOperation(q);
         var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
-        return result[0];
+        return result[0].c;
     }
 }

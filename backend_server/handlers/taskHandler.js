@@ -608,10 +608,10 @@ module.exports = class taskHandler {
 
 
     async totalRatedTasks(username){
-        var q = new Query(1, "SELECT DISTINCT COUNT(*) FROM tasks WHERE username=? AND taskId IN (SELECT taskId FROM ratedTasks)")
+        var q = new Query(1, "SELECT DISTINCT COUNT(*) as c FROM tasks WHERE username=? AND taskId IN (SELECT taskId FROM ratedTasks)")
         var id = DatabaseHandler.current.enqueueOperation(q);
         var result = await DatabaseHandler.current.waitForOperationToFinish(id);
-        return result[0];
+        return result[0].c;
     }
 
 
