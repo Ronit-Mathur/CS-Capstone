@@ -463,7 +463,7 @@ module.exports = class Server {
                 return;
             }
 
-            if ( req.query.usernameh) {
+            if ( req.query.username) {
                 var total = await this.taskHandler.totalRatedTasks( req.query.username);
                 res.status(200).send(JSON.stringify(total));
                 return;

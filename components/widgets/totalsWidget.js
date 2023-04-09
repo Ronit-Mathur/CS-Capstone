@@ -1,7 +1,8 @@
 import { View, Text } from "react-native"
 import { Component } from "react"
 import StylingConstants from "../StylingConstants"
-import { totalCompletedTasks } from "../../lib/server/tasks";
+import { totalCompletedTasks, totalRatedTasks } from "../../lib/server/tasks";
+import { totalRates } from "../../lib/server/daily";
 
 export default class TotalsWidget extends Component {
     constructor(props) {
@@ -16,7 +17,9 @@ export default class TotalsWidget extends Component {
     componentDidMount() {
         (async () => {
             var totalTasks = await totalCompletedTasks();
-            this.setState({totalCompleted: totalTasks});
+            var totalRated = await totalRatedTasks();
+            var daysRated = await totalRates();
+            this.setState({totalCompleted: totalTasks, totalRated: totalRated, daysRated: daysRated});
         })();
     }
 
