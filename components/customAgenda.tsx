@@ -72,17 +72,21 @@ const nav = useNavigation()
         borderColor:StylingConstants.highlightColor,
         width:'50%',
         alignSelf:'center',
+        paddingBottom:'5%'
       }}>
         <Text style ={{
           alignSelf:'center',
+          fontFamily: StylingConstants.defaultFont
         }}>{year}</Text>
         <Text style={{
           alignSelf:'center',
           fontSize:27,
+          fontFamily: StylingConstants.defaultFontBold
         }}>{months[month]}</Text>
         <Text style={{
           alignSelf:'center',
           fontSize:27,
+          fontFamily:StylingConstants.defaultFont, 
         }}>{numDay}</Text>
       </View>
       

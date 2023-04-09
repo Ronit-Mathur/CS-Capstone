@@ -24,7 +24,7 @@ import ImportUserPhotoScreen, { AddToOnPhotoUpdated } from './external_integrati
 import { GetUserPhoto } from './external_integration/importUserPhoto';
 import RoundImage from './RoundImage';
 import ImportCalendarScreen from './external_integration/importCalendarScreen';
-
+import UnratedTasks from './unratedtasks';
 
 
 
@@ -50,8 +50,8 @@ function HomeScreenNav() {
         <StackNavigator.Screen name="ImportCalendar" component={ImportCalendarScreen} options={{ headerTintColor:"white", headerTitleStyle:{color:"white"},
           presentation: 'containedModal', headerStyle: { backgroundColor: 'transparent', }, title: "Import Calendar", headerShadowVisible: false, // applied here
           headerBackTitleVisible: false
-        }}></StackNavigator.Screen>
-
+        }}/>
+      <StackNavigator.Screen name='RateTasks' component={UnratedTasks} options={{presentation:'containedModal'}} />
       </StackNavigator.Group>
     </StackNavigator.Navigator>
   );
@@ -460,24 +460,56 @@ function TaskWidget({ item }: any, Nav: any, isCompleted: boolean) {
   </View>)
 }
 
+var globalList :any =[]
 
+
+async function checkUnrated (){
+  var unratedTaskList = []
+  const list = await HSH.checkForUnRatedTasks()
+  unratedTaskList = list 
+  if(list != globalList && Object.keys(unratedTaskList).length != 0 ){
+    globalList = list
+    return true 
+  }else{
+    return false
+  }
+} 
 function Home() {
-  const [unratedTaskList, setUnratedTaskList] = React.useState([]);
-  const navigation = useNavigation();
-  const message = 'You have unrated Tasks! Would you like to rate them now?'
 
-  /** 
-  React.useEffect(() => {
+  const navigation = useNavigation();
+  
+  const message = 'You have unrated Tasks! Would you like to rate them now?'
+  const [alerted, setAlerted] = React.useState(false)
+
+
+
+
+
+
+
+
+
+/*    React.useEffect(() => {
     const check = async () => {
       const list = await HSH.checkForUnRatedTasks()
       setUnratedTaskList(list)
+      console.log('list: ' + list)
+      console.log('global: ' + globalList)
+
+      if(list != globalList && Object.keys(unratedTaskList).length != 0){
+        globalList = list
+        
+        unRatedTasks()
+      }
+      
       
     }
     check()
     
-  }, [])
-  **/
+  }, [])  */
+  
 
+  
   const unRatedTasks = () => {
     Alert.alert('UnRated Tasks', message, [
       {
@@ -485,16 +517,23 @@ function Home() {
         onPress: () => console.log('Dismissed'),
 
       },
+      {
+        text: 'Rate Tasks',
+        onPress: () => navigation.navigate('RateTasks'),
+
+      },
 
     ])
+    
   }
 
 
-  /** 
- if(Object.keys(unratedTaskList).length != 0){
-   unRatedTasks()
- }
- **/
+  if (!alerted && checkUnrated()){
+    unRatedTasks()
+    setAlerted(true)
+  }
+ 
+ 
 
 
   //var result = await getCurrentTaskProgressAndMax();

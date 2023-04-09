@@ -3,7 +3,6 @@ import {View,Text, TextInput, Button} from 'react-native';
 import * as Helpers from '../backend_server/lib/helpers';
 import{getTodaysActiveTasks, getTodaysFinishedTasks, updateTask, rateTask, getUnratedCompletedTasks} from '../lib/server/tasks';
 import { useNavigation} from '@react-navigation/native';
-import {getUser} from './homescreen'
 import serverHandler from '../lib/server/serverHandler';
 
 function EditTask (task:any){

@@ -6,6 +6,7 @@ import { createNativeStackNavigator} from '@react-navigation/native-stack';
 import {AgendaNav} from './customAgenda';
 
 import serverHandler from '../lib/server/serverHandler';
+import StylingConstants from './StylingConstants';
 
 const StackNavigator = createNativeStackNavigator();
 
@@ -29,8 +30,25 @@ function CalendarNav() {
 
 function CreateCalendar() {
 
+  var markedDay:any  = {}
 
+  const formatDate = () => {
+    const date = formatDates(new Date().toLocaleDateString().substring(0,10)).split('/')
+  
+    const reformat = [date[2],date[0], date[1]]
+    const combine = reformat.join('-')
+    return combine
 
+  }
+
+  function formatDates(dateString:string) {
+    let [month, day, year] = dateString.split('/');
+    month = month.length === 1 ? '0' + month : month;
+    day = day.length === 1 ? '0' + day : day;
+    return `${month}/${day}/${year}`;
+  }
+  markedDay[formatDate()] = {selected:true, selectedColor: StylingConstants.highlightColor}
+  console.log(markedDay)
   const navigation = useNavigation();
   return (
     <CalendarList
@@ -38,11 +56,12 @@ function CreateCalendar() {
     style={{
       borderTopRightRadius: 20,
       borderTopLeftRadius: 20,
-      //overflow: 'hidden',
       borderBottomLeftRadius: 20,
       borderBottomRightRadius: 20,
 
     }} 
+
+      markedDates={markedDay}
    
       onDayPress={(day) => { navigation.navigate('CalAgenda', day )}}
     />

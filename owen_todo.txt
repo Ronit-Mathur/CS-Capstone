@@ -16,6 +16,7 @@ update username
 change password
 return list of users completed tasks that have not yet been rated
 delte user
+list of all unique dates that have a task on them from a users task table 
 
 
 error code: 
