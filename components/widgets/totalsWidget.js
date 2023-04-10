@@ -3,6 +3,7 @@ import { Component } from "react"
 import StylingConstants from "../StylingConstants"
 import { totalCompletedTasks, totalRatedTasks } from "../../lib/server/tasks";
 import { totalRates } from "../../lib/server/daily";
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export default class TotalsWidget extends Component {
     constructor(props) {
@@ -25,7 +26,8 @@ export default class TotalsWidget extends Component {
 
     render() {
         return (
-            <View style={{ borderRadius: 8, padding: "4%", backgroundColor: StylingConstants.highlightColor }}>
+            <View style={{position: "relative", borderRadius: 8, padding: "4%", backgroundColor: StylingConstants.highlightColor }}>
+                <MaterialCommunityIcons name="account" color="white" size={25} style={{position:"absolute", top: "15%", right: "4%"}}> </MaterialCommunityIcons>
                 <Text style={{ fontSize: StylingConstants.normalFontSize, color: "white", fontFamily: StylingConstants.defaultFontBold }}>Totals</Text>
                 <View style={{ flexDirection: "row" }}>
                     <View style={{ marginTop: "2%", marginRight: "4%" }}>

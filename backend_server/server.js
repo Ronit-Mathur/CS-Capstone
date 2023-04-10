@@ -574,6 +574,24 @@ module.exports = class Server {
 
 
         /**
+         * delete the user. no safeguard. be careful
+         */
+        app.get(SERVER_ENDPOINTS.USER_DELETE, async(req, res) =>{
+            if (!await this.authenticateQuery(req, res)) {
+                res.status(400).send("invalid auth key");
+                return;
+            }
+            if (req.query.username) {
+                var total = await this.userHandler.deleteUser(req.query.username);
+                return;
+            }
+            else {
+                res.status(400).send("invalid parameters");
+                return;
+            }
+        })
+
+        /**
          * google oauth2
          */
 

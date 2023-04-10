@@ -41,6 +41,7 @@ module.exports = {
         USER_LOGIN: "/api/user/login",
         USER_SESSION_LOGIN: "/api/user/session",
         USER_INFO: "/api/user/info",
+        USER_DELETE: "/api/user/delete",
 
         USER_RATE_DAY: "/api/user/day/rate",
         USER_GET_DAY_RATING: "/api/user/day/rating",

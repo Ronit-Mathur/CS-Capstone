@@ -448,6 +448,17 @@ module.exports = class UserHandler {
         var result = await DatabaseHandler.current.waitForOperationToFinish(id);
         return result[0];
     }
+
+
+    /**
+     * deletes the user from the database
+     * @param {*} username 
+     */
+    async deleteUser(username){
+        var q = new Query(1, "DELETE from users WHERE username = ? ", [username]);
+        var id = DatabaseHandler.current.enqueueOperation(q);
+        return;
+    }
 }
 
 

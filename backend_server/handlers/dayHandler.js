@@ -84,4 +84,17 @@ module.exports = class dayHandler {
         var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
         return result[0].c;
     }
+
+
+    /**
+     * @returns a list of happiness values for every day in the month. if a day has not been rated, it will not be given an entry
+     */
+    async monthlyHappiness(username, epoch){
+        fullDate = helpers.epochToMMDDYYY(epoch);
+        globDate = "??/" + fullDate.substring(3, fullDate.length);
+        var q = new Query(1, "SELECT date,happiness FROM daily WHERE username = ? AND date GLOB ? "[username, globDate]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+        return result;
+    }
 }
