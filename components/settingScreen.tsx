@@ -11,7 +11,7 @@ import { DefaultTheme, NavigationContainer, useNavigation } from '@react-navigat
 import { GetUserPhoto } from './external_integration/importUserPhoto';
 import RoundImage from './RoundImage';
 import RNRestart from 'react-native-restart';
-import { logout } from '../lib/server/users'
+import { deleteUser, logout } from '../lib/server/users'
 import { AddToOnPhotoUpdated } from './external_integration/importUserPhoto';
 
 
@@ -62,7 +62,10 @@ function Settings() {
             },
             {
                 text: 'Confirm',
-                onPress: () => console.log('Account Deleted')
+                onPress: async () =>{
+                    await deleteUser();
+                }
+               
             }
         ])
     }

@@ -11,11 +11,15 @@ const Query = require("./database/query");
 const Statement = require("./database/statement");
 
 
+
+
 module.exports = class DatabaseHandler {
 
     static current; //current database handler being used by the server
 
     currentOperation = false; //the current operation being processed
+
+   
 
 
 
@@ -27,11 +31,19 @@ module.exports = class DatabaseHandler {
     constructor(isRemote) {
         DatabaseHandler.current = this;
         this.isRemote = isRemote;
-
-
+        this.init();
+     
+        /** 
+        if(!this.isRemote){
+            SQLite.enablePromise(true);
+        }
+        **/
 
     }
 
+    async init(){
+        const localDB = await import ("./database/localDatabaseWrapper.mjs");
+    }
 
 
     /**

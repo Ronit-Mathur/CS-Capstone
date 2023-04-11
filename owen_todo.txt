@@ -16,7 +16,6 @@ update user email
 update username
 change password
 return list of users completed tasks that have not yet been rated
-delte user
 
 error code: 
 daily mood already input
