@@ -1,7 +1,9 @@
 const sqlite3 = require('sqlite3').verbose();
 const sqlite = require('sqlite');
 const SERVER_CONSTANTS = require("../../serverConstants");
-export default class RemoteDatabaseWrapper{
+
+
+module.exports = class RemoteDatabaseWrapper{
     constructor(){
         
     }
