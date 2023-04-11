@@ -4,4 +4,8 @@ export default class LocalDatabaseWrapper{
     constructor(){
         
     }
+
+    async getDBConnection(){
+        return true;
+    }
 }

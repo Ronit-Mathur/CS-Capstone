@@ -10,12 +10,13 @@ import Stats from './components/statscreen';
 import serverHandler from './lib/server/serverHandler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { CreateAccount } from './components/createaccount';
-import { loginUserSession } from "./lib/server/users";
+import { initLocalUser, loginUserSession } from "./lib/server/users";
 
-
+import { isRemote } from './lib/server/users';
 import { SignInScreen } from './components/SignInScreen';
 import StylingConstants from './components/StylingConstants';
 import StatsScreen from './components/newStatsScreen';
+import PrivacyPolicyScreen from './components/PrivacyPolicyScreen';
 
 /* 
   Create Tabs to switch between Screens
@@ -41,18 +42,31 @@ function MainStack() {
 
 
   function verifySignIn(uName: string) {
+
+
+
     userName = uName
 
     setIsSignedIn(true)
   }
 
   if (!isSignedIn) {
-    loginUserSession((result: boolean, username: string) => {
-      if (!result) {
-        return;
+
+    isRemote(async (remoteResult: boolean) => {
+      if (remoteResult) {
+        loginUserSession((result: boolean, username: string) => {
+          if (!result) {
+            return;
+          }
+          verifySignIn(username);
+        });
       }
-      verifySignIn(username);
-    });
+      else {
+        await initLocalUser();
+        verifySignIn(serverHandler.current.userState.username);
+      }
+    })
+
   }
 
 
@@ -63,7 +77,14 @@ function MainStack() {
         <>
           <StackNavigator.Screen
             name="SignIn" children={() => <SignInScreen signIn={verifySignIn} />} options={{ headerShown: false }} />
-          <StackNavigator.Screen name='CreateAccount' children={() => <CreateAccount signIn={verifySignIn} />} options={{ presentation: 'modal' }} />
+          <StackNavigator.Screen name='Create Account' children={() => <CreateAccount signIn={verifySignIn} />} options={{
+            presentation: 'modal', headerTintColor: "white", headerTitleStyle: { color: "white" }, headerStyle: { backgroundColor: StylingConstants.highlightColor, }, headerShadowVisible: false, // applied here
+            headerBackTitleVisible: false,
+          }} />
+          <StackNavigator.Screen name='Privacy Policy' children={() => <PrivacyPolicyScreen />} options={{
+            presentation: 'modal', headerTintColor: "white", headerTitleStyle: { color: "white" }, headerStyle: { backgroundColor: StylingConstants.highlightColor, }, headerShadowVisible: false, // applied here
+            headerBackTitleVisible: false,
+          }} />
         </>
 
       ) : (

@@ -7,6 +7,7 @@ const helpers = require("../lib/helpers");
 const Query = require("./database/query");
 const Statement = require("./database/statement");
 
+
 /**
  * handles user operations. this includes interacting with the database. initialize database before creating or using
  */
@@ -459,6 +460,9 @@ module.exports = class UserHandler {
         var id = DatabaseHandler.current.enqueueOperation(q);
         return;
     }
+
+
+
 }
 
 

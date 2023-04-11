@@ -116,7 +116,7 @@ const SignInScreen = ({signIn}:any) =>{
                             console.log('Invalid Login')
                         }
                     }} />
-                    <Button title='Create Account' onPress={() => navigation.navigate('CreateAccount')} />
+                    <Button title='Create Account' onPress={() => navigation.navigate('Create Account')} />
                 </View>
 
             </View>
