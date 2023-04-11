@@ -14,7 +14,7 @@ const { SERVER_ENDPOINTS } = require('./serverConstants.js');
 const fs = require('fs');
 const calendarImports = require('./lib/external_integration/calendarImports.js');
 const helpers = require('./lib/helpers');
-const { default: RemoteDatabaseWrapper } = require('./handlers/database/remoteDatabaseWrapper.mjs');
+
 
 
 
@@ -32,10 +32,9 @@ module.exports = class Server {
         Server.current = this;
         this.isRemote = isRemote;
         this.port = port;
-        var rdw = new RemoteDatabaseWrapper();
 
         //create and initialize the database handlers
-        this.DatabaseHandler = new (require("./handlers/databaseHandler.js"))(isRemote, rdw);
+     
         this.userHandler = new (require("./handlers/userHandler.js"))();
         this.taskHandler = new (require("./handlers/taskHandler.js"))();
         this.dayHandler = new (require('./handlers/dayHandler.js'))();
@@ -72,6 +71,11 @@ module.exports = class Server {
      * starts the server. run after creating object
      */
     async start() {
+        
+        const RemoteDatabaseWrapper = (await import('./handlers/database/remoteDatabaseWrapper.mjs')).default;
+        var rdw = new RemoteDatabaseWrapper();
+
+        this.DatabaseHandler = new (require("./handlers/databaseHandler.js"))(isRemote, rdw);
         await this.DatabaseHandler.init();
 
 
