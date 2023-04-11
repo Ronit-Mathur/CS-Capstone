@@ -3,13 +3,10 @@
  */
 
 const SERVER_CONSTANTS = require("../serverConstants");
-const sqlite3 = require('sqlite3').verbose();
-const sqlite = require('sqlite');
 const PriorityQueue = require('priority-queue-node')
 const helpers = require("../lib/helpers");
 const Query = require("./database/query");
 const Statement = require("./database/statement");
-
 
 
 
@@ -19,7 +16,7 @@ module.exports = class DatabaseHandler {
 
     currentOperation = false; //the current operation being processed
 
-   
+
 
 
 
@@ -28,11 +25,13 @@ module.exports = class DatabaseHandler {
      * 
      * @param {boolean} isRemote whether or not the database is remote
      */
-    constructor(isRemote) {
+    constructor(isRemote, dbWrapper) {
         DatabaseHandler.current = this;
         this.isRemote = isRemote;
-        this.init();
-     
+        this.dbWrapper = dbWrapper;
+
+
+
         /** 
         if(!this.isRemote){
             SQLite.enablePromise(true);
@@ -41,17 +40,20 @@ module.exports = class DatabaseHandler {
 
     }
 
-    async init(){
-        const localDB = await import ("./database/localDatabaseWrapper.mjs");
-    }
+
+  
 
 
     /**
      * run after creating handler.
      */
     async init() {
+
+
         await this._initDatabase();
         this._initOperationQueue();
+
+
     }
 
 
@@ -91,8 +93,8 @@ module.exports = class DatabaseHandler {
      * @param {*} id task id
      * @return the result of the task
      */
-    async waitForOperationToFinish(id){
-        while(!DatabaseHandler.current.isOperationFinished(id)){
+    async waitForOperationToFinish(id) {
+        while (!DatabaseHandler.current.isOperationFinished(id)) {
             await helpers.sleep(300);
         }
 
@@ -121,7 +123,7 @@ module.exports = class DatabaseHandler {
             else if (operation instanceof Statement) {
                 await this.exec(statement, params);
             }
-        }catch(e){
+        } catch (e) {
             console.log("[DatabaseHandler] Unable to process next operation");
             console.log(e);
             result = "error";
@@ -257,12 +259,8 @@ module.exports = class DatabaseHandler {
      * @returns database connection
      */
     async _getDBConnection() {
-        var db = await sqlite.open({
-            filename: SERVER_CONSTANTS.DATABASE_FILE,
-            driver: sqlite3.Database
-        });
-        await db.run("PRAGMA foreign_keys = ON");
-        return db;
+        return await this.dbWrapper.getDBConnection();
+
     }
 
 
