@@ -12,15 +12,15 @@ export default class StatsScreen extends Component {
     }
 
     render() {
-        return <View style={{ flexDirection: "column" }}>
+        return (
+        <View style={{flex: 1, flexDirection: "column" }}>
             <Text style={{
-
                 color: "white",
                 borderBottomLeftRadius: 12,
                 borderBottomRightRadius: 12, backgroundColor: StylingConstants.highlightColor, padding: "4%", fontFamily: StylingConstants.defaultFontBold, fontSize: StylingConstants.hugeFontSize
             }}>Your Statistics</Text>
 
-            <ScrollView style={{ padding: "2%", height: "100%" }}>
+            <ScrollView style={{padding: "2%", height: "100%" }}>
 
                 <FiveDayMoodHistoryWidget></FiveDayMoodHistoryWidget>
                 <View style={{marginTop:"4%"}}>
@@ -29,6 +29,7 @@ export default class StatsScreen extends Component {
             </ScrollView>
 
         </View>
+        )
     }
 }
 
