@@ -3,6 +3,7 @@ import * as React from 'react'
 import { View, Text, TextInput, Pressable, Button } from 'react-native'
 import { createUser, initLocalUser } from '../lib/server/users'
 import ChooseStorageOption from './ChooseStorageOption';
+import serverHandler from '../lib/server/serverHandler';
 
 
 const CreateAccount = ({ signIn }: any) => {
@@ -13,6 +14,10 @@ const CreateAccount = ({ signIn }: any) => {
 
   const handleSignUp = async () => {
     const didSignUp = await createUser(username, password, email)
+    serverHandler.current.userState = {};
+    serverHandler.current.userState.username = username;
+    serverHandler.current.userState.email = email;
+    
     if (didSignUp) {
       signIn(username)
     } else {

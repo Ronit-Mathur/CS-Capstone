@@ -586,8 +586,8 @@ module.exports = class Server {
                 return;
             }
             if (req.query.username) {
-                var total = await this.userHandler.deleteUser(req.query.username);
-                return;
+                await this.userHandler.deleteUser(req.query.username);
+                return true;
             }
             else {
                 res.status(400).send("invalid parameters");

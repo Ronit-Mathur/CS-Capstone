@@ -302,6 +302,10 @@ module.exports = class UserHandler {
         }
 
         var apiInfo = await this._getApiKey(username);
+
+        if(apiInfo == null){
+            return true;
+        }
         return apiInfo.key == apiKey.trim();
     }
 
