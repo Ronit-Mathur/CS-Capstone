@@ -28,11 +28,14 @@ module.exports = class LocalDatabaseWrapper {
     }
 
     async query(statement, params) {
-        await (new Promise(function (res, rej) {
+        var connection = await this.getDBConnection();
+        return await (new Promise(function (res, rej) {
             connection.transaction((tx) => {
                 tx.executeSql(statement, params).then(([tx, results]) => {
-                    console.log(results);
-                    res();
+                    if(results.rows == null){
+                        return res([]);
+                    };
+                    return res(results.rows.raw());
                 });
             });
         }));

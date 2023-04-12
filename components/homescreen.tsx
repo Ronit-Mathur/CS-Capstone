@@ -25,6 +25,7 @@ import { GetUserPhoto } from './external_integration/importUserPhoto';
 import RoundImage from './RoundImage';
 import ImportCalendarScreen from './external_integration/importCalendarScreen';
 import UnratedTasks from './unratedtasks';
+import PrivacyPolicyScreen from './PrivacyPolicyScreen';
 
 
 
@@ -52,6 +53,10 @@ function HomeScreenNav() {
           headerBackTitleVisible: false
         }}/>
       <StackNavigator.Screen name='RateTasks' component={UnratedTasks} options={{presentation:'containedModal'}} />
+      <StackNavigator.Screen name='Privacy Policy' children={() => <PrivacyPolicyScreen />} options={{
+            presentation: 'modal', headerTintColor: "white", headerTitleStyle: { color: "white" }, headerStyle: { backgroundColor: StylingConstants.highlightColor, }, headerShadowVisible: false, // applied here
+            headerBackTitleVisible: false,
+          }} />
       </StackNavigator.Group>
     </StackNavigator.Navigator>
   );

@@ -352,7 +352,7 @@ module.exports = class taskHandler {
      * @param {*} endTime 
      * @returns true if succesful
      */
-    async updateTask(id, username, summary, date, location, startTime, endTime, recursiveId) {
+    async updateTask(id, username, summary, date, location, startTime, endTime) {
 
         //check if task is in database
         if (!await this.taskExists(id)) {
@@ -363,13 +363,10 @@ module.exports = class taskHandler {
             return false;
         }
 
-        var newRecursiveId = recursiveId;
-        if(newRecursiveId === null){
-            newRecursiveId = -1;
-        }
+   
 
         //perform update to database
-        var statement = new Statement(1,"UPDATE tasks SET username = ?, summary = ?, location =?, date=?, startTime =?, endTime =?, recursiveId = ? WHERE taskId =?", [username, summary, location, date, startTime, endTime, newRecursiveId, id] );
+        var statement = new Statement(1,"UPDATE tasks SET username = ?, summary = ?, location =?, date=?, startTime =?, endTime =? WHERE taskId =?", [username, summary, location, date, startTime, endTime, id] );
         DatabaseHandler.current.enqueueOperation(statement);
         //DatabaseHandler.current.exec("UPDATE tasks SET username = ?, summary = ?, location =?, date=?, startTime =?, endTime =?, recursiveId = ? WHERE taskId =?", [username, summary, location, date, startTime, endTime, rescursiveId, id]);
 
@@ -607,7 +604,7 @@ module.exports = class taskHandler {
 
 
     async totalRatedTasks(username){
-        var q = new Query(1, "SELECT DISTINCT COUNT(*) as c FROM tasks WHERE username=? AND taskId IN (SELECT taskId FROM ratedTasks)")
+        var q = new Query(1, "SELECT DISTINCT COUNT(*) as c FROM tasks WHERE username=? AND taskId IN (SELECT taskId FROM ratedTasks)", [username])
         var id = DatabaseHandler.current.enqueueOperation(q);
         var result = await DatabaseHandler.current.waitForOperationToFinish(id);
         return result[0].c;

@@ -29,10 +29,11 @@ function Settings() {
     const [base64Image, setBase64Image] = React.useState("");
     const navigation = useNavigation();
 
-    AddToOnPhotoUpdated((base64: string)=>{
+
+    AddToOnPhotoUpdated((base64: string) => {
         setBase64Image(base64);
     });
-   
+
 
     const logoutAlert = () => {
         Alert.alert('Confirm Logout', 'Are you sure you want to logout?', [
@@ -62,10 +63,10 @@ function Settings() {
             },
             {
                 text: 'Confirm',
-                onPress: async () =>{
+                onPress: async () => {
                     await deleteUser();
                 }
-               
+
             }
         ])
     }
@@ -112,6 +113,28 @@ function Settings() {
 
     }
 
+    var buttons = [];
+
+    const remoteButtons = (<View>
+       
+        {ListButton("calendar-import", "Import Calendar", () => { navigation.navigate('ImportCalendar') })}
+        {ListButton("logout", "Logout", logoutAlert)}
+        {ListButton("security", "Privacy Policy", () => { navigation.navigate('Privacy Policy') })}
+        {ListButton("delete", "Delete Account", deleteAlert)}
+    </View>);
+
+    const localButtons = (<View>
+        {ListButton("logout", "Logout", logoutAlert)}
+    </View>);
+
+    if (serverHandler.current.userState.localInitCompleted) {
+        buttons = localButtons;
+    }
+    else {
+        buttons = remoteButtons;
+    }
+
+
 
 
     return (
@@ -121,7 +144,7 @@ function Settings() {
 
 
         }}>
-          
+
             <View style={{
                 paddingLeft: "5%",
                 paddingRight: "5%", flex: 0.2, flexDirection: "row", alignItems: "flex-start", alignSelf: "flex-start", paddingTop: "7%",
@@ -153,10 +176,8 @@ function Settings() {
 
 
             <ScrollView style={{ flex: 5, paddingBottom: 2 }}>
+                {buttons}
 
-                {ListButton("calendar-import", "Import Calendar", () => {navigation.navigate('ImportCalendar') })}
-                {ListButton("logout", "Logout", logoutAlert)}
-                {ListButton("delete", "Delete Account", deleteAlert)}
             </ScrollView>
 
 

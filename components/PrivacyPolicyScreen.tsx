@@ -85,7 +85,7 @@ export default function PrivacyPolicyScreen() {
                     Contact Us
                 </Text>
                 <Text style={{ marginBottom: 30, color: "black", fontFamily: StylingConstants.defaultFont, fontSize: StylingConstants.tinyFontSize, textAlign: "justify" }}>
-                    If you have any questions or concerns about this Privacy Policy or our collection, use, or disclosure of your personal data, please contact us at [insert contact information].
+                    If you have any questions or concerns about this Privacy Policy or our collection, use, or disclosure of your personal data, please contact us at optimoodtracking@gmail.com.
 
 
 
