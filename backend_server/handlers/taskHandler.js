@@ -48,8 +48,8 @@ module.exports = class taskHandler {
      * generates an unused recursive id for a task
      * @return unused recursive id
      */
-    async _getNewRecursiveTaskId() {
-        const taskIds = await this.getAllRecursiveTaskIds();
+    async _getNewRecursiveTaskId(username) {
+        const taskIds = await this.getAllRecursiveTaskIds(username);
         var currentRecursiveId = 0;
         for (var i = 0; i < taskIds.length; i++) {
             //go through all ids, incrementing the current id. when they do not match we have an unused id
@@ -63,13 +63,13 @@ module.exports = class taskHandler {
     }
 
 
-    async getAllRecursiveTaskIds() {
-        var oppId = DatabaseHandler.current.enqueueOperation(new Query(1, "SELECT DISTINCT recursiveId FROM tasks ORDER BY recursiveId", []));
+    async getAllRecursiveTaskIds(username) {
+        var oppId = DatabaseHandler.current.enqueueOperation(new Query(1, "SELECT DISTINCT recursiveId FROM tasks WHERE username=? ORDER BY recursiveId", [username]));
         var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
         //convert from objects to a list of ints
         var idLs = [];
         for (var i = 0; i < result.length; i++) {
-            idLs.push(result[i].taskId);
+            idLs.push(result[i].recursiveId);
         }
 
         return idLs;
@@ -131,11 +131,10 @@ module.exports = class taskHandler {
         var recursiveId = -1;
         if (result.length == 1) {
             //give both tasks a new recursive id
-            var newRId = await this._getNewRecursiveTaskId();
-            console.log(newRId);
+            var newRId = await this._getNewRecursiveTaskId(username);
 
             //update the existing task
-            var updateStatement = new Statement(1, "UPDATE tasks SET recursiveId = ? WHERE taskId = ?", [newRid, result[0].taskId])
+            var updateStatement = new Statement(1, "UPDATE tasks SET recursiveId = ? WHERE taskId = ?", [newRId, result[0].taskId])
             var updateOppId = DatabaseHandler.current.enqueueOperation(updateStatement);
             await DatabaseHandler.current.waitForOperationToFinish(updateOppId);
             recursiveId = newRId;
