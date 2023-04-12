@@ -129,7 +129,6 @@ module.exports = class taskHandler {
 
 
         var recursiveId = -1;
-        console.log(result);
         if(result.length == 1){
             //give both tasks a new recursive id
             var newRId = await this._getNewRecursiveTaskId();

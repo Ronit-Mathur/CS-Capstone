@@ -64,7 +64,8 @@ function Settings() {
             {
                 text: 'Confirm',
                 onPress: async () => {
-                    await deleteUser();
+                    deleteUser();
+                    RNRestart.restart();
                 }
 
             }
