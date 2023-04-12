@@ -123,15 +123,17 @@ module.exports = class taskHandler {
         }
 
         //find all tasks which share the same summary and link them with a recursive id
-        var query = new Query(priority, "SELECT * FROM tasks WHERE username = ? AND summary =?", [username, summary]);``
+        var query = new Query(priority, "SELECT * FROM tasks WHERE username = ? AND summary = ?", [username, summary]);``
         var oppId =DatabaseHandler.current.enqueueOperation(query);
         var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
 
 
         var recursiveId = -1;
+        console.log(result);
         if(result.length == 1){
             //give both tasks a new recursive id
             var newRId = await this._getNewRecursiveTaskId();
+            console.log(newRId);
 
             //update the existing task
             await this.updateTask(result[0].taskId, username, summary, result[0].date, result[0].location, result[0].startTime, result[0].endTime, newRId);

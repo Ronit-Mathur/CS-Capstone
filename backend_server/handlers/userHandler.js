@@ -15,7 +15,6 @@ module.exports = class UserHandler {
 
     constructor() {
 
-        console.log("starting");
         UserHandler.current = this;
         //credentials are used to authenticate with google and microsoft servers. only stored in memory
         //username:key
