@@ -4,7 +4,6 @@
 
 const DatabaseHandler = require("./databaseHandler");
 const helpers = require("../lib/helpers");
-const Server = require("../server");
 const UserHandler = require("./userHandler");
 const Query = require("./database/query");
 const Statement =require("./database/statement");
@@ -389,7 +388,7 @@ module.exports = class taskHandler {
      */
     async _areTaskParametersValid(username, summary, date, location, startTime, endTime) {
         //verify that user exists. check date, endtime and starttime are all in the correct format. 
-        return (await Server.current.getUserHandler().userExists(username)) && helpers.isDateFormat(date) && helpers.isTimeFormat(startTime) && helpers.isTimeFormat(endTime) && location && summary;
+        return (await UserHandler.current.userExists(username)) && helpers.isDateFormat(date) && helpers.isTimeFormat(startTime) && helpers.isTimeFormat(endTime) && location && summary;
     }
 
 

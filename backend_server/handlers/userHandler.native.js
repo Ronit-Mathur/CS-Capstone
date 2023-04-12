@@ -1,6 +1,6 @@
 const DatabaseHandler = require("./databaseHandler")
-const bcrypt = require("bcrypt");
-const { getOutlookEventsFromToken, getOutlookCalendarsFromToken, getOutlookOAuth2Token, getAuthorizedGoogleOAuth2Client, getGoogleCalendarsFromClient, getGoogleEventsFromClient } = require("../lib/external_integration/calendarImports");
+//const bcrypt = require("bcrypt");
+//const { getOutlookEventsFromToken, getOutlookCalendarsFromToken, getOutlookOAuth2Token, getAuthorizedGoogleOAuth2Client, getGoogleCalendarsFromClient, getGoogleEventsFromClient } = require("../lib/external_integration/calendarImports");
 const helpers = require("../lib/helpers");
 const Query = require("./database/query");
 const Statement = require("./database/statement");
@@ -124,10 +124,10 @@ module.exports = class UserHandler {
             return -1;
         }
 
-        var crypto = null;
+        //var crypto = null;
         try {
-            let c = "crypto";
-            crypto = (await import(c)).default;
+         //   let c = "crypto";
+          //  crypto = (await import(c)).default;
         }
         catch(e) {
 
@@ -170,8 +170,8 @@ module.exports = class UserHandler {
 
         var crypto = null;
         try {
-            let c = "crypto";
-            crypto  = (await import(c)).default;
+         //   let c = "crypto";
+          //  crypto  = (await import(c)).default;
             var token = crypto.randomBytes(20).toString('hex');
         }
         catch(e){
@@ -431,8 +431,8 @@ module.exports = class UserHandler {
 
 
         //hand off events to task handler to parse
-        const Server = require("../server");
-        await Server.current.getTaskHandler().parseAndImportGoogleEvents(events, username);
+        //const Server = require("../server");
+        //await Server.current.getTaskHandler().parseAndImportGoogleEvents(events, username);
 
     }
 
@@ -453,8 +453,8 @@ module.exports = class UserHandler {
         const events = await getOutlookEventsFromToken(token, id);
 
         //hand off events to task handler to parse
-        const Server = require("../server");
-        await Server.current.getTaskHandler().parseAndImportOutlookEvents(events, username);
+       // const Server = require("../server");
+        //await Server.current.getTaskHandler().parseAndImportOutlookEvents(events, username);
     }
 
     /**
