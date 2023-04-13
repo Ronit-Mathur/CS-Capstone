@@ -14,6 +14,8 @@ const { SERVER_ENDPOINTS } = require('./serverConstants.js');
 const fs = require('fs');
 const calendarImports = require('./lib/external_integration/calendarImports.js');
 const helpers = require('./lib/helpers');
+const RemoteDatabaseWrapper = require('./handlers/database/remoteDatabaseWrapper.js');
+
 
 
 
@@ -31,8 +33,10 @@ module.exports = class Server {
         Server.current = this;
         this.isRemote = isRemote;
         this.port = port;
+        var rdwrapper = new RemoteDatabaseWrapper();
+
         //create and initialize the database handlers
-        this.DatabaseHandler = new (require("./handlers/databaseHandler.js"))(isRemote);
+        this.DatabaseHandler = new (require("./handlers/databaseHandler.js"))(isRemote, rdwrapper);
         this.userHandler = new (require("./handlers/userHandler.js"))();
         this.taskHandler = new (require("./handlers/taskHandler.js"))();
         this.dayHandler = new (require('./handlers/dayHandler.js'))();
@@ -582,8 +586,8 @@ module.exports = class Server {
                 return;
             }
             if (req.query.username) {
-                var total = await this.userHandler.deleteUser(req.query.username);
-                return;
+                await this.userHandler.deleteUser(req.query.username);
+                return true;
             }
             else {
                 res.status(400).send("invalid parameters");

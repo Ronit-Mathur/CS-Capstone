@@ -3,13 +3,10 @@
  */
 
 const SERVER_CONSTANTS = require("../serverConstants");
-const sqlite3 = require('sqlite3').verbose();
-const sqlite = require('sqlite');
 const PriorityQueue = require('priority-queue-node')
 const helpers = require("../lib/helpers");
 const Query = require("./database/query");
 const Statement = require("./database/statement");
-
 
 
 
@@ -19,7 +16,7 @@ module.exports = class DatabaseHandler {
 
     currentOperation = false; //the current operation being processed
 
-   
+
 
 
 
@@ -28,30 +25,30 @@ module.exports = class DatabaseHandler {
      * 
      * @param {boolean} isRemote whether or not the database is remote
      */
-    constructor(isRemote) {
+    constructor(isRemote, dbWrapper) {
         DatabaseHandler.current = this;
         this.isRemote = isRemote;
-        this.init();
-     
-        /** 
-        if(!this.isRemote){
-            SQLite.enablePromise(true);
-        }
-        **/
+        this.dbWrapper = dbWrapper;
+
+
+
 
     }
 
-    async init(){
-        const localDB = await import ("./database/localDatabaseWrapper.mjs");
-    }
+
+  
 
 
     /**
      * run after creating handler.
      */
     async init() {
+
+
         await this._initDatabase();
         this._initOperationQueue();
+
+
     }
 
 
@@ -91,8 +88,8 @@ module.exports = class DatabaseHandler {
      * @param {*} id task id
      * @return the result of the task
      */
-    async waitForOperationToFinish(id){
-        while(!DatabaseHandler.current.isOperationFinished(id)){
+    async waitForOperationToFinish(id) {
+        while (!DatabaseHandler.current.isOperationFinished(id)) {
             await helpers.sleep(300);
         }
 
@@ -121,7 +118,7 @@ module.exports = class DatabaseHandler {
             else if (operation instanceof Statement) {
                 await this.exec(statement, params);
             }
-        }catch(e){
+        } catch (e) {
             console.log("[DatabaseHandler] Unable to process next operation");
             console.log(e);
             result = "error";
@@ -190,12 +187,11 @@ module.exports = class DatabaseHandler {
     async _initDatabase() {
 
 
-        //get a connection to the on-disk database. will create one if dosent exist
-        const db = await this._getDBConnection();
+
         //create tables if not exist
 
         //user table is needed even if not remote. cascade delete
-        await db.run("CREATE TABLE IF NOT EXISTS users (username TEXT PRIMARY KEY UNIQUE, email TEXT UNIQUE, password TEXT)");
+        await this.dbWrapper.exec("CREATE TABLE IF NOT EXISTS users (username TEXT PRIMARY KEY UNIQUE, email TEXT UNIQUE, password TEXT)", []);
 
 
 
@@ -211,7 +207,7 @@ module.exports = class DatabaseHandler {
         //startTime - the start time of the task. in the format hh:mm
         //endTime - the end time of the task. in the format hh:mm
         //rescursiveId - an id shared by all tasks which are linked or -1 if individual
-        await db.run("CREATE TABLE IF NOT EXISTS tasks (taskId INTEGER PRIMARY KEY UNIQUE,  username TEXT, summary TEXT, location TEXT, date TEXT, startTime TEXT, endTime TEXT, recursiveId INTEGER , FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE)");
+        await this.dbWrapper.exec("CREATE TABLE IF NOT EXISTS tasks (taskId INTEGER PRIMARY KEY UNIQUE,  username TEXT, summary TEXT, location TEXT, date TEXT, startTime TEXT, endTime TEXT, recursiveId INTEGER , FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE)",[]);
 
         //ratedTask
         //a rated task is added data for a task. contains data about how the task was performed.
@@ -220,7 +216,7 @@ module.exports = class DatabaseHandler {
         //physicalActivity - how physically active the user was. scale 1-5. 5 being greatest
         //engagement - how engaged the user was mentally. scale 1-5. 5 being greatest
         //mentalDifficulty - how mentally difficult the task was. scale 1-5. 5 being greatest
-        await db.run("CREATE TABLE IF NOT EXISTS ratedTasks (taskId INTEGER  PRIMARY KEY UNIQUE, enjoyment INTEGER , phyiscalActivity INTEGER , engagement INTEGER , mentalDifficulty INTEGER , FOREIGN KEY(taskId) REFERENCES tasks(taskId) ON DELETE CASCADE)");
+        await this.dbWrapper.exec("CREATE TABLE IF NOT EXISTS ratedTasks (taskId INTEGER  PRIMARY KEY UNIQUE, enjoyment INTEGER , phyiscalActivity INTEGER , engagement INTEGER , mentalDifficulty INTEGER , FOREIGN KEY(taskId) REFERENCES tasks(taskId) ON DELETE CASCADE)",[]);
 
         //daily
         //a rating of individual days for users
@@ -229,7 +225,7 @@ module.exports = class DatabaseHandler {
         //username - the user which the day belongs to. linked to the users table
         //happiness - a happiness value associated with the whole day. scale 1-5. 5 being greated
         //rating - a general summary rating for the day made from pre-existing data. floating point number from 0-1;
-        await db.run("CREATE TABLE IF NOT EXISTS daily (date TEXT, time TEXT, username TEXT, happiness INTEGER , rating REAL, FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE, PRIMARY KEY(date, username))");
+        await this.dbWrapper.exec("CREATE TABLE IF NOT EXISTS daily (date TEXT, time TEXT, username TEXT, happiness INTEGER , rating REAL, FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE, PRIMARY KEY(date, username))",[]);
 
 
         //api keys
@@ -237,50 +233,26 @@ module.exports = class DatabaseHandler {
         //username - the username the api key belongs to
         //key - a string of letters and numbers which makes up the api key
         //date - the date the key was issued in the format mm/dd/yyyy
-        await db.run("CREATE TABLE IF NOT EXISTS apiCredentials (username TEXT PRIMARY KEY, key TEXT, date TEXT, FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE)");
+        await this.dbWrapper.exec("CREATE TABLE IF NOT EXISTS apiCredentials (username TEXT PRIMARY KEY, key TEXT, date TEXT, FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE)",[]);
 
 
         //session tokens
         //maps a username to it's current session token
         //username - the username the session token belongs to
         //token - the session token of the user. a string of letters and numbers
-        await db.run("CREATE TABLE IF NOT EXISTS sessionTokens (username TEXT PRIMARY KEY, token TEXT, FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE)");
+        await this.dbWrapper.exec("CREATE TABLE IF NOT EXISTS sessionTokens (username TEXT PRIMARY KEY, token TEXT, FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE)",[]);
 
-
-        //close connection
-        db.close();
     }
 
 
-    /**
-     * @summary gets a connection to the database
-     * @returns database connection
-     */
-    async _getDBConnection() {
-        var db = await sqlite.open({
-            filename: SERVER_CONSTANTS.DATABASE_FILE,
-            driver: sqlite3.Database
-        });
-        await db.run("PRAGMA foreign_keys = ON");
-        return db;
-    }
-
+   
 
     /**
      * executes an sql statement on the datbase with no return
      * @param {*} statement statement to execute
      */
     async exec(statement, params) {
-        try {
-            var db = await this._getDBConnection();
-            await db.run(statement, params);
-            await db.close();
-        }
-        catch (e) {
-            console.log("database handler unable to execute run \"" + statement + "\"");
-            console.log("Params: " + params);
-            console.log(e);
-        }
+        await this.dbWrapper.exec(statement, params);
     }
 
 
@@ -291,19 +263,7 @@ module.exports = class DatabaseHandler {
      * @returns response from the database
      */
     async query(statement, params) {
-        let response;
-        try {
-            var db = await this._getDBConnection();
-            response = await db.all(statement, params);
-            await db.close();
-        }
-        catch (e) {
-            console.log("database handler unable to execute query \"" + statement + "\"");
-            console.log("Params: " + params);
-            console.log(e);
-            response = [];
-        }
-        return response;
+       return await this.dbWrapper.query(statement, params);
     }
 
     /**
