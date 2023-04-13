@@ -11,7 +11,7 @@ async function calcDayMood(user: any, day: any) {
     var moodRatingList = [];
     var dayAvgMood = 0;
     var dayMood = await getDay(day); // Day object
-    console.log("day is: " + dayMood);
+    console.log("day is: " + dayMood.happiness);
     if (dayMood != null) {
         moodRatingList.push(dayMood.happiness); // Add day rating
     }
@@ -21,13 +21,14 @@ async function calcDayMood(user: any, day: any) {
     console.log(ratedTasks);
     for (var task of ratedTasks) {
         console.log(task.taskId);
-        tmpTaskRating = await getTaskRating(task.taskId);
-        console.log("Task ID: " + task.taskId + " has rating: " + tmpTaskRating);
+        tmpTaskRating = await getTaskRating(task.taskId); // getTaskRating returns {"engagement": #, "enjoyment": #, "mentalDifficulty": #, "phyiscalActivity": #, "taskId": ###}
+        console.log("Task ID: " + task.taskId + " has rating: " + tmpTaskRating.enjoyment);
         if (tmpTaskRating != null) {
-            moodRatingList.push(tmpTaskRating);
+            moodRatingList.push(tmpTaskRating.enjoyment);
         }
     }
-    console.log("Mood rating list pre calc" + moodRatingList);
+    console.log("Mood rating list pre calc: ");
+    console.log(moodRatingList);
     moodRatingList.forEach(function(rating) {
         dayAvgMood += rating; // Add task ratings
     })
@@ -42,12 +43,14 @@ async function calcDayMood(user: any, day: any) {
 /* 
 month: mm/yyyy
 */
-async function getTaskRatingsMonth(user: any, month: any) {
+async function getTaskRatingsMonth(month: any) {
     var dateRatings = [];
     const monthRatingTasks = await getTaskRatingsByMonth(month); // {taskId, date}
+    console.log(monthRatingTasks);
     var tmprtg;
     for (var task of monthRatingTasks) {
-        tmprtg = await getTaskRating(task.taskid);
+        console.log(task);
+        tmprtg = await getTaskRating(task.taskId);
     }
     console.log(monthRatingTasks);
 }

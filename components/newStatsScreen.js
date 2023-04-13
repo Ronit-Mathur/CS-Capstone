@@ -1,9 +1,12 @@
-import { View, Text } from "react-native"
+import { View, Text, Button } from "react-native"
 import { Component } from "react"
 import StylingConstants from "./StylingConstants";
 import { ScrollView } from "react-native-gesture-handler";
 import FiveDayMoodHistoryWidget from "./widgets/fiveDayMoodHistoryWidget";
 import TotalsWidget from "./widgets/totalsWidget";
+import { calcDayMood, getTaskRatingsMonth, rateManualTask } from './statsHelpers';
+import serverHandler from '../lib/server/serverHandler';
+import MonthlyStatsWidget from './widgets/monthlyStatsWidget'
 
 export default class StatsScreen extends Component {
 
@@ -25,6 +28,9 @@ export default class StatsScreen extends Component {
                 <FiveDayMoodHistoryWidget></FiveDayMoodHistoryWidget>
                 <View style={{marginTop:"4%"}}>
                     <TotalsWidget></TotalsWidget>
+                    <MonthlyStatsWidget/>
+                    <Button title='calcDayMood' onPress={() => calcDayMood(serverHandler.current.userState.username, '04/11/2023')}></Button>
+                    <Button title='monthRatedTasks' onPress={() => getTaskRatingsMonth('04/2023')}></Button>
                 </View>
             </ScrollView>
 
@@ -32,4 +38,3 @@ export default class StatsScreen extends Component {
         )
     }
 }
-
