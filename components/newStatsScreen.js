@@ -6,7 +6,7 @@ import FiveDayMoodHistoryWidget from "./widgets/fiveDayMoodHistoryWidget";
 import TotalsWidget from "./widgets/totalsWidget";
 import { calcDayMood, getTaskRatingsMonth, rateManualTask } from './statsHelpers';
 import serverHandler from '../lib/server/serverHandler';
-import MonthlyStatsWidget from './widgets/monthlyStatsWidget'
+import DaysOfWeekStatsWidget from './widgets/daysOfWeekStatsWidget'
 import TaskWidget, { HappiestWhenDayStartsWithWidget, LeastEnjoyableTaskWidget } from "./widgets/taskWidget";
 
 export default class StatsScreen extends Component {
@@ -31,8 +31,7 @@ export default class StatsScreen extends Component {
                 <HappiestWhenDayStartsWithWidget></HappiestWhenDayStartsWithWidget>
                 <View style={{marginTop:"4%"}}>
                     <TotalsWidget></TotalsWidget>
-                  
-                    <MonthlyStatsWidget/>
+                    <DaysOfWeekStatsWidget/>
                     <Button title='calcDayMood' onPress={() => calcDayMood(serverHandler.current.userState.username, '04/11/2023')}></Button>
                     <Button title='monthRatedTasks' onPress={() => getTaskRatingsMonth('04/2023')}></Button>
                 </View>

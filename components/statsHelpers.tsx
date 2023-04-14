@@ -6,6 +6,10 @@ import { useNavigation} from '@react-navigation/native';
 import {getUser} from './homescreen'
 import { getDay } from '../lib/server/daily';
 
+async function getDateMoodList() {
+    tmpMonth = '04/2023';
+}
+
 async function calcDayMood(user: any, day: any) {
     var ratedTaskIDs = [];
     var moodRatingList = [];
@@ -43,16 +47,20 @@ async function calcDayMood(user: any, day: any) {
 /* 
 month: mm/yyyy
 */
-async function getTaskRatingsMonth(month: any) {
+async function getMonthAvgRatings(month: any) {
     var dateRatings = [];
     const monthRatingTasks = await getTaskRatingsByMonth(month); // {taskId, date}
     console.log(monthRatingTasks);
-    var tmprtg;
+    var tmprtg = 0;
     for (var task of monthRatingTasks) {
         console.log(task);
-        tmprtg = await getTaskRating(task.taskId);
+        tmpDate = task.date;
+        tmprtg = await calcDayMood(tmpDate);
+        dateRatings.push({tmpDate, tmprtg}); // {date, dayRatingAvg}
     }
     console.log(monthRatingTasks);
+    console.log(dateRatings);
+    return dateRatings;
 }
 
 async function getNumRated(user: any) {
@@ -68,4 +76,4 @@ async function rateManualTask(taskID: any) {
 //     return tmp
 // }
 
-export {getNumRated, calcDayMood, rateManualTask, getTaskRatingsMonth};
+export {getDateMoodList, getNumRated, calcDayMood, rateManualTask, getMonthAvgRatings};
