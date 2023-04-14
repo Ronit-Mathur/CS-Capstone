@@ -84,6 +84,15 @@ module.exports = class taskHandler {
         return result;
     }
 
+    async getRecursiveRatedTasksById(username, id){
+       
+        var q = new Query(1, "SELECT DISTINCT * FROM  (ratedTasks INNER JOIN tasks ON ratedTasks.taskId = tasks.taskId) WHERE username =? AND recursiveId = ?", [username, id]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+
+        return result;
+    }
+
 
     /**
      * finds all tasks in the database which share a recursive id
@@ -653,6 +662,8 @@ module.exports = class taskHandler {
 
 
 
+
+
     /**
      * 
      * @param {*} username 
@@ -725,7 +736,7 @@ module.exports = class taskHandler {
         }
 
         //get tasks by the recursive id and return the first one
-        var recursiveGroup = await this.getRecursiveTasksById(username, biggestRecurId);
+        var recursiveGroup = await this.getRecursiveRatedTasksById(username, biggestRecurId);
         if(recursiveGroup.length == 0){
             return null;
         }
