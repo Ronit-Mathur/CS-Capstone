@@ -4,7 +4,7 @@ import { happiestWhenDayStartsWith, leastEnjoyableTask } from "../../lib/server/
 import StylingConstants from "../StylingConstants";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-export function TaskWidget(title, summary, subText, subValue, icon) {
+export function TaskWidget(title, summary, subText, subValue, icon, color) {
     return (
         <View style={{
             shadowColor: "gray",
@@ -22,9 +22,9 @@ export function TaskWidget(title, summary, subText, subValue, icon) {
             marginBottom: 5,
             position: "relative"
         }}>
-            <MaterialCommunityIcons name={icon} color={StylingConstants.highlightColor} size={25} style={{ position: "absolute", top: "15%", right: "2%" }}> </MaterialCommunityIcons>
-            <Text style={{  fontSize: StylingConstants.largeFontSize, color:StylingConstants.highlightColor, fontFamily: StylingConstants.defaultFontBold }}>{title}</Text>
-            <Text style={{ fontSize: StylingConstants.normalFontSize, color: "black", fontFamily: StylingConstants.defaultFontBold }}>{summary}</Text>
+            <MaterialCommunityIcons name={icon} color={color} size={25} style={{ position: "absolute", top: "15%", right: "2%" }}> </MaterialCommunityIcons>
+            <Text style={{marginBottom:4,  fontSize: StylingConstants.subFontSize, color:StylingConstants.highlightColor, fontFamily: StylingConstants.defaultFontBold }}>{title}</Text>
+            <Text style={{ marginBottom:1, fontSize: StylingConstants.subFontSize, color: "black", fontFamily: StylingConstants.defaultFontBold }}>{summary}</Text>
             <View style={{ flexDirection: "row" }}>
                 <Text style={{ marginRight: 4, fontSize: StylingConstants.tinyFontSize, color: "black", fontFamily: StylingConstants.defaultFontBold }}>{subValue}</Text>
                 <Text style={{ fontSize: StylingConstants.tinyFontSize, color: "black", fontFamily: StylingConstants.defaultFontBold }}>{subText}</Text>
@@ -39,7 +39,7 @@ export function LeastEnjoyableTaskWidget() {
 
     var loadData = async () => {
         var task = await leastEnjoyableTask();
-
+        
 
         setTaskData(task);
 
@@ -62,7 +62,7 @@ export function LeastEnjoyableTaskWidget() {
     }
 
 
-    return TaskWidget("Your Least Enjoyable Task", summary, subText, count, "arrow-down");
+    return TaskWidget("Your Least Enjoyable Task", summary, subText, count, "arrow-down", "red");
 }
 
 export function HappiestWhenDayStartsWithWidget(){
@@ -88,9 +88,9 @@ export function HappiestWhenDayStartsWithWidget(){
         count = taskData.c;
 
         if (count == 1) {
-            subText = "instance rated negatively";
+            subText = "day started positively";
         }
     }
 
-      return TaskWidget("Your Day is Happiest When it Starts With", summary, subText, count, "arrow-down");
+      return TaskWidget("Your Day is Happiest When it Starts With", summary, subText, count, "arrow-up", "green");
 }

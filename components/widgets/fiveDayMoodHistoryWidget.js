@@ -103,12 +103,12 @@ function DayHistoryWidget(dateResult) {
                 height: "90%",
 
             }}>
-                <View style={{ backgroundColor: StylingConstants.highlightColor, height: "80%", width: 3, alignSelf: "center", marginRight: 5 }}></View>
+                <View style={{ backgroundColor: StylingConstants.lighterHighlightColor, height: "80%", width: 3, alignSelf: "center", marginRight: 5 }}></View>
 
                 <View style={{ flexDirection: "column" }}>
                     <Text style={{
                         alignSelf: "center", paddingLeft: 2, paddingRight: 2,
-                        fontFamily: StylingConstants.defaultFontBold, fontSize: StylingConstants.normalFontSize, color: StylingConstants.highlightColor, marginBottom: 4
+                        fontFamily: StylingConstants.defaultFontBold, fontSize: StylingConstants.normalFontSize, color: StylingConstants.lighterHighlightColor, marginBottom: 4
                     }}>{day.substring(0, 3)}</Text>
                     <MaterialCommunityIcons name={face} color={StylingConstants.darkFontColor} size={30} style={{
                         alignSelf: "center"
