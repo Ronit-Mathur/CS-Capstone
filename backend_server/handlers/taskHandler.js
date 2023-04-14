@@ -702,7 +702,7 @@ module.exports = class taskHandler {
         var biggestRecurId = -2;
         keys = Object.keys(totals);
         for (var i = 0; i < keys.length; i++) {
-            if (total[keys[i]] > biggest) {
+            if (totals[keys[i]] > biggest) {
                 biggest = totals[keys[i]]
                 biggestRecurId = keys[i]
             }
@@ -730,6 +730,7 @@ module.exports = class taskHandler {
             return null;
         }
 
+        recursiveGroup[0].c = recursiveGroup.length;
         return recursiveGroup[0];
 
 

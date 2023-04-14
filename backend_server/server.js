@@ -548,7 +548,6 @@ module.exports = class Server {
 
             if (req.query.username) {
                 var task = await this.taskHandler.happiestWhenDayStartsWith(req.query.username);
-                console.log(task);
                 res.status(200).send(task);
                 return;
             }

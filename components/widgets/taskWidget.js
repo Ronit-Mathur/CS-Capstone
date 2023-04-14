@@ -82,7 +82,7 @@ export function HappiestWhenDayStartsWithWidget(){
 
     var summary = "";
     var count = 0;
-    var subText = "instances rated negatively";
+    var subText = "days started positively";
     if (taskData != null && Object.keys(taskData).length > 0) {
         summary = taskData.summary;
         count = taskData.c;
@@ -92,5 +92,5 @@ export function HappiestWhenDayStartsWithWidget(){
         }
     }
 
-      return TaskWidget("Your Least Enjoyable Task", summary, subText, count, "arrow-down");
+      return TaskWidget("Your Day is Happiest When it Starts With", summary, subText, count, "arrow-down");
 }
