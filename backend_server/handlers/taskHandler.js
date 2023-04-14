@@ -634,8 +634,8 @@ module.exports = class taskHandler {
      * @returns the users least enjoyable, repetitive task
      */
     async leastEnjoyableRepetetiveTask(username) {
-        var q = new Query(1, "SELECT DISTINCT summary, recursiveId, COUNT(*) as c FROM (ratedTasks INNER JOIN tasks ON ratedTasks.taskId = tasks.taskId) WHERE  username = ? AND enjoyment = 1 GROUP BY recursiveId ORDER BY count(recursiveId) DESC", [username]);
-        var id = DatabaseHandler.current.enqueueOperation(q);
+        var q = new Query(1, "SELECT DISTINCT summary, recursiveId, COUNT(*) as c FROM (ratedTasks INNER JOIN tasks ON ratedTasks.taskId = tasks.taskId) WHERE username = ? AND enjoyment IN (SELECT min(enjoyment) FROM (ratedTasks INNER JOIN tasks ON ratedTasks.taskId = tasks.taskId)) GROUP BY recursiveId ORDER BY count(recursiveId) DESC", [username]);
+        var id =    DatabaseHandler.current.enqueueOperation(q);
         var result = await DatabaseHandler.current.waitForOperationToFinish(id);
         return result;
     }
