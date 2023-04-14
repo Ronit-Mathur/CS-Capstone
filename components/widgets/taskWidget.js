@@ -18,7 +18,11 @@ export function LeastEnjoyableTaskWidget(){
         setTaskData(task);
     }
 
-    loadData();
+    if(taskData == {}){
+        loadData();
+    }
+
+  
 
     return TaskWidget("","");
 }
