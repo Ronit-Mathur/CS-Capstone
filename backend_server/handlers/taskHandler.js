@@ -651,7 +651,7 @@ module.exports = class taskHandler {
      * @returns a task where which is first when the user's day is happiest
      */
     async happiestWhenDayStartsWith(username) {
-        var q = new Query(1, "SELECT * FROM (ratedTasks INNER JOIN tasks ON ratedTasks.taskId = tasks.taskId) WHERE date IN (SELECT date FROM daily WHERE happiness IN (SELECT max(happiness) FROM daily WHERE username = ?) AND username =?) "[username, username])
+        var q = new Query(1, "SELECT * FROM (ratedTasks INNER JOIN tasks ON ratedTasks.taskId = tasks.taskId) WHERE date IN (SELECT date FROM daily WHERE happiness IN (SELECT max(happiness) FROM daily WHERE username = ?) AND username =?) ", [username, username])
         var id = DatabaseHandler.current.enqueueOperation(q);
         var result = await DatabaseHandler.current.waitForOperationToFinish(id);
         console.log(result);
