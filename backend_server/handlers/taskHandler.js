@@ -637,7 +637,10 @@ module.exports = class taskHandler {
         var q = new Query(1, "SELECT DISTINCT summary, recursiveId, COUNT(*) as c FROM (ratedTasks INNER JOIN tasks ON ratedTasks.taskId = tasks.taskId) WHERE username = ? AND enjoyment IN (SELECT min(enjoyment) FROM (ratedTasks INNER JOIN tasks ON ratedTasks.taskId = tasks.taskId) WHERE username=?) GROUP BY recursiveId ORDER BY count(recursiveId) DESC", [username, username]);
         var id =    DatabaseHandler.current.enqueueOperation(q);
         var result = await DatabaseHandler.current.waitForOperationToFinish(id);
-        return result;
+        if(result.length == 0){
+            return null;
+        }
+        return result[0];
     }
 
 
