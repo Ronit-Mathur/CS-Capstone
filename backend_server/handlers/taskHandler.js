@@ -76,6 +76,14 @@ module.exports = class taskHandler {
     }
 
 
+    async getRecursiveTasksById(username, id){
+        var q = new Query(1, "SELECT DISTINCT * FROM tasks WHERE username =? AND recursiveId = ?", [username, id]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+
+        return result;
+    }
+
 
     /**
      * finds all tasks in the database which share a recursive id
@@ -654,8 +662,79 @@ module.exports = class taskHandler {
         var q = new Query(1, "SELECT * FROM (ratedTasks INNER JOIN tasks ON ratedTasks.taskId = tasks.taskId) WHERE date IN (SELECT date FROM daily WHERE happiness IN (SELECT max(happiness) FROM daily WHERE username = ?) AND username =?) ", [username, username])
         var id = DatabaseHandler.current.enqueueOperation(q);
         var result = await DatabaseHandler.current.waitForOperationToFinish(id);
-        console.log(result);
-        return result;
+
+        if (result.length == 0) {
+            return null;
+        }
+
+        var earliestRecIds = {};
+
+
+        //find the task id and recursive id of the earliest of each date
+        for (var i = 0; i < result.length; i++) {
+            if (earliestRecIds[result[i].date] == null) {
+                earliestRecIds[result[i].date] = [result[i].taskId, result[i].recursiveId, result[i].startTime];
+            }
+            else {
+                var prev = earliestRecIds[result[i].date];
+                if (helpers.isHourMinuteBefore(result[i].startTime, prev[2])) {
+                    earliestRecIds[result[i].date] = [result[i].taskId, result[i].recursiveId, result[i].startTime];
+                }
+            }
+        }
+
+        var keys = Object.keys(earliestRecIds);
+        var totals = {};
+
+        //keep track of the count of total recursiveIds
+        for (var i = 0; i < keys.length; i++) {
+            var task = earliestRecIds[keys[i]];
+            if (totals[task[1]] == null) {
+                totals[task[1]] = 1;
+            }
+            else {
+                totals[task[1]] = totals[task[1]] + 1;
+            }
+        }
+
+        //get the biggest total
+        var biggest = -1;
+        var biggestRecurId = -2;
+        keys = Object.keys(totals);
+        for (var i = 0; i < keys.length; i++) {
+            if (total[keys[i]] > biggest) {
+                biggest = totals[keys[i]]
+                biggestRecurId = keys[i]
+            }
+        }
+
+        if (biggestRecurId == -2) {
+            return null;
+        }
+
+        if (biggestRecurId == -1) {
+            //find the first take in the rec ids with a -1 id
+            keys = Object.keys(earliestRecIds);
+            for (var i = 0; i < keys.length; i++) {
+                var recResult = earliestRecIds[keys[i]];
+                if (recResult[1] == -1) {
+                    var task = await this.getTask(recResult[0]);
+                    return task;
+                }
+            }
+        }
+
+        //get tasks by the recursive id and return the first one
+        var recursiveGroup = await this.getRecursiveTasksById(username, biggestRecurId);
+        if(recursiveGroup.length == 0){
+            return null;
+        }
+
+        return recursiveGroup[0];
+
+
+
+     
     }
 
 
