@@ -27,9 +27,10 @@ export default class StatsScreen extends Component {
             <ScrollView style={{padding: "2%", height: "100%" }}>
 
                 <FiveDayMoodHistoryWidget></FiveDayMoodHistoryWidget>
+                <LeastEnjoyableTaskWidget></LeastEnjoyableTaskWidget>
                 <View style={{marginTop:"4%"}}>
                     <TotalsWidget></TotalsWidget>
-                    <LeastEnjoyableTaskWidget></LeastEnjoyableTaskWidget>
+                  
                     <MonthlyStatsWidget/>
                     <Button title='calcDayMood' onPress={() => calcDayMood(serverHandler.current.userState.username, '04/11/2023')}></Button>
                     <Button title='monthRatedTasks' onPress={() => getTaskRatingsMonth('04/2023')}></Button>

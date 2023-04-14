@@ -540,6 +540,23 @@ module.exports = class Server {
 
         });
 
+        app.get(SERVER_ENDPOINTS.USER_TASK_HAPPIEST_WHEN_DAY_STARTS_WITH, async (req, res) => {
+            if (!await this.authenticateQuery(req, res)) {
+                res.status(400).send("invalid auth key");
+                return;
+            }
+
+            if (req.query.username) {
+                var task = await this.taskHandler.happiestWhenDayStartsWith(req.query.username);
+                res.status(200).send(task);
+                return;
+            }
+            else {
+                res.status(400).send(JSON.stringify("invalid parameters"));
+                return;
+            }
+        });
+
         /**
          * daily methods
          */
@@ -593,6 +610,8 @@ module.exports = class Server {
                 return;
             }
         });
+
+
 
 
         /**

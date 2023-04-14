@@ -248,6 +248,7 @@ function DailyMood() {
       marginRight: "2%",
       flexDirection: "column",
       paddingTop: "2%",
+      alignSelf:"center"
 
     }}>
 

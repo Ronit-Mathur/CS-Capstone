@@ -26,6 +26,7 @@ module.exports = {
         USER_TASKS_COUNT_RATED: "/api/user/tasks/count/rated",
         USER_TASKS_DATES: "/api/user/tasks/dates",
         USER_TASK_LEAST_ENJOYABLE: "/api/user/tasks/enjoyable/least",
+        USER_TASK_HAPPIEST_WHEN_DAY_STARTS_WITH:"/api/user/task/happiest/day",
         
        
         

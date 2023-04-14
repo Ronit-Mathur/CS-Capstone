@@ -635,14 +635,28 @@ module.exports = class taskHandler {
      */
     async leastEnjoyableRepetetiveTask(username) {
         var q = new Query(1, "SELECT DISTINCT summary, recursiveId, COUNT(*) as c FROM (ratedTasks INNER JOIN tasks ON ratedTasks.taskId = tasks.taskId) WHERE username = ? AND enjoyment IN (SELECT min(enjoyment) FROM (ratedTasks INNER JOIN tasks ON ratedTasks.taskId = tasks.taskId) WHERE username=?) GROUP BY recursiveId ORDER BY count(recursiveId) DESC", [username, username]);
-        var id =    DatabaseHandler.current.enqueueOperation(q);
+        var id = DatabaseHandler.current.enqueueOperation(q);
         var result = await DatabaseHandler.current.waitForOperationToFinish(id);
-        if(result.length == 0){
+        if (result.length == 0) {
             return null;
         }
         return result[0];
     }
 
+
+
+    /**
+     * 
+     * @param {*} username 
+     * @returns a task where which is first when the user's day is happiest
+     */
+    async happiestWhenDayStartsWith(username) {
+        var q = new Query(1, "SELECT * FROM (ratedTasks INNER JOIN tasks ON ratedTasks.taskId = tasks.taskId) WHERE date IN (SELECT date FROM daily WHERE happiness IN (SELECT max(happiness) FROM daily WHERE username = ?) AND username =?) "[username, username])
+        var id = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(id);
+        console.log(result);
+        return result;
+    }
 
 
 }
