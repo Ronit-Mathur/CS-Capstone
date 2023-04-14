@@ -158,7 +158,7 @@ module.exports = class Server {
             }
         });
 
-        app.get(SERVER_ENDPOINTS.USER_INFO, async (req, res) =>{
+        app.get(SERVER_ENDPOINTS.USER_INFO, async (req, res) => {
             //authenticate
             if (!await this.authenticateQuery(req, res)) {
                 res.status(400).send("invalid auth key");
@@ -174,7 +174,7 @@ module.exports = class Server {
         /**
          * tries to log in using a sesison token
          */
-        app.get(SERVER_ENDPOINTS.USER_SESSION_LOGIN, async (req, res) =>{
+        app.get(SERVER_ENDPOINTS.USER_SESSION_LOGIN, async (req, res) => {
             if (req.query.username && req.query.sessionToken) {
 
                 ///try and get api key from the user handler
@@ -237,12 +237,12 @@ module.exports = class Server {
         /**
          * counts a users completed tasks
          */
-        app.get(SERVER_ENDPOINTS.USER_TASKS_COUNT_COMPLETED, async (req, res) =>{
+        app.get(SERVER_ENDPOINTS.USER_TASKS_COUNT_COMPLETED, async (req, res) => {
             if (!await this.authenticateQuery(req, res)) {
                 res.status(400).send("invalid auth key");
                 return;
             }
-            
+
 
             if (req.query.time && req.query.username) {
                 var count = await this.taskHandler.totalCompletedTasks(req.query.username, req.query.time);
@@ -254,7 +254,7 @@ module.exports = class Server {
                 return;
             }
 
-       
+
         })
 
         /**
@@ -446,8 +446,8 @@ module.exports = class Server {
                 return;
             }
 
-            if ( req.query.username, req.query.epoch) {
-                var tasks = await this.taskHandler.getUnratedCompletedTasks( req.query.username, req.query.epoch);
+            if (req.query.username, req.query.epoch) {
+                var tasks = await this.taskHandler.getUnratedCompletedTasks(req.query.username, req.query.epoch);
                 res.status(200).send(tasks);
                 return;
             }
@@ -461,14 +461,14 @@ module.exports = class Server {
         /**
          * count all of a users rated tasks
          */
-        app.get(SERVER_ENDPOINTS.USER_TASKS_COUNT_RATED, async (req, res) =>{
+        app.get(SERVER_ENDPOINTS.USER_TASKS_COUNT_RATED, async (req, res) => {
             if (!await this.authenticateQuery(req, res)) {
                 res.status(400).send("invalid auth key");
                 return;
             }
 
-            if ( req.query.username) {
-                var total = await this.taskHandler.totalRatedTasks( req.query.username);
+            if (req.query.username) {
+                var total = await this.taskHandler.totalRatedTasks(req.query.username);
                 res.status(200).send(JSON.stringify(total));
                 return;
             }
@@ -488,8 +488,8 @@ module.exports = class Server {
                 return;
             }
 
-            if ( req.query.username && req.query.engagement) {
-                var tasks = await this.taskHandler.getRatedByEngagement( req.query.username, req.query.engagement);
+            if (req.query.username && req.query.engagement) {
+                var tasks = await this.taskHandler.getRatedByEngagement(req.query.username, req.query.engagement);
                 res.status(200).send(tasks);
                 return;
             }
@@ -504,14 +504,14 @@ module.exports = class Server {
         /**
          * gets all the dates for a user which contains a task
          */
-        app.get(SERVER_ENDPOINTS.USER_TASKS_DATES, async (req, res) =>{
+        app.get(SERVER_ENDPOINTS.USER_TASKS_DATES, async (req, res) => {
             if (!await this.authenticateQuery(req, res)) {
                 res.status(400).send("invalid auth key");
                 return;
             }
 
-            if ( req.query.username) {
-                var dates = await this.taskHandler.datesWithTask( req.query.username);
+            if (req.query.username) {
+                var dates = await this.taskHandler.datesWithTask(req.query.username);
                 res.status(200).send(dates);
                 return;
             }
@@ -560,7 +560,7 @@ module.exports = class Server {
             }
         });
 
-        app.get(SERVER_ENDPOINTS.USER_DAILY_COUNT, async (req, res) =>{
+        app.get(SERVER_ENDPOINTS.USER_DAILY_COUNT, async (req, res) => {
             if (!await this.authenticateQuery(req, res)) {
                 res.status(400).send("invalid auth key");
                 return;
@@ -580,7 +580,7 @@ module.exports = class Server {
         /**
          * delete the user. no safeguard. be careful
          */
-        app.get(SERVER_ENDPOINTS.USER_DELETE, async(req, res) =>{
+        app.get(SERVER_ENDPOINTS.USER_DELETE, async (req, res) => {
             if (!await this.authenticateQuery(req, res)) {
                 res.status(400).send("invalid auth key");
                 return;
@@ -610,8 +610,8 @@ module.exports = class Server {
                 res.status(400).send("invalid auth key");
                 return;
             }
-            
-            if(!req.query.username || !req.ip){
+
+            if (!req.query.username || !req.ip) {
                 res.status(400).send("missing params");
                 return;
             }
@@ -660,7 +660,16 @@ module.exports = class Server {
             }
 
             //get calendars
-            const calendars = await this.userHandler.getGoogleCalendars(req.query.username);
+            var calendars = [];
+            try {
+                calendars = await this.userHandler.getGoogleCalendars(req.query.username);
+            }
+            catch(e){
+                console.log("[Server] Unable to list google calendars");
+                console.log(e);
+            }
+
+         
             res.status(200).send(calendars);
             return;
 
@@ -706,8 +715,8 @@ module.exports = class Server {
                 res.status(400).send("invalid auth key");
                 return;
             }
-            
-            if(!req.query.username || !req.ip){
+
+            if (!req.query.username || !req.ip) {
                 res.status(400).send("missing params");
                 return;
             }
@@ -792,7 +801,7 @@ module.exports = class Server {
         //start http server
         var nonSSLServer = http.createServer(app).listen(80);
 
-       
+
 
 
         //start https server
@@ -804,8 +813,8 @@ module.exports = class Server {
             console.log(`Mental Health Tracker API running on ${this.port}`)
         })
 
-        server.timeout= 4000;
-        nonSSLServer.timeout = 4000; 
+        server.timeout = 4000;
+        nonSSLServer.timeout = 4000;
 
 
 
