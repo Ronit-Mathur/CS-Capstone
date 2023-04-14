@@ -10,15 +10,20 @@ export function TaskWidget(title, summary){
 
 export function LeastEnjoyableTaskWidget(){
     const [taskData, setTaskData] = useState({});
+    const [tried, setTried] = useState(false);
 
     console.log(taskData);
 
     var loadData = async() =>{
         var task = await leastEnjoyableTask();
-        setTaskData(task);
+        this.setState({
+            taskData: task,
+            tried: true
+        })
+
     }
 
-    if(taskData == {}){
+    if(!tried){
         loadData();
     }
 
