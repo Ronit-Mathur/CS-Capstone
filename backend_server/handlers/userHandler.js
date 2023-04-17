@@ -75,7 +75,7 @@ module.exports = class UserHandler {
 
         var user = await this._getUser(username);
         if (!await this._equalsHash(password, user.password)) {
-            return -1;
+            return -2;
         }
 
 
