@@ -8,7 +8,7 @@ export function TaskWidget(title, summary, subText, subValue, icon, color) {
     return (
         <View style={{
             shadowColor: "gray",
-            borderRadius: 1,
+            borderRadius: 15,
             shadowOffset: { width: 5, height: 5 },
             shadowRadius: 5,
 
@@ -20,16 +20,25 @@ export function TaskWidget(title, summary, subText, subValue, icon, color) {
             width: "98%",
             alignSelf: "center", marginTop: 10,
             marginBottom: 5,
-            position: "relative"
+            flexDirection: "row",
         }}>
-            <MaterialCommunityIcons name={icon} color={color} size={25} style={{ position: "absolute", top: "15%", right: "2%" }}> </MaterialCommunityIcons>
-            <Text style={{marginBottom:4,  fontSize: StylingConstants.subFontSize, color:StylingConstants.highlightColor, fontFamily: StylingConstants.defaultFontBold }}>{title}</Text>
-            <Text style={{ marginBottom:1, fontSize: StylingConstants.subFontSize, color: "black", fontFamily: StylingConstants.defaultFontBold }}>{summary}</Text>
-            <View style={{ flexDirection: "row" }}>
-                <Text style={{ marginRight: 4, fontSize: StylingConstants.tinyFontSize, color: "black", fontFamily: StylingConstants.defaultFontBold }}>{subValue}</Text>
-                <Text style={{ fontSize: StylingConstants.tinyFontSize, color: "black", fontFamily: StylingConstants.defaultFontBold }}>{subText}</Text>
+            <View style={{
+                flexDirection: "column",
+                width: "90%"
+            }}>
+
+
+                <Text style={{ marginBottom: 4, fontSize: StylingConstants.subFontSize, color: StylingConstants.highlightColor, fontFamily: StylingConstants.defaultFontBold }}>{title}</Text>
+                <Text style={{ marginBottom: 1, fontSize: StylingConstants.subFontSize, color: "black", fontFamily: StylingConstants.defaultFontBold }}>{summary}</Text>
+                <View style={{ flexDirection: "row" }}>
+                    <Text style={{ marginRight: 4, fontSize: StylingConstants.tinyFontSize, color: "black", fontFamily: StylingConstants.defaultFontBold }}>{subValue}</Text>
+                    <Text style={{ fontSize: StylingConstants.tinyFontSize, color: "black", fontFamily: StylingConstants.defaultFontBold }}>{subText}</Text>
+
+                </View>
+
 
             </View>
+            <MaterialCommunityIcons name={icon} color={color} size={35} style={{ alignSelf: "center"}}> </MaterialCommunityIcons>
         </View>
     )
 }
@@ -39,7 +48,7 @@ export function LeastEnjoyableTaskWidget() {
 
     var loadData = async () => {
         var task = await leastEnjoyableTask();
-        
+
 
         setTaskData(task);
 
@@ -65,7 +74,7 @@ export function LeastEnjoyableTaskWidget() {
     return TaskWidget("Your Least Enjoyable Task", summary, subText, count, "arrow-down", "red");
 }
 
-export function HappiestWhenDayStartsWithWidget(){
+export function HappiestWhenDayStartsWithWidget() {
     const [taskData, setTaskData] = useState({});
 
     var loadData = async () => {
@@ -92,5 +101,5 @@ export function HappiestWhenDayStartsWithWidget(){
         }
     }
 
-      return TaskWidget("Your Day is Happiest When it Starts With", summary, subText, count, "arrow-up", "green");
+    return TaskWidget("Your Day is Happiest When it Starts With", summary, subText, count, "arrow-up", "green");
 }

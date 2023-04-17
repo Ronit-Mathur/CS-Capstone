@@ -21,7 +21,7 @@ export default function ImportUserPhotoScreen() {
 
         var selected = result.assets[0];
         await UpdateUserPhoto(selected.base64);
-     
+
         SetBase64Photo(selected.base64);
 
     }
@@ -67,24 +67,28 @@ export default function ImportUserPhotoScreen() {
  * @param {*} callback a callback which takes a base64 string of the image or null if the user does not have an image
  */
 export function GetUserPhoto(callback) {
+    if (serverHandler.current.userState == null || serverHandler.current.userState.username == null) {
+        callback("");
+        return;
+    }
     AsyncStorage.getItem(serverHandler.current.userState.username + "$photo").then(callback);
 
-    
+
 }
 
 
-export async function UpdateUserPhoto(base64){
+export async function UpdateUserPhoto(base64) {
     await AsyncStorage.setItem(serverHandler.current.userState.username + "$photo", base64);
-    if(global.onPhotoUpdated){
-        for(var i = 0; i<global.onPhotoUpdated.length; i++){
+    if (global.onPhotoUpdated) {
+        for (var i = 0; i < global.onPhotoUpdated.length; i++) {
             global.onPhotoUpdated[i](base64);
         }
     }
 }
 
 
-export function AddToOnPhotoUpdated(action){
-    if(global.onPhotoUpdated == null){
+export function AddToOnPhotoUpdated(action) {
+    if (global.onPhotoUpdated == null) {
         global.onPhotoUpdated = [];
     }
 

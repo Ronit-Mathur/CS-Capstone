@@ -28,7 +28,7 @@ export default class TotalsWidget extends Component {
         return (
             <View style={{
                 shadowColor: "gray",
-                borderRadius: 1,
+                borderRadius: 15,
                 shadowOffset: { width: 5, height: 5 },
                 shadowRadius: 5,
 

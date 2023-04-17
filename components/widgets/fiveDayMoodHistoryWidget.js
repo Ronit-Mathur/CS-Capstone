@@ -27,9 +27,21 @@ export default function FiveDayMoodHistoryWidget() {
 
 
     return (
-        <View style={{ width: "100%", alignSelf: "center", width: "100%", marginTop: "2%" }}>
-            <Text style={{ paddingLeft: 5, paddingRight: 5, color: "black", fontFamily: StylingConstants.defaultFontBold, fontSize: StylingConstants.normalFontSize }}>Your Last 5 Days</Text>
-            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
+        <View style={{
+            width: "98%", alignSelf: "center", marginTop: "2%", shadowColor: "gray",
+          
+            borderRadius: 15,
+            shadowOffset: { width: 5, height: 5 },
+            shadowRadius: 5,
+
+            shadowOpacity: .22,
+            padding: 8,
+            backgroundColor: "white",
+            elevation: 8,
+            zIndex: 2
+        }}>
+            <Text style={{ paddingLeft: 5, paddingRight: 5, color: StylingConstants.highlightColor, fontFamily: StylingConstants.defaultFontBold, fontSize: StylingConstants.normalFontSize }}>Your Last 5 Days</Text>
+            <View style={{ paddingLeft: 5, paddingRight: 5, flexDirection: "row", alignItems: "center",   justifyContent:"space-between" }}>
 
                 {DayHistoryWidget(dayData[0])}
                 {DayHistoryWidget(dayData[1])}
@@ -64,21 +76,27 @@ function DayHistoryWidget(dateResult) {
         var day = helpers.dateToDayOfWeek(helpers.MMDDYYYYtoDate(dateResult));
 
         var face = "emoticon-neutral-outline";
+        var color = "black";
         //convert the rating to a face
         if (serverData == null || serverData.happiness == 3) {
             face = "emoticon-neutral-outline";
+            color = "#f5e942";
         }
         else if (serverData.happiness == 1) {
             face = 'emoticon-frown-outline';
+            color = "#f55a42";
         }
         else if (serverData.happiness == 2) {
             face = 'emoticon-sad-outline';
+            color= "#f58a42";
         }
         else if (serverData.happiness == 4) {
             face = 'emoticon-happy-outline';
+            color = "#cfff30";
         }
         else if (serverData.happiness == 5) {
             face = 'emoticon-outline';
+            color = "#7ef763";
         }
 
 
@@ -87,30 +105,20 @@ function DayHistoryWidget(dateResult) {
             <View style={{
                 flexDirection: "row",
                 marginTop: 10,
-                marginRight: 6,
-                marginLeft: 6,
-                shadowColor: "gray",
-                borderRadius: 1,
-                shadowOffset: { width: 5, height: 5 },
-                shadowRadius: 5,
+                
 
-                shadowOpacity: .22,
-                padding: 8,
-                backgroundColor: "white",
-                elevation: 8,
-                zIndex: 2,
-                alignSelf: "center",
+  
                 height: "90%",
 
             }}>
-                <View style={{ backgroundColor: StylingConstants.lighterHighlightColor, height: "80%", width: 3, alignSelf: "center", marginRight: 5 }}></View>
+                <View style={{ backgroundColor: color, height: "80%", width: 3, alignSelf: "center", marginRight: 5 }}></View>
 
                 <View style={{ flexDirection: "column" }}>
                     <Text style={{
                         alignSelf: "center", paddingLeft: 2, paddingRight: 2,
-                        fontFamily: StylingConstants.defaultFontBold, fontSize: StylingConstants.normalFontSize, color: StylingConstants.lighterHighlightColor, marginBottom: 4
+                        fontFamily: StylingConstants.defaultFontBold, fontSize: StylingConstants.normalFontSize, color: "black", marginBottom: 4
                     }}>{day.substring(0, 3)}</Text>
-                    <MaterialCommunityIcons name={face} color={StylingConstants.darkFontColor} size={30} style={{
+                    <MaterialCommunityIcons name={face} color="black" size={30} style={{
                         alignSelf: "center"
                     }}
                     />
