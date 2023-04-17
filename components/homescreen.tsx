@@ -24,7 +24,7 @@ import ImportUserPhotoScreen, { AddToOnPhotoUpdated } from './external_integrati
 import { GetUserPhoto } from './external_integration/importUserPhoto';
 import RoundImage from './RoundImage';
 import ImportCalendarScreen from './external_integration/importCalendarScreen';
-import UnratedTasks from './unratedtasks';
+import UnratedTaskNav from './unratedtasks';
 import PrivacyPolicyScreen from './PrivacyPolicyScreen';
 
 
@@ -36,7 +36,7 @@ function HomeScreenNav() {
   
   return (
     <StackNavigator.Navigator initialRouteName='Home'>
-      <StackNavigator.Screen name='HomeScreen' component={Home} options={{ title: 'Home', headerShown: false, }} />
+      <StackNavigator.Screen name='HomeScreen' children={() => <Home refresh = {0} /> } options={{ title: 'Home', headerShown: false, }} />
 
       <StackNavigator.Group  >
         <StackNavigator.Screen name='EditTask' component={HSH.EditTask} options={{ presentation: 'modal', headerStyle: { backgroundColor: 'transparent', }, title: '', contentStyle: { backgroundColor: 'transparent' } }} />
@@ -52,7 +52,7 @@ function HomeScreenNav() {
           presentation: 'containedModal', headerStyle: { backgroundColor: 'transparent', }, title: "Import Calendar", headerShadowVisible: false, // applied here
           headerBackTitleVisible: false
         }}/>
-      <StackNavigator.Screen name='RateTasks' component={UnratedTasks} options={{presentation:'containedModal'}} />
+      <StackNavigator.Screen name='RateTasks' component={UnratedTaskNav} options={{presentation:'modal'}} />
       <StackNavigator.Screen name='Privacy Policy' children={() => <PrivacyPolicyScreen />} options={{
             presentation: 'modal', headerTintColor: "white", headerTitleStyle: { color: "white" }, headerStyle: { backgroundColor: StylingConstants.highlightColor, }, headerShadowVisible: false, // applied here
             headerBackTitleVisible: false,
@@ -465,54 +465,28 @@ function TaskWidget({ item }: any, Nav: any, isCompleted: boolean) {
   </View>)
 }
 
-var globalList :any =[]
+
 
 
 async function checkUnrated (){
   var unratedTaskList = []
   const list = await HSH.checkForUnRatedTasks()
-  unratedTaskList = list 
-  if(list != globalList && Object.keys(unratedTaskList).length != 0 ){
-    globalList = list
-    return true 
-  }else{
-    return false
+  unratedTaskList.push(list)
+  
+  var check = false
+  if(unratedTaskList[0] !=0){
+   
+    check = true  
   }
+  return check 
 } 
-function Home() {
+function Home({refresh}) {
 
   const navigation = useNavigation();
   
   const message = 'You have unrated Tasks! Would you like to rate them now?'
   const [alerted, setAlerted] = React.useState(false)
-
-
-
-
-
-
-
-
-
-/*    React.useEffect(() => {
-    const check = async () => {
-      const list = await HSH.checkForUnRatedTasks()
-      setUnratedTaskList(list)
-      console.log('list: ' + list)
-      console.log('global: ' + globalList)
-
-      if(list != globalList && Object.keys(unratedTaskList).length != 0){
-        globalList = list
-        
-        unRatedTasks()
-      }
-      
-      
-    }
-    check()
-    
-  }, [])  */
-  
+  const [alert, setAlert] = React.useState(false)
 
   
   const unRatedTasks = () => {
@@ -532,8 +506,17 @@ function Home() {
     
   }
 
+  React.useEffect(() => {
+    const check = async () => {
+      const getBool = await checkUnrated()
+      console.log('Should alert: ' + getBool)
+      setAlert(getBool)
+    }
+    check()
+    
+  }, [])
   
-  if (!alerted && checkUnrated()){
+  if (!alerted && alert){
     unRatedTasks()
     setAlerted(true)
   }
