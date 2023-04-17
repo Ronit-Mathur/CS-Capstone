@@ -10,8 +10,7 @@ export default class MoodGraphWidget extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            moodDateList: [],
-            tmpMonth: '04/2023',
+            
         }
     }
 

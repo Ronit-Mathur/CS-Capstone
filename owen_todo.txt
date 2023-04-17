@@ -9,8 +9,9 @@ switch dates over to epoch
 delete operations in operationmanager with no return type
 
 wrappers left:
+** Get all rated task for a specified day **
 get # of rated tasks a user has
-get all rated tasks (all time)
+* get all rated tasks (all time) 
 get next task that will be completed based on endTime
 update user email
 update username
