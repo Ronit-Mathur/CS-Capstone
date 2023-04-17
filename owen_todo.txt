@@ -10,7 +10,8 @@ wrappers left:
 update user email
 update username
 change password
-get all task ids attatched to a category for a user
+fix unrelated completed tasks
+fix missing username on fresh login
 
 error code: 
 daily mood already input
