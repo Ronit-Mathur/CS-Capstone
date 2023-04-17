@@ -212,6 +212,24 @@ module.exports = class Server {
 
 
 
+
+        //get next task which has not happened yet, based on endtime
+        app.get(SERVER_ENDPOINTS.USER_TASK_NEXT, async (req, res) =>{
+            if (!await this.authenticateQuery(req, res)) {
+                res.status(400).send("invalid auth key");
+                return;
+            }
+            if (req.query.username && req.query.time) {
+                var task = await this.taskHandler.nextTask(req.query.username, req.query.time);
+                res.status(200).send(task);
+            }
+            else {
+                res.status(400).send("invalid paramaters");
+                return;
+            }
+        });
+
+
         /**
          * get an individual task by it's id
          */
@@ -470,6 +488,24 @@ module.exports = class Server {
             if (req.query.username) {
                 var total = await this.taskHandler.totalRatedTasks(req.query.username);
                 res.status(200).send(JSON.stringify(total));
+                return;
+            }
+            else {
+                res.status(400).send(JSON.stringify("invalid parameters"));
+                return;
+            }
+        })
+
+
+        app.get(SERVER_ENDPOINTS.USER_GET_TASK_RATINGS_ALL, async (req, res) =>{
+            if (!await this.authenticateQuery(req, res)) {
+                res.status(400).send("invalid auth key");
+                return;
+            }
+
+            if (req.query.username) {
+                var tasks = await this.taskHandler.getAllRatedTasks(req.query.username);
+                res.status(200).send(tasks);
                 return;
             }
             else {

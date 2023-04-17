@@ -27,6 +27,7 @@ module.exports = {
         USER_TASKS_DATES: "/api/user/tasks/dates",
         USER_TASK_LEAST_ENJOYABLE: "/api/user/tasks/enjoyable/least",
         USER_TASK_HAPPIEST_WHEN_DAY_STARTS_WITH:"/api/user/task/happiest/day",
+        USER_TASK_NEXT: "/api/user/tasks/next",
         
        
         
@@ -36,6 +37,8 @@ module.exports = {
         USER_GET_TASK_RATING: "/api/user/tasks/rated/day",
         USER_GET_TASK_RATINGS_BY_MONTH: "/api/user/tasks/rated/month",
         USER_GET_RATED_TASKS_BY_ENGAGEMENT: "/api/user/tasks/rated/engagement",
+        USER_GET_TASK_RATINGS_ALL: "/api/user/tasks/rated/all",
+
         
 
         USER_CREATE: "/api/user/create",

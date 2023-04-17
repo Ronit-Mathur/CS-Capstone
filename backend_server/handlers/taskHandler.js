@@ -76,7 +76,7 @@ module.exports = class taskHandler {
     }
 
 
-    async getRecursiveTasksById(username, id){
+    async getRecursiveTasksById(username, id) {
         var q = new Query(1, "SELECT DISTINCT * FROM tasks WHERE username =? AND recursiveId = ?", [username, id]);
         var oppId = DatabaseHandler.current.enqueueOperation(q);
         var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
@@ -84,8 +84,8 @@ module.exports = class taskHandler {
         return result;
     }
 
-    async getRecursiveRatedTasksById(username, id){
-       
+    async getRecursiveRatedTasksById(username, id) {
+
         var q = new Query(1, "SELECT DISTINCT * FROM  (ratedTasks INNER JOIN tasks ON ratedTasks.taskId = tasks.taskId) WHERE username =? AND recursiveId = ?", [username, id]);
         var oppId = DatabaseHandler.current.enqueueOperation(q);
         var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
@@ -737,7 +737,7 @@ module.exports = class taskHandler {
 
         //get tasks by the recursive id and return the first one
         var recursiveGroup = await this.getRecursiveRatedTasksById(username, biggestRecurId);
-        if(recursiveGroup.length == 0){
+        if (recursiveGroup.length == 0) {
             return null;
         }
 
@@ -746,8 +746,58 @@ module.exports = class taskHandler {
 
 
 
-     
+
     }
+
+
+    /**
+     * 
+     * @param {*} username 
+     * @returns a list of task id for all rated tasks belonging to the given user
+     */
+    async getAllRatedTasks(username) {
+        var q = new Query(1, "SELECT DISTINCT taskId FROM (ratedTasks INNER JOIN tasks ON ratedTasks.taskId = tasks.taskId) WHERE username = ?", [username]);
+        var id = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(id);
+        return result;
+    }
+
+
+
+    /**
+     * 
+     * @param {*} username
+     * @returns the next task that has not been completed for a user based on end time 
+     */
+    async nextTask(username, epochTime) {
+        var tasks = await this._getAllTasks(username, time);
+
+        var nowDate = helpers.MMDDYYYYtoDate(helpers.epochToMMDDYYY(epochTime));
+        var nowHHMM = helpers.epochToHHMM(epochTime);
+
+
+
+        for (var i = 0; i < tasks.length; i++) {
+            var task = tasks[i];
+            var taskDate = helpers.MMDDYYYYtoDate(task.date);
+            if (helpers.datesAreOnSameDay(taskDate, nowDate)) {
+                //check if task has already happened
+                if (helpers.isHourMinuteBefore(nowHHMM, task.endTime)) {
+                    return task;
+                }
+            }
+            else if (helpers.MMDDYYYYbeforeMMDDYYYY(nowDate, taskDate)) {
+                //date has to have not happened yet
+                return task;
+            }
+
+        }
+
+        return null; //all tasks have passed
+
+
+    }
+
 
 
 }
