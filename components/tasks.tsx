@@ -15,6 +15,7 @@ function TaskCreation (){
     const [taskTitle, setTaskTitle] = React.useState("");
     const [startTime, setStarttime] = React.useState(new Date());
     const [endTime, setEndTime] = React.useState(new Date());
+    const [showDate, setShowDate] = React.useState(false);
     const [showStartTime, setShowStartTime] = React.useState(false);
     const [showEndTime, setShowEndTime] = React.useState(false);
     const [date, setDate] = React.useState(new Date());
@@ -66,16 +67,21 @@ function TaskCreation (){
             />
 
             <View style={{alignItems: 'flex-start',}}>
-
+                <Button title='Date' onPress={()=>(setShowDate(!showDate))}></Button>
+                
+                {showDate && ( 
                 <RNDateTimePicker value={date} mode="date" onChange={(event:DateTimePickerEvent, day:Date)=>{
                     setDate(day)
-                }} style={{}}/>
+                    setShowDate(!showDate)
+                }} style={{}}/>)}
+               
                 
                 <Button title='Start Time' onPress={() => (setShowStartTime(!showStartTime))
                 }></Button>
                 {showStartTime && ( 
                 <RNDateTimePicker  value={startTime} onChange={(event:DateTimePickerEvent, day:Date) => {
                     setStarttime(day)
+                    setShowStartTime(!showStartTime)
                 }} mode="time" display="inline" textColor='black'/>)}
                 
               
@@ -84,6 +90,7 @@ function TaskCreation (){
                 {showEndTime && ( 
                 <RNDateTimePicker  value={endTime}  onChange={(event:DateTimePickerEvent, day:Date) => {
                     setEndTime(day)
+                    setShowEndTime(!showEndTime)
                 }} mode="time" display="inline"/>)}
 
             <TextInput 

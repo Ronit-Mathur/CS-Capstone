@@ -107,7 +107,7 @@ function MaterialTabs() {
 
       tabBarStyle: { bottom: 25 },
       tabBarIndicatorStyle: {
-        backgroundColor: 'maroon'
+        backgroundColor: StylingConstants.lighterHighlightColor
       }
     }}>
       {

@@ -2,8 +2,9 @@ import { useState, } from 'react';
 import {View,Text, TextInput, Button} from 'react-native';
 import * as Helpers from '../backend_server/lib/helpers';
 import{getTodaysActiveTasks, getTodaysFinishedTasks, updateTask, rateTask, getUnratedCompletedTasks} from '../lib/server/tasks';
-import { useNavigation} from '@react-navigation/native';
+import { useNavigation, useRoute} from '@react-navigation/native';
 import serverHandler from '../lib/server/serverHandler';
+import StylingConstants from './StylingConstants';
 
 function EditTask (task:any){
     
@@ -37,12 +38,30 @@ function EditTask (task:any){
             }}>
                 <View style={{
                     flex:1,
+                    backgroundColor:StylingConstants.highlightColor,
+                    justifyContent:'center',
+                }} >
+
+                <Text style={{
+                    fontSize:StylingConstants.hugeFontSize,
+                    alignSelf:'center',
+                    color:'white',
+                    fontFamily:StylingConstants.defaultFontBold
+                    
+                }}
+                    >Edit Task</Text>
+
+                </View>
+                <View style={{
+                    flex:1,
                 }}>
                     <Text style={{
                         flex:1,
                         alignSelf:'center',
                         textDecorationLine:'underline',
                         paddingTop:'3%',
+                        fontFamily:StylingConstants.defaultFont,
+                        fontSize: StylingConstants.normalFontSize
                     }}
                     >Title</Text>
                     <TextInput style={{
@@ -66,6 +85,8 @@ function EditTask (task:any){
                         alignSelf:'center',
                         textDecorationLine:'underline',
                         paddingTop:'3%',
+                        fontFamily:StylingConstants.defaultFont,
+                        fontSize: StylingConstants.normalFontSize
                     }}
                     >Start Time</Text>
                     <TextInput style={{
@@ -89,6 +110,8 @@ function EditTask (task:any){
                         alignSelf:'center',
                         textDecorationLine:'underline',
                         paddingTop:'3%',
+                        fontFamily:StylingConstants.defaultFont,
+                        fontSize: StylingConstants.normalFontSize
                     }}
                     >End Time</Text>
                     <TextInput style={{
@@ -113,6 +136,8 @@ function EditTask (task:any){
                         alignSelf:'center',
                         textDecorationLine:'underline',
                         paddingTop:'3%',
+                        fontFamily:StylingConstants.defaultFont,
+                        fontSize: StylingConstants.normalFontSize
                     }}
                     >Location</Text>
                     <TextInput style={{
@@ -148,13 +173,23 @@ function EditTask (task:any){
 
 
 function RankTask (task:any){
-  
+    const route = useRoute()
+    const routeTest = route.name
+    console.log('Route: ' + routeTest)
     const navigation = useNavigation()
     const id = task.route.params.task.item.taskId
     const [enjoyment, setEnjoyment] = useState('1')
     const [physcialActivity, setPhysicalActivity] = useState('1')
     const [engagement, setEngagement] = useState('1')
     const [mentalDifficulty, setMentalDifficulty] = useState('1')
+    var random = Math.random()
+    var navPath = 'Home'
+    if (routeTest == 'Rank Task'){
+        navPath = 'Home'
+    }else{
+        navPath = 'UnRated'
+    }
+    
    
      return(
          <View style={{
@@ -280,8 +315,8 @@ function RankTask (task:any){
                 
                     
                 }}>
-                    <Button  title='Cancel'  onPress={()=> navigation.navigate('HomeScreen')}/>
-                    <Button title='Submit' onPress ={async()=> {rankT(id, enjoyment,physcialActivity,engagement,mentalDifficulty); navigation.navigate('HomeScreen')}} />
+                    <Button  title='Cancel'  onPress={()=> navigation.goBack()}/>
+                    <Button title='Submit' onPress ={async()=> {rankT(id, enjoyment,physcialActivity,engagement,mentalDifficulty); navigation.navigate(navPath, {random})}} />
                 </View>
             
              
