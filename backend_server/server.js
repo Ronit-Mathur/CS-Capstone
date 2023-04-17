@@ -191,6 +191,35 @@ module.exports = class Server {
          * task methods
          */
 
+        app.get(SERVER_ENDPOINTS.USER_TASK_ADD_TO_CATEGORY, async (req, res) =>{
+            if (!await this.authenticateQuery(req, res)) {
+                res.status(400).send("invalid auth key");
+                return;
+            }
+            if (req.query.username && req.query.taskId && req.query.category) {
+                var worked = await this.taskHandler.addTaskToCategory(req.query.username, req.query.taskId, req.query.category);
+                res.status(200).send(worked);
+            }
+            else {
+                res.status(400).send("invalid paramaters");
+                return;
+            }
+        });
+
+        app.get(SERVER_ENDPOINTS.USER_TASK_CATEGORIES, async (req, res) =>{
+            if (!await this.authenticateQuery(req, res)) {
+                res.status(400).send("invalid auth key");
+                return;
+            }
+            if (req.query.username && req.query.taskId) {
+                var cats = await this.taskHandler.getTaskCategories(req.query.username, req.query.taskId);
+                res.status(200).send(cats);
+            }
+            else {
+                res.status(400).send("invalid paramaters");
+                return;
+            }
+        });
 
         /**
          * get all tasks within a month

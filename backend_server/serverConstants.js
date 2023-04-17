@@ -28,6 +28,8 @@ module.exports = {
         USER_TASK_LEAST_ENJOYABLE: "/api/user/tasks/enjoyable/least",
         USER_TASK_HAPPIEST_WHEN_DAY_STARTS_WITH:"/api/user/task/happiest/day",
         USER_TASK_NEXT: "/api/user/tasks/next",
+        USER_TASK_ADD_TO_CATEGORY: "/api/user/task/categories/add",
+        USER_TASK_CATEGORIES: "/api/user/task/categories/all",
         
        
         

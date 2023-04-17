@@ -800,6 +800,81 @@ module.exports = class taskHandler {
 
 
 
+    /**
+     * 
+     * @param {*} username 
+     * @param {*} taskId 
+     * @returns true if the task belongs to user or false if not
+     */
+    async _taskBelongsToUser(username, taskId){
+        var q = new Query(1, "SELECT * FROM tasks WHERE taskId =? AND username = ?", [taskId, username]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+        return result.length != 0;
+
+    }
+
+
+    /**
+     * 
+     * @param {*} taskId 
+     * @param {*} category 
+     * @returns true if the task belong to the category
+     */
+    async taskHasCategory(taskId, category){
+        var q = new Query(1, "SELECT * FROM taskCategories WHERE taskId =? AND category = ?", [taskId, category]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+        return result.length != 0;
+
+    }
+
+
+    /**
+     * 
+     * @param {*} taskId 
+     * @param {*} username 
+     * @returns a list of categories belonging to the task
+     */
+    async getTaskCategories(taskId, username){
+        if(!await this.taskExists(taskId) || !await this._taskBelongsToUser(username, taskId)){
+            return [];
+        }
+ 
+        var q = new Query(1, "SELECT category FROM taskCategories WHERE taskId = ?", [taskId]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+
+
+        var cats = [];
+        for(var i = 0; i<result.length; i++){
+            cats.push(result[i].category);
+        }
+
+        return cats;
+    }
+
+
+
+    
+    /**
+     * adds a task to a specific category
+     * @param {*} username 
+     * @param {*} taskId 
+     * @param {*} category 
+     */
+    async addTaskToCategory(username,taskId, category){
+        //make sure task exists and belongs to the user
+        if(!await this.taskExists(taskId) || !await this._taskBelongsToUser(username, taskId) || await this.taskHasCategory(taskId, category)){
+            return false;
+        }
+
+        //insert task into db
+        var ins = new Statement(1, "INSERT INTO taskCategories (taskId, category) VALUES(?,?)", [taskId, category]);
+        DatabaseHandler.current.enqueueOperation(ins);
+        return true;
+    }
+
 }
 
 
