@@ -221,6 +221,36 @@ module.exports = class Server {
             }
         });
 
+        app.get(SERVER_ENDPOINTS.USER_ALL_TASK_CATEGORIES, async (req, res) =>{
+            if (!await this.authenticateQuery(req, res)) {
+                res.status(400).send("invalid auth key");
+                return;
+            }
+            if (req.query.username) {
+                var cats = await this.taskHandler.getAllUserTaskCategories(req.query.username);
+                res.status(200).send(cats);
+            }
+            else {
+                res.status(400).send("invalid paramaters");
+                return;
+            }
+        });
+
+        app.get(SERVER_ENDPOINTS.USER_TASKS_ALL_IN_CATEGORY, async (req, res) =>{
+            if (!await this.authenticateQuery(req, res)) {
+                res.status(400).send("invalid auth key");
+                return;
+            }
+            if (req.query.username, req.query.category) {
+                var taskIds = await this.taskHandler.getAllTasksBelongingToCategory(req.query.username, req.query.category);
+                res.status(200).send(taskIds);
+            }
+            else {
+                res.status(400).send("invalid paramaters");
+                return;
+            }
+        });
+
         /**
          * get all tasks within a month
          */

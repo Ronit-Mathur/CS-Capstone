@@ -10,6 +10,7 @@ wrappers left:
 update user email
 update username
 change password
+get all task ids attatched to a category for a user
 
 error code: 
 daily mood already input

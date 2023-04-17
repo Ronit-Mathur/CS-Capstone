@@ -30,6 +30,8 @@ module.exports = {
         USER_TASK_NEXT: "/api/user/tasks/next",
         USER_TASK_ADD_TO_CATEGORY: "/api/user/task/categories/add",
         USER_TASK_CATEGORIES: "/api/user/task/categories/all",
+        USER_ALL_TASK_CATEGORIES: "/api/user/tasks/categories/all",
+        USER_TASKS_ALL_IN_CATEGORY: "/api/user/tasks/category",
         
        
         

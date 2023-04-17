@@ -875,6 +875,46 @@ module.exports = class taskHandler {
         return true;
     }
 
+
+
+    /**
+     * 
+     * @param {*} username 
+     * @returns all categories for which a user has tasks belonging to
+     */
+    async getAllUserTaskCategories(username){
+        var q = new Query(1, "SELECT DISTINCT category FROM (taskCategories INNER JOIN tasks ON taskCategories.taskId = tasks.taskId) WHERE username = ?", [username]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+
+
+        var cats = [];
+        for(var i = 0; i<result.length; i++){
+            cats.push(result[i].category);
+        }
+
+        return cats;
+
+    }
+
+    /**
+     * 
+     * @param {*} username 
+     * @returns a list of taskIds belonging to a category and a user
+     */
+    async getAllTasksBelongingToCategory(username, category){
+        var q = new Query(1, "SELECT DISTINCT taskId FROM taskCategories INNER JOIN tasks ON taskCategories.taskId = tasks.taskId) WHERE username = ? AND category = ?", [username, category]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+
+
+        var tasks = [];
+        for(var i = 0; i<result.length; i++){
+            tasks.push(result[i].taskId);
+        }
+
+        return tasks;
+    }
 }
 
 
