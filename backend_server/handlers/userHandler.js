@@ -70,12 +70,12 @@ module.exports = class UserHandler {
      */
     async isValidLogin(username, password) {
         if (!await this.userExists(username)) {
-            return -1;
+            return -1;  
         }
 
         var user = await this._getUser(username);
         if (!await this._equalsHash(password, user.password)) {
-            return -1;
+            return -2;
         }
 
 

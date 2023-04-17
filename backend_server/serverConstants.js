@@ -25,6 +25,13 @@ module.exports = {
         USER_TASKS_COUNT_COMPLETED: "/api/user/tasks/count/completed",
         USER_TASKS_COUNT_RATED: "/api/user/tasks/count/rated",
         USER_TASKS_DATES: "/api/user/tasks/dates",
+        USER_TASK_LEAST_ENJOYABLE: "/api/user/tasks/enjoyable/least",
+        USER_TASK_HAPPIEST_WHEN_DAY_STARTS_WITH:"/api/user/task/happiest/day",
+        USER_TASK_NEXT: "/api/user/tasks/next",
+        USER_TASK_ADD_TO_CATEGORY: "/api/user/task/categories/add",
+        USER_TASK_CATEGORIES: "/api/user/task/categories/all",
+        USER_ALL_TASK_CATEGORIES: "/api/user/tasks/categories/all",
+        USER_TASKS_ALL_IN_CATEGORY: "/api/user/tasks/category",
         
        
         
@@ -34,6 +41,8 @@ module.exports = {
         USER_GET_TASK_RATING: "/api/user/tasks/rated/day",
         USER_GET_TASK_RATINGS_BY_MONTH: "/api/user/tasks/rated/month",
         USER_GET_RATED_TASKS_BY_ENGAGEMENT: "/api/user/tasks/rated/engagement",
+        USER_GET_TASK_RATINGS_ALL: "/api/user/tasks/rated/all",
+
         
 
         USER_CREATE: "/api/user/create",

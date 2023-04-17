@@ -5,6 +5,18 @@ import{getTodaysActiveTasks, getTodaysFinishedTasks, updateTask, getDaysTasks, g
 import { useNavigation} from '@react-navigation/native';
 import {getUser} from './homescreen'
 import { getDay } from '../lib/server/daily';
+import serverHandler from '../lib/server/serverHandler';
+
+async function getDateMoodList() {
+    tmpMonth = '04/2023';
+}
+
+async function getWeeklyAvgs() { // Current year, retrieved monthly for now
+    currYear = '2023'
+    for (let i = 0; i < 11; i++) {
+        
+    }
+}
 
 async function calcDayMood(user: any, day: any) {
     var ratedTaskIDs = [];
@@ -17,12 +29,12 @@ async function calcDayMood(user: any, day: any) {
     }
 
     var tmpTaskRating;
-    const ratedTasks = await getDaysTasks(user, day); // mm/dd/yyy
+    const ratedTasks = await getDaysTasks(user, day); // mm/dd/yyy -- 
     console.log(ratedTasks);
     for (var task of ratedTasks) {
-        console.log(task.taskId);
-        tmpTaskRating = await getTaskRating(task.taskId); // getTaskRating returns {"engagement": #, "enjoyment": #, "mentalDifficulty": #, "phyiscalActivity": #, "taskId": ###}
-        console.log("Task ID: " + task.taskId + " has rating: " + tmpTaskRating.enjoyment);
+        console.log(task.taskId); // Logged ID
+        tmpTaskRating = await getTaskRating(task.taskId); // TODO Throws error when task is not rated
+        //console.log("Task ID: " + task.taskId + " has rating: " + tmpTaskRating.enjoyment);
         if (tmpTaskRating != null) {
             moodRatingList.push(tmpTaskRating.enjoyment);
         }
@@ -34,7 +46,7 @@ async function calcDayMood(user: any, day: any) {
     })
     dayAvgMood = dayAvgMood/moodRatingList.length; // Average ratings for specified date (no date returned
     console.log("DayAvgMood Calc = " + dayAvgMood);
-    if (dayAvgMood !>= 0) {
+    if (dayAvgMood == 0 || dayAvgMood < 0) {
         return "Error Calculating Days Average Mood"
     }
     return dayAvgMood;
@@ -43,16 +55,22 @@ async function calcDayMood(user: any, day: any) {
 /* 
 month: mm/yyyy
 */
-async function getTaskRatingsMonth(month: any) {
+async function getMonthAvgRatings(month: any) {
     var dateRatings = [];
     const monthRatingTasks = await getTaskRatingsByMonth(month); // {taskId, date}
     console.log(monthRatingTasks);
-    var tmprtg;
+    var tmprtg = 0;
     for (var task of monthRatingTasks) {
         console.log(task);
-        tmprtg = await getTaskRating(task.taskId);
+        if (task.date != tmpDate) {
+            tmpDate = task.date;
+            tmprtg = await calcDayMood(serverHandler.current.userState.username, tmpDate);
+            dateRatings.push({tmpDate, tmprtg}); // {date, dayRatingAvg}
+            console.log(dateRatings);
+        }
     }
-    console.log(monthRatingTasks);
+    // console.log(monthRatingTasks);
+    // return dateRatings;
 }
 
 async function getNumRated(user: any) {
@@ -68,4 +86,4 @@ async function rateManualTask(taskID: any) {
 //     return tmp
 // }
 
-export {getNumRated, calcDayMood, rateManualTask, getTaskRatingsMonth};
+export {getDateMoodList, getNumRated, calcDayMood, rateManualTask, getMonthAvgRatings};

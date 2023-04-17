@@ -1,7 +1,5 @@
 Owen's todo list:
 
-** Categories for tasks (To choose when rating a task) 
---> Hardcode some categories (Work, School, Personal, Leisure, Exercise), leave room to add categories
 rename recursiveId to groupId
 implement delete user
 import using timezones from google calendar
@@ -9,17 +7,13 @@ switch dates over to epoch
 delete operations in operationmanager with no return type
 
 wrappers left:
-get # of rated tasks a user has
-get all rated tasks (all time)
-get next task that will be completed based on endTime
 update user email
 update username
 change password
-return list of users completed tasks that have not yet been rated
+get all task ids attatched to a category for a user
 
 error code: 
 daily mood already input
 task already rated
-during login/account creation: user already exists
 
 

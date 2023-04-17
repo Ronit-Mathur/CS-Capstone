@@ -242,7 +242,12 @@ module.exports = class DatabaseHandler {
         //token - the session token of the user. a string of letters and numbers
         await this.dbWrapper.exec("CREATE TABLE IF NOT EXISTS sessionTokens (username TEXT PRIMARY KEY, token TEXT, FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE)",[]);
 
+    
+        //task categories
+        await this.dbWrapper.exec("CREATE TABLE IF NOT EXISTS taskCategories (taskId INTEGER, category TEXT, PRIMARY KEY (taskId, category) FOREIGN KEY(taskId) REFERENCES tasks(taskId) ON DELETE CASCADE)", []);
     }
+
+
 
 
    

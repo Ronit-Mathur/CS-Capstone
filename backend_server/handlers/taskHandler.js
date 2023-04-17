@@ -76,6 +76,23 @@ module.exports = class taskHandler {
     }
 
 
+    async getRecursiveTasksById(username, id) {
+        var q = new Query(1, "SELECT DISTINCT * FROM tasks WHERE username =? AND recursiveId = ?", [username, id]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+
+        return result;
+    }
+
+    async getRecursiveRatedTasksById(username, id) {
+
+        var q = new Query(1, "SELECT DISTINCT * FROM  (ratedTasks INNER JOIN tasks ON ratedTasks.taskId = tasks.taskId) WHERE username =? AND recursiveId = ?", [username, id]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+
+        return result;
+    }
+
 
     /**
      * finds all tasks in the database which share a recursive id
@@ -628,8 +645,276 @@ module.exports = class taskHandler {
     }
 
 
+    /**
+     * 
+     * @param {*} username 
+     * @returns the users least enjoyable, repetitive task
+     */
+    async leastEnjoyableRepetetiveTask(username) {
+        var q = new Query(1, "SELECT DISTINCT summary, recursiveId, COUNT(*) as c FROM (ratedTasks INNER JOIN tasks ON ratedTasks.taskId = tasks.taskId) WHERE username = ? AND enjoyment IN (SELECT min(enjoyment) FROM (ratedTasks INNER JOIN tasks ON ratedTasks.taskId = tasks.taskId) WHERE username=?) GROUP BY recursiveId ORDER BY count(recursiveId) DESC", [username, username]);
+        var id = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(id);
+        if (result.length == 0) {
+            return null;
+        }
+        return result[0];
+    }
 
 
+
+
+
+    /**
+     * 
+     * @param {*} username 
+     * @returns a task where which is first when the user's day is happiest
+     */
+    async happiestWhenDayStartsWith(username) {
+        var q = new Query(1, "SELECT * FROM (ratedTasks INNER JOIN tasks ON ratedTasks.taskId = tasks.taskId) WHERE date IN (SELECT date FROM daily WHERE happiness IN (SELECT max(happiness) FROM daily WHERE username = ?) AND username =?) ", [username, username])
+        var id = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(id);
+
+        if (result.length == 0) {
+            return null;
+        }
+
+        var earliestRecIds = {};
+
+
+        //find the task id and recursive id of the earliest of each date
+        for (var i = 0; i < result.length; i++) {
+            if (earliestRecIds[result[i].date] == null) {
+                earliestRecIds[result[i].date] = [result[i].taskId, result[i].recursiveId, result[i].startTime];
+            }
+            else {
+                var prev = earliestRecIds[result[i].date];
+                if (helpers.isHourMinuteBefore(result[i].startTime, prev[2])) {
+                    earliestRecIds[result[i].date] = [result[i].taskId, result[i].recursiveId, result[i].startTime];
+                }
+            }
+        }
+
+        var keys = Object.keys(earliestRecIds);
+        var totals = {};
+
+        //keep track of the count of total recursiveIds
+        for (var i = 0; i < keys.length; i++) {
+            var task = earliestRecIds[keys[i]];
+            if (totals[task[1]] == null) {
+                totals[task[1]] = 1;
+            }
+            else {
+                totals[task[1]] = totals[task[1]] + 1;
+            }
+        }
+
+        //get the biggest total
+        var biggest = -1;
+        var biggestRecurId = -2;
+        keys = Object.keys(totals);
+        for (var i = 0; i < keys.length; i++) {
+            if (totals[keys[i]] > biggest) {
+                biggest = totals[keys[i]]
+                biggestRecurId = keys[i]
+            }
+        }
+
+        if (biggestRecurId == -2) {
+            return null;
+        }
+
+        if (biggestRecurId == -1) {
+            //find the first take in the rec ids with a -1 id
+            keys = Object.keys(earliestRecIds);
+            for (var i = 0; i < keys.length; i++) {
+                var recResult = earliestRecIds[keys[i]];
+                if (recResult[1] == -1) {
+                    var task = await this.getTask(recResult[0]);
+                    return task;
+                }
+            }
+        }
+
+        //get tasks by the recursive id and return the first one
+        var recursiveGroup = await this.getRecursiveRatedTasksById(username, biggestRecurId);
+        if (recursiveGroup.length == 0) {
+            return null;
+        }
+
+        recursiveGroup[0].c = recursiveGroup.length;
+        return recursiveGroup[0];
+
+
+
+
+    }
+
+
+    /**
+     * 
+     * @param {*} username 
+     * @returns a list of task id for all rated tasks belonging to the given user
+     */
+    async getAllRatedTasks(username) {
+        var q = new Query(1, "SELECT DISTINCT taskId FROM (ratedTasks INNER JOIN tasks ON ratedTasks.taskId = tasks.taskId) WHERE username = ?", [username]);
+        var id = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(id);
+        return result;
+    }
+
+
+
+    /**
+     * 
+     * @param {*} username
+     * @returns the next task that has not been completed for a user based on end time 
+     */
+    async nextTask(username, epochTime) {
+        var tasks = await this._getAllTasks(username, time);
+
+        var nowDate = helpers.MMDDYYYYtoDate(helpers.epochToMMDDYYY(epochTime));
+        var nowHHMM = helpers.epochToHHMM(epochTime);
+
+
+
+        for (var i = 0; i < tasks.length; i++) {
+            var task = tasks[i];
+            var taskDate = helpers.MMDDYYYYtoDate(task.date);
+            if (helpers.datesAreOnSameDay(taskDate, nowDate)) {
+                //check if task has already happened
+                if (helpers.isHourMinuteBefore(nowHHMM, task.endTime)) {
+                    return task;
+                }
+            }
+            else if (helpers.MMDDYYYYbeforeMMDDYYYY(nowDate, taskDate)) {
+                //date has to have not happened yet
+                return task;
+            }
+
+        }
+
+        return null; //all tasks have passed
+
+
+    }
+
+
+
+    /**
+     * 
+     * @param {*} username 
+     * @param {*} taskId 
+     * @returns true if the task belongs to user or false if not
+     */
+    async _taskBelongsToUser(username, taskId){
+        var q = new Query(1, "SELECT * FROM tasks WHERE taskId =? AND username = ?", [taskId, username]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+        return result.length != 0;
+
+    }
+
+
+    /**
+     * 
+     * @param {*} taskId 
+     * @param {*} category 
+     * @returns true if the task belong to the category
+     */
+    async taskHasCategory(taskId, category){
+        var q = new Query(1, "SELECT * FROM taskCategories WHERE taskId =? AND category = ?", [taskId, category]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+        return result.length != 0;
+
+    }
+
+
+    /**
+     * 
+     * @param {*} taskId 
+     * @param {*} username 
+     * @returns a list of categories belonging to the task
+     */
+    async getTaskCategories(taskId, username){
+        if(!await this.taskExists(taskId) || !await this._taskBelongsToUser(username, taskId)){
+            return [];
+        }
+ 
+        var q = new Query(1, "SELECT category FROM taskCategories WHERE taskId = ?", [taskId]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+
+
+        var cats = [];
+        for(var i = 0; i<result.length; i++){
+            cats.push(result[i].category);
+        }
+
+        return cats;
+    }
+
+
+
+    
+    /**
+     * adds a task to a specific category
+     * @param {*} username 
+     * @param {*} taskId 
+     * @param {*} category 
+     */
+    async addTaskToCategory(username,taskId, category){
+        //make sure task exists and belongs to the user
+        if(!await this.taskExists(taskId) || !await this._taskBelongsToUser(username, taskId) || await this.taskHasCategory(taskId, category)){
+            return false;
+        }
+
+        //insert task into db
+        var ins = new Statement(1, "INSERT INTO taskCategories (taskId, category) VALUES(?,?)", [taskId, category]);
+        DatabaseHandler.current.enqueueOperation(ins);
+        return true;
+    }
+
+
+
+    /**
+     * 
+     * @param {*} username 
+     * @returns all categories for which a user has tasks belonging to
+     */
+    async getAllUserTaskCategories(username){
+        var q = new Query(1, "SELECT DISTINCT category FROM (taskCategories INNER JOIN tasks ON taskCategories.taskId = tasks.taskId) WHERE username = ?", [username]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+
+
+        var cats = [];
+        for(var i = 0; i<result.length; i++){
+            cats.push(result[i].category);
+        }
+
+        return cats;
+
+    }
+
+    /**
+     * 
+     * @param {*} username 
+     * @returns a list of taskIds belonging to a category and a user
+     */
+    async getAllTasksBelongingToCategory(username, category){
+        var q = new Query(1, "SELECT DISTINCT taskId FROM taskCategories INNER JOIN tasks ON taskCategories.taskId = tasks.taskId) WHERE username = ? AND category = ?", [username, category]);
+        var oppId = DatabaseHandler.current.enqueueOperation(q);
+        var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
+
+
+        var tasks = [];
+        for(var i = 0; i<result.length; i++){
+            tasks.push(result[i].taskId);
+        }
+
+        return tasks;
+    }
 }
 
 
