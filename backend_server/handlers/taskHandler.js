@@ -756,7 +756,7 @@ module.exports = class taskHandler {
      * @returns a list of task id for all rated tasks belonging to the given user
      */
     async getAllRatedTasks(username) {
-        var q = new Query(1, "SELECT taskId FROM  (ratedTasks INNER JOIN tasks ON ratedTasks.taskId = tasks.taskId) WHERE username = ?", [username]);
+        var q = new Query(1, "SELECT * FROM  (ratedTasks INNER JOIN tasks ON ratedTasks.taskId = tasks.taskId) WHERE username = ?", [username]);
         var id = DatabaseHandler.current.enqueueOperation(q);
         var result = await DatabaseHandler.current.waitForOperationToFinish(id);
         return result;
