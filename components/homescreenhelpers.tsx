@@ -183,9 +183,10 @@ function RankTask (task:any){
     const [engagement, setEngagement] = useState('1')
     const [mentalDifficulty, setMentalDifficulty] = useState('1')
     var random = Math.random()
-    var navPath = 'Home'
-    if (routeTest == 'Rank Task'){
-        navPath = 'Home'
+    var navPath = 'HomeScreen'
+    console.log(routeTest)
+    if (routeTest == 'RankTask'){
+        navPath = 'HomeScreen'
     }else{
         navPath = 'UnRated'
     }

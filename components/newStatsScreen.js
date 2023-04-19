@@ -1,4 +1,4 @@
-import { View, Text, Button } from "react-native"
+import { View, Text, Button} from "react-native"
 import { Component } from "react"
 import StylingConstants from "./StylingConstants";
 import { ScrollView } from "react-native-gesture-handler";
@@ -18,13 +18,21 @@ export default class StatsScreen extends Component {
     render() {
         return (
             <View style={{ flex: 1, flexDirection: "column" }}>
-                <Text style={{
-                    color: "white",
-                    borderBottomLeftRadius: 12,
-                    borderBottomRightRadius: 12, backgroundColor: StylingConstants.highlightColor, padding: "4%", fontFamily: StylingConstants.defaultFontBold, fontSize: StylingConstants.hugeFontSize
+               
+                    <Text style={{
+                        color: "white",
+                        borderBottomEndRadius: 30,
+                    
+                    
+                    borderBottomRightRadius: 30, backgroundColor: StylingConstants.highlightColor, padding: "10%", fontFamily: StylingConstants.defaultFontBold, fontSize: StylingConstants.hugeFontSize, 
+                    
                 }}>Your Statistics</Text>
 
-                <ScrollView style={{ padding: "2%", height: "100%" }}>
+              
+               
+                
+
+                <ScrollView style={{ padding: "2%", height: "100%"}}>
 
                     <TotalsWidget></TotalsWidget>
                     <FiveDayMoodHistoryWidget></FiveDayMoodHistoryWidget>
