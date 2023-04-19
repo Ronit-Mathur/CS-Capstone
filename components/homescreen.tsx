@@ -449,7 +449,7 @@ function TaskWidget({ item }: any, Nav: any, isCompleted: boolean) {
     navPath = 'RankTask';
   }
 
-  return (<View style={{ marginLeft: "2%", marginRight: "2%", marginBottom: 5, borderLeftWidth: 3, borderColor: StylingConstants.highlightColor, flexDirection: "row", justifyContent: "space-between", alignItems: "center",  }}>
+  return (<View style={{ marginLeft: "2%", marginRight: "2%", marginBottom: "1.5%", borderLeftWidth: 3, borderColor: StylingConstants.highlightColor, flexDirection: "row", justifyContent: "space-between", alignItems: "center",  }}>
     <View style={{ marginLeft: "2%" }}>
       <Text style={{ color: 'black', fontWeight: "bold", fontSize: StylingConstants.subFontSize }}>{helpers.toTitleCase(item.summary.substring(0, 25))} {bool ? '...' : ''}</Text>
       <Text style={{ color: 'black', fontSize: StylingConstants.tinyFontSize }}>Start Time: {item.startTime}</Text>
