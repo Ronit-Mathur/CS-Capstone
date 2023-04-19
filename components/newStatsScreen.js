@@ -1,8 +1,5 @@
-<<<<<<< HEAD
-import { View, Text, Button} from "react-native"
-=======
+
 import { View, Text, Button, SafeAreaView } from "react-native"
->>>>>>> 5f1b8d9b431f65983010e0fc5399bce54cb0ce74
 import { Component } from "react"
 import StylingConstants from "./StylingConstants";
 import { ScrollView } from "react-native-gesture-handler";
@@ -22,24 +19,9 @@ export default class StatsScreen extends Component {
 
     render() {
         return (
-<<<<<<< HEAD
-            <View style={{ flex: 1, flexDirection: "column" }}>
-               
-                    <Text style={{
-                        color: "white",
-                        borderBottomEndRadius: 30,
-                    
-                    
-                    borderBottomRightRadius: 30, backgroundColor: StylingConstants.highlightColor, padding: "10%", fontFamily: StylingConstants.defaultFontBold, fontSize: StylingConstants.hugeFontSize, 
-                    
-                }}>Your Statistics</Text>
 
-              
-               
-                
 
-                <ScrollView style={{ padding: "2%", height: "100%"}}>
-=======
+
             <SafeAreaView style={{ flex: 1, flexDirection: "column" }}>
                 <View style={{
                     borderBottomLeftRadius: 12,
@@ -51,7 +33,7 @@ export default class StatsScreen extends Component {
                     }}>Your Statistics</Text>
                 </View>
                 <ScrollView style={{ padding: "2%", height: "100%" }}>
->>>>>>> 5f1b8d9b431f65983010e0fc5399bce54cb0ce74
+
 
                     <TotalsWidget></TotalsWidget>
                     <FiveDayMoodHistoryWidget></FiveDayMoodHistoryWidget>
