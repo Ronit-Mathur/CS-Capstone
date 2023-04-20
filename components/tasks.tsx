@@ -1,10 +1,11 @@
 import * as React from 'react';
-import {Text, TextInput, SafeAreaView,View, Button} from 'react-native';
+import {Text, TextInput, SafeAreaView,View, Button, Platform, Pressable, StyleSheet} from 'react-native';
 import RNDateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { addTask } from '../lib/server/tasks';
 import { format } from 'path/posix';
 
 import serverHandler from '../lib/server/serverHandler';
+import StylingConstants from './StylingConstants';
 
 
 
@@ -57,44 +58,134 @@ function TaskCreation (){
         
         <View style={{
             flex:1,
+           
         }}>
+
+            <View style={{
+                backgroundColor:StylingConstants.highlightColor, 
+                height:'10%',
+                marginTop:0,
+                marginBottom:'10%',
+                justifyContent:'center',
+            }}>
+                <Text style={{
+                    alignSelf:'center',
+                    fontFamily:StylingConstants.defaultFont, 
+                    fontSize: StylingConstants.largeFontSize,
+                    color:'white'
+                }}>Create New Task</Text>
+
+            </View>
+
+           <Text style={{
+               alignSelf:'center',
+               fontFamily:StylingConstants.defaultFont,
+               fontSize:StylingConstants.normalFontSize,
+               color:'black',
+               marginBottom:'5%'
+           }}>Name</Text>
             <TextInput 
-            style={{height: 40}}
+            style={{height: 40, alignSelf:'center', borderWidth:1, width:'60%', fontFamily: StylingConstants.defaultFont, paddingLeft:'15%', marginBottom:'8%'}}
             onChangeText={newTitle => setTaskTitle(newTitle)}
             placeholder='Enter Task Name'
             placeholderTextColor={"black"}
             defaultValue={taskTitle}
+            
             />
 
-            <View style={{alignItems: 'flex-start',}}>
-                <Button title='Date' onPress={()=>(setShowDate(!showDate))}></Button>
+            <View style={{}}>
                 
+            <Text style={{
+                fontFamily:StylingConstants.defaultFont,
+                fontSize:StylingConstants.normalFontSize,
+                color:'black',
+                alignSelf:'center'
+            }}>Date</Text> 
+           
+            <Pressable  onPress={() => setShowDate(!showDate) }>
+                    <Text style={{
+                        fontFamily: StylingConstants.defaultFont,
+                        fontSize: StylingConstants.hugeFontSize,
+                        alignSelf:'center',
+                        marginBottom:'5%',
+                        marginTop:'5%',
+                        color: StylingConstants.lighterHighlightColor
+                        
+                    }}>{date.toLocaleDateString()}</Text>
+                </Pressable>
                 {showDate && ( 
                 <RNDateTimePicker value={date} mode="date" onChange={(event:DateTimePickerEvent, day:Date)=>{
                     setDate(day)
                     setShowDate(!showDate)
-                }} style={{}}/>)}
+                }}
+                style={{
+                    alignSelf:'center',
+                    
+                }}/>)}
+
                
                 
-                <Button title='Start Time' onPress={() => (setShowStartTime(!showStartTime))
-                }></Button>
+                <Text style={{
+                    fontFamily:StylingConstants.defaultFont,
+                    fontSize:StylingConstants.normalFontSize,
+                    color:'black',
+                    alignSelf:'center',
+                    marginBottom:'5%'
+                }}> Start Time</Text>
+                <Pressable onPress={() => (setShowStartTime(!showStartTime))} >
+                    <Text style={{
+                        alignSelf:'center',
+                        fontFamily:StylingConstants.defaultFont,
+                        fontSize:StylingConstants.largeFontSize,
+                        color:StylingConstants.lighterHighlightColor,
+                    }}>{startTime.toLocaleTimeString().substring(0,4) + startTime.toLocaleTimeString().substring(8,10)}</Text>
+
+                </Pressable>
                 {showStartTime && ( 
                 <RNDateTimePicker  value={startTime} onChange={(event:DateTimePickerEvent, day:Date) => {
                     setStarttime(day)
-                    setShowStartTime(!showStartTime)
-                }} mode="time" display="inline" textColor='black'/>)}
+                    if(Platform.OS != 'ios'){
+                        setShowStartTime(!showStartTime)  
+                    }
+                    
+                }} mode='time' display='spinner' textColor='black'/>)}
                 
               
-                
-                <Button title='End Time' onPress={() => (setShowEndTime(!showEndTime))}></Button>
+                <Text style={{
+                    alignSelf:'center',
+                    fontFamily:StylingConstants.defaultFont,
+                    fontSize:StylingConstants.normalFontSize,
+                    color:'black',
+                    marginTop:'5%',
+                    marginBottom:'5%'
+                }}>End Time</Text>
+                <Pressable onPress={() => (setShowEndTime(!showEndTime))}>
+                    <Text style={{
+                        fontFamily:StylingConstants.defaultFont,
+                        fontSize:StylingConstants.largeFontSize,
+                        color:StylingConstants.lighterHighlightColor,
+                        alignSelf:'center',
+                        marginBottom:'5%'
+                    }}>{endTime.toLocaleTimeString().substring(0,4) + endTime.toLocaleTimeString().substring(8,10)}</Text>
+                </Pressable>
                 {showEndTime && ( 
                 <RNDateTimePicker  value={endTime}  onChange={(event:DateTimePickerEvent, day:Date) => {
                     setEndTime(day)
-                    setShowEndTime(!showEndTime)
-                }} mode="time" display="inline"/>)}
-
+                    if(Platform.OS != 'ios'){
+                        setShowEndTime(!showEndTime) 
+                    }
+                
+                    
+                }} mode="time" display='spinner'/>)}
+            <Text style={{
+                alignSelf:'center',
+                fontFamily:StylingConstants.defaultFont,
+                fontSize:StylingConstants.normalFontSize,
+                color:'black',
+                marginBottom:'5%',
+            }}>Location</Text>
             <TextInput 
-                style={{height: 40}}
+                style={{height: 40, alignSelf:'center', borderWidth:1, width:'60%',fontFamily:StylingConstants.defaultFont, paddingLeft:'20%', marginBottom:'5%'}}
                 onChangeText={newLocation => setLocation(newLocation)}
                 placeholder='Enter Location'
                 placeholderTextColor={"black"}
