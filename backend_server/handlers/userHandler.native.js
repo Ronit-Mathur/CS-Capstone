@@ -62,6 +62,18 @@ module.exports = class UserHandler {
         return true;
     }
 
+    async createLocalUser(username){
+
+        if(await this.userExists(username)){
+            return false;
+        }
+        //perform insertion statement
+        var statement = new Statement(1, "INSERT INTO users (username, email, password) VALUES(?,?,?)", [username, "me", "me"]);
+        var oppId = DatabaseHandler.current.enqueueOperation(statement);
+        await DatabaseHandler.current.waitForOperationToFinish(oppId);
+        return true;
+   }
+
 
     /**
      * checks if a login is valid. a.k.a the username and password match

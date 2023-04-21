@@ -25,7 +25,7 @@ export default function FiveDayMoodHistoryWidget() {
 
     dayData = dayData.reverse();
 
-
+ console.log("rendering");
     return (
         <View style={{
             width: "98%", alignSelf: "center", marginTop: "2%", shadowColor: "gray",

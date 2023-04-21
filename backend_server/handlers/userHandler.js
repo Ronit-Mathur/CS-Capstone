@@ -50,8 +50,11 @@ module.exports = class UserHandler {
         if (await this.userExists(username)) {
             return false; //user already exists, do not add to db
         }
+        
 
         var hashedPassword = await this._hash(password);
+        
+       
 
         //perform insertion statement
         var statement = new Statement(1, "INSERT INTO users (username, email, password) VALUES(?,?,?)", [username, email, hashedPassword]);
@@ -60,6 +63,8 @@ module.exports = class UserHandler {
         //await DatabaseHandler.current.exec("INSERT INTO users (username, email, password) VALUES(?,?,?)", [username, email, hashedPassword]);
         return true;
     }
+
+   
 
 
     /**
