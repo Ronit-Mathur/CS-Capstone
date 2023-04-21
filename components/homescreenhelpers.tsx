@@ -1,13 +1,17 @@
-import { useState, } from 'react';
-import {View,Text, TextInput, Button} from 'react-native';
+import { useState, useCallback } from 'react';
+import {View,Text, TextInput, Button, SafeAreaView} from 'react-native';
 import * as Helpers from '../backend_server/lib/helpers';
 import{getTodaysActiveTasks, getTodaysFinishedTasks, updateTask, rateTask, getUnratedCompletedTasks} from '../lib/server/tasks';
 import { useNavigation, useRoute} from '@react-navigation/native';
 import serverHandler from '../lib/server/serverHandler';
 import StylingConstants from './StylingConstants';
+import DropDownPicker from 'react-native-dropdown-picker'
 
 function EditTask (task:any){
-    
+    const timeString = 'April 07, 2001, ' + task.route.params.task.item.startTime + ':00'
+    const time = new Date(timeString)
+    console.log(time)
+
    const navigation = useNavigation()
    const [sum, setSum] = useState(task.route.params.task.item.summary)
    const [start, setStart] = useState(task.route.params.task.item.startTime)
@@ -56,9 +60,7 @@ function EditTask (task:any){
                     flex:1,
                 }}>
                     <Text style={{
-                        flex:1,
                         alignSelf:'center',
-                        textDecorationLine:'underline',
                         paddingTop:'3%',
                         fontFamily:StylingConstants.defaultFont,
                         fontSize: StylingConstants.normalFontSize
@@ -81,9 +83,7 @@ function EditTask (task:any){
                     flex:1,
                 }}>
                     <Text style={{
-                        flex:1,
                         alignSelf:'center',
-                        textDecorationLine:'underline',
                         paddingTop:'3%',
                         fontFamily:StylingConstants.defaultFont,
                         fontSize: StylingConstants.normalFontSize
@@ -106,9 +106,7 @@ function EditTask (task:any){
                     flex:1,
                 }}>
                     <Text style={{
-                        flex:1,
                         alignSelf:'center',
-                        textDecorationLine:'underline',
                         paddingTop:'3%',
                         fontFamily:StylingConstants.defaultFont,
                         fontSize: StylingConstants.normalFontSize
@@ -132,9 +130,7 @@ function EditTask (task:any){
                     marginBottom:'5%'
                 }}>
                     <Text style={{
-                        flex:1,
                         alignSelf:'center',
-                        textDecorationLine:'underline',
                         paddingTop:'3%',
                         fontFamily:StylingConstants.defaultFont,
                         fontSize: StylingConstants.normalFontSize
@@ -175,13 +171,43 @@ function EditTask (task:any){
 function RankTask (task:any){
     const route = useRoute()
     const routeTest = route.name
-    console.log('Route: ' + routeTest)
     const navigation = useNavigation()
     const id = task.route.params.task.item.taskId
-    const [enjoyment, setEnjoyment] = useState('1')
-    const [physcialActivity, setPhysicalActivity] = useState('1')
-    const [engagement, setEngagement] = useState('1')
-    const [mentalDifficulty, setMentalDifficulty] = useState('1')
+
+
+    const[items, setItems] = useState([
+        {label: '1 - Minimal', value: 1},
+        {label: '2 - Some', value: 2},
+        {label: '3 - Moderate', value: 3},
+        {label: '4 - High', value: 4},
+        {label: '5 - Very High', value: 5},
+      ])
+      const[enjoymentOpen, setEnjoymentOpen] = useState(false)
+      const[enjoymentValue, setEnjoymentValue] = useState(null)
+      const[physicalOpen, setPhysicalOpen] = useState(false)
+      const[physicalValue, setPhysicalValue] = useState(null)
+      const[engagementOpen, setEngagementOpen] = useState(false)
+      const[engagementValue, setEngagementValue] = useState(null)
+      const[mentalDifficultyOpen, setMentalDifficultyOpen] = useState(false)
+      const[mentalDifficultyValue, setMentalDifficultyValue] = useState(null)
+
+     
+    
+
+      const onEnjoymentOpen = useCallback(() => {
+        setPhysicalOpen(false);
+        setEngagementOpen(false);
+        setMentalDifficultyOpen(false);
+        setEnjoymentOpen(!enjoymentOpen);
+      }, [enjoymentOpen]);
+      
+      const onPhysicalOpen = useCallback(() => {
+        setPhysicalOpen(!physicalOpen);
+        setEngagementOpen(false);
+        setMentalDifficultyOpen(false);
+        setEnjoymentOpen(false);
+      }, [physicalOpen]);
+
     var random = Math.random()
     var navPath = 'HomeScreen'
   
@@ -202,114 +228,137 @@ function RankTask (task:any){
              
              
          }}>
-             <View style={{
+             <SafeAreaView style={{
                  flex:1,
                  borderWidth:0,
-                 height:'60%',
+                 height:'75%',
                  width:'80%',
                  alignSelf:'center',
                  position:'absolute',
-                 top:'10%', 
+                 top:'5%', 
                  backgroundColor:'white', 
                  borderRadius:30, 
+                
                  
              }}>
+
+                    <View style ={{
+                        flex:2,
+                        backgroundColor: StylingConstants.highlightColor,
+                        justifyContent: 'center',
+                        borderTopEndRadius:30,
+                        borderTopStartRadius:30
+                    }}>
+                        <Text style={{
+                            color: 'white',
+                            fontSize: StylingConstants.largeFontSize,
+                            fontFamily: StylingConstants.defaultFont,
+                            alignSelf:'center'
+                        }}>Rate Task</Text>
+
+                    </View>
                
-               
-               <View style={{
-                    flex:1,
-                }}>
                     <Text style={{
-                        flex:1,
+                        
                         alignSelf:'center',
-                        textDecorationLine:'underline',
-                        paddingTop:'3%',
+                        padding:'5%',
+                        fontFamily: StylingConstants.defaultFont,
+                        fontSize: StylingConstants.subFontSize
                     }}
                     >Enjoyment</Text>
-                    <TextInput style={{
-                        flex:1,
-                        borderWidth:1,
-                        width:'75%',
-                        alignSelf:'center',
-                        paddingLeft:'3%',
-                        
-                    }} 
-                    placeholder={enjoyment}
-                    placeholderTextColor='black'
-                    onChangeText={text=>setEnjoyment(text)}
-                    />
-                </View>
-                <View style={{
-                    flex:1,
-                }}>
+                       <DropDownPicker
+                            open={enjoymentOpen}
+                            value={enjoymentValue}
+                            items={items}
+                            setOpen={onEnjoymentOpen}
+                            setValue={setEnjoymentValue}
+                            setItems={setItems}
+                            containerStyle = {{
+                                width: '75%',
+                                alignSelf:'center'
+                            }}
+                            zIndex={4000}
+                            zIndexInverse={1000}
+                        />
+                    
+               
+               
                     <Text style={{
-                        flex:1,
+                
                         alignSelf:'center',
-                        textDecorationLine:'underline',
-                        paddingTop:'3%',
+                        fontSize: StylingConstants.subFontSize,
+                        padding:'5%',
+                        fontFamily: StylingConstants.defaultFont,
                     }}
                     >Pysical Activity</Text>
-                    <TextInput style={{
-                        flex:1,
-                        borderWidth:1,
-                        width:'75%',
-                        alignSelf:'center',
-                        paddingLeft:'3%',
-                        
-                    }} 
-                    placeholder={physcialActivity}
-                    placeholderTextColor='black'
-                    onChangeText={text=>setPhysicalActivity(text)}
-                    />
-                </View>
+                  <DropDownPicker
+                            open={physicalOpen}
+                            value={physicalValue}
+                            items={items}
+                            setOpen={onPhysicalOpen}
+                            setValue={setPhysicalValue}
+                            setItems={setItems}
+                            containerStyle={{
+                                width:'75%',
+                                alignSelf:'center'
 
-                <View style={{
-                    flex:1,
-                }}>
+                            }}
+                            zIndex ={3000}
+                            zIndexInverse ={2000}
+                        />
+                    
+                
+
                     <Text style={{
-                        flex:1,
+                       
                         alignSelf:'center',
-                        textDecorationLine:'underline',
-                        paddingTop:'3%',
+                        fontFamily: StylingConstants.defaultFont,
+                        padding:'5%',
+                        fontSize: StylingConstants.subFontSize
                     }}
                     >Engagement</Text>
-                    <TextInput style={{
-                        flex:1,
-                        borderWidth:1,
-                        width:'75%',
-                        alignSelf:'center',
-                        paddingLeft:'3%',
-                        
-                    }} 
-                    placeholder={engagement}
-                    placeholderTextColor='black'
-                    onChangeText={text=>setEngagement(text)}
-                    />
-                </View>
+                      <DropDownPicker
+                            open={engagementOpen}
+                            value={engagementValue}
+                            items={items}
+                            setOpen={setEngagementOpen}
+                            setValue={setEngagementValue}
+                            setItems={setItems}
+                            containerStyle={{
+                                width:'75%',
+                                alignSelf:'center'
+                            }}
+                            zIndex={2000}
+                            zIndexInverse={2000}
 
-                <View style={{
-                    flex:1,
-                }}>
+                        />
+                
+
+                
                     <Text style={{
-                        flex:1,
+                      
                         alignSelf:'center',
-                        textDecorationLine:'underline',
-                        paddingTop:'3%',
+                        fontFamily: StylingConstants.defaultFont,
+                        fontSize:StylingConstants.subFontSize,
+                        padding:'5%',
+                    
                     }}
                     >Mental Difficulty</Text>
-                    <TextInput style={{
-                        flex:1,
-                        borderWidth:1,
-                        width:'75%',
-                        alignSelf:'center',
-                        paddingLeft:'3%',
-                        
-                    }} 
-                    placeholder={mentalDifficulty}
-                    placeholderTextColor='black'
-                    onChangeText={text=>setMentalDifficulty(text)}
-                    />
-                </View>
+                      <DropDownPicker
+                            open={mentalDifficultyOpen}
+                            value={mentalDifficultyValue}
+                            items={items}
+                            setOpen={setMentalDifficultyOpen}
+                            setValue={setMentalDifficultyValue}
+                            setItems={setItems}
+                            containerStyle ={{
+                                width: '75%',
+                                alignSelf:'center'
+                            }}
+                            zIndex={1000}
+                            zIndexInverse ={4000}
+                        />
+                
                 
                 <View  style={{
                     flex:1,
@@ -319,13 +368,13 @@ function RankTask (task:any){
                     
                 }}>
                     <Button  title='Cancel'  onPress={()=> navigation.goBack()}/>
-                    <Button title='Submit' onPress ={async()=> {rankT(id, enjoyment,physcialActivity,engagement,mentalDifficulty); navigation.navigate(navPath, {random})}} />
+                    <Button title='Submit' onPress ={async()=> {rankT(id, enjoymentValue,physcialValue,engagementValue,mentalDifficultyValue); navigation.navigate(navPath, {random})}} />
                 </View>
             
              
  
  
-             </View>
+             </SafeAreaView>
          </View>
      );
  }
