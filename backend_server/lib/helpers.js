@@ -115,6 +115,14 @@ module.exports = {
     return new Date(parts[2], parts[0] - 1, parts[1]);
   },
 
+  MMYYYYtoMonthName(d){
+    var parts = d.split("/");
+    var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    var tmpD = new Date(parts[1], parts[0] - 1);
+    var m = tmpD.getMonth();
+    return months[m];
+  },
+
   dateToMMDDYYYY(date) {
     const yyyy = date.getFullYear();
     let mm = date.getMonth() + 1; // Months start at 0!
@@ -196,6 +204,18 @@ module.exports = {
     return formattedToday;
   },
 
+  getTodaysMonth() {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    let mm = today.getMonth() + 1; // Months start at 0!
+
+    if (mm < 10) mm = '0' + mm;
+
+    const formattedCurrMonth = mm + '/' + yyyy;
+
+    return formattedCurrMonth;
+  },
+  
   /**
    * @returns today's date in the yyy-mm--dd format for RN_Cal Agenda
    * Similar to getTodaysDate()
