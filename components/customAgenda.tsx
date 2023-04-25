@@ -21,7 +21,7 @@ function AgendaNav (day:any){
 currentDay = day
   return(
     <stack.Navigator>
-      <stack.Screen name='Agen' component={CustomAgenda} options={{headerShown:false}} />
+      <stack.Screen name='Agen' children={()=> <CustomAgenda refresh = {0} />} options={{headerShown:false}} />
       <stack.Screen name='EditAgen' component={HSH.EditTask} />
       <stack.Screen name='RankAgen' component={HSH.RankTask}  options={{title:'Rank Task'}}/>
       <stack.Screen name = 'AddAgen' component={TaskCreation} />
@@ -51,7 +51,7 @@ const months = {
 let globalDate = ''
 
 
-function CustomAgenda () {
+function CustomAgenda ({refresh}) {
 const nav = useNavigation()
 
  let date = currentDay.route.params.dateString
@@ -232,65 +232,5 @@ async function  getTasks(date:string) {
 
     return taskList;
 }
-
-
-/* function CustomAgenda (day:any){
-  console.log(day)
-  //get the slected day object and convert to values 
-  const convertDate = Object.values(day)
-  
-  //created a list to hold the date and add the selected date 
-  var selectedDatesTasks: any[]=[]
-  convertDate.forEach(function(task){
-  selectedDatesTasks.push(task.params)
-  })
-
-
-  
-  var loadDate = selectedDatesTasks[1]
-  console.log(typeof(loadDate))
-  let testList = {}
-  
-  //var taskList = getSelectedDayTasks(loadDate,user)
-
-
-  
-    return(
-    <Agenda
-    items={{
-        : [{name:'cycling', height:80, day: '2023-03-17'} ],
-      
-      }}
-     
-      selected={loadDate}
-      ></Agenda>
-    );
-}
-
-async function getSelectedDayTasks (rawDate:string, user:any) : Promise <any[]> {
-  
-
-  //format the date into the correct format for getting tasks from the database
-  const reArrange = rawDate.split('-')
-  var yearOrg = reArrange[0]
-  reArrange[0] = reArrange[1]
-  var dayOrg = reArrange[2]
-  reArrange[2] = yearOrg
-  reArrange[1] = dayOrg
-  const dateFormatted = reArrange.join('-')
-
-  //get the tasks list for the selected date and convert it into a list 
-  var taskList: any[] = []
-  var daysTasksRaw = await getDaysTasks(user, dateFormatted)
-  var convertTasks = Object.values(daysTasksRaw)
-  convertTasks.forEach(function(task){
-  taskList.push(task)
-  })
-
-  return taskList
-  
-
-} */
-
 
 export {CustomAgenda, AgendaNav}

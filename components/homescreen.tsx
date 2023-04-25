@@ -46,7 +46,7 @@ function HomeScreenNav() {
           headerBackTitleVisible: false, 
         }} />
         <StackNavigator.Screen name='calImport' component={CalImportPage} options={{ presentation: 'containedModal' }} />
-        <StackNavigator.Screen name='AddTask' component={TaskCreation} options={{ presentation: 'modal' }} />
+        <StackNavigator.Screen name='AddTask' component={TaskCreation} options={{ presentation: 'modal', headerShown:false }} />
         <StackNavigator.Screen name="ImportUserPhoto" component={ImportUserPhotoScreen} options={{  headerTintColor:"white", headerTitleStyle:{color:"white"}, presentation: 'containedModal', headerStyle: { backgroundColor: 'transparent', }, title: "Edit Photo", contentStyle: { backgroundColor: 'transparent' } }}></StackNavigator.Screen>
         <StackNavigator.Screen name="ImportCalendar" component={ImportCalendarScreen} options={{ headerTintColor:"white", headerTitleStyle:{color:"white"},
           presentation: 'containedModal', headerStyle: { backgroundColor: 'transparent', }, title: "Import Calendar", headerShadowVisible: false, // applied here
