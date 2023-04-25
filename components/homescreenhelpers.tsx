@@ -368,7 +368,7 @@ function RankTask (task:any){
                     
                 }}>
                     <Button  title='Cancel'  onPress={()=> navigation.goBack()}/>
-                    <Button title='Submit' onPress ={async()=> {rankT(id, enjoymentValue,physcialValue,engagementValue,mentalDifficultyValue); navigation.navigate(navPath, {random})}} />
+                    <Button title='Submit' onPress ={async()=> {rankT(id, enjoymentValue,physicalValue,engagementValue,mentalDifficultyValue); navigation.navigate(navPath, {random})}} />
                 </View>
             
              

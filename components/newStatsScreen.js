@@ -17,7 +17,8 @@ export default function StatsScreen() {
     const [widgets, setWidgets] = useState([<TotalsWidget key={1}></TotalsWidget>,
     <FiveDayMoodHistoryWidget key={2}></FiveDayMoodHistoryWidget>,
     <LeastEnjoyableTaskWidget key={3}></LeastEnjoyableTaskWidget>,
-    <HappiestWhenDayStartsWithWidget key={4}> </HappiestWhenDayStartsWithWidget>]);
+    <HappiestWhenDayStartsWithWidget key={4}> </HappiestWhenDayStartsWithWidget>,
+    <MoodGraphWidget key={5}></MoodGraphWidget>]);
     //const [keyOffset, setKeyOffset] = useState(0);
 
     const onRefresh = useCallback(() => {
@@ -28,7 +29,8 @@ export default function StatsScreen() {
         setWidgets([<TotalsWidget key={keyOffset + 1}></TotalsWidget>,
         <FiveDayMoodHistoryWidget key={keyOffset + 2}></FiveDayMoodHistoryWidget>,
         <LeastEnjoyableTaskWidget key={keyOffset + 3}></LeastEnjoyableTaskWidget>,
-        <HappiestWhenDayStartsWithWidget key={keyOffset + 4}> </HappiestWhenDayStartsWithWidget>]);
+        <HappiestWhenDayStartsWithWidget key={keyOffset + 4}> </HappiestWhenDayStartsWithWidget>,
+        <MoodGraphWidget key={keyOffset + 5}></MoodGraphWidget>]);
 
         setTimeout(() => {
             setRefreshing(false);
@@ -75,8 +77,9 @@ export default function StatsScreen() {
                         <DaysOfWeekStatsWidget />
                         {/* <Button title='calcDayMood' onPress={() => calcDayMood(serverHandler.current.userState.username, '04/11/2023')}></Button>
                         <Button title='getMonthAvgRatings' onPress={() => getMonthAvgRatings('04/2023')}></Button>
-                        <Button title='test' onPress={() => getWeeklyAvgs()}> </Button> */}
+                        <Button title='test' onPress={() => getWeeklyAvgs()}> </Button> 
                     </View>
+                */}
             </ScrollView>
 
 
