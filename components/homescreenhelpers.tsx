@@ -290,7 +290,7 @@ function RankTask (task:any){
                         padding:'5%',
                         fontFamily: StylingConstants.defaultFont,
                     }}
-                    >Pysical Activity</Text>
+                    >Physical Activity</Text>
                   <DropDownPicker
                             open={physicalOpen}
                             value={physicalValue}

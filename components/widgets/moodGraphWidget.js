@@ -100,7 +100,7 @@ export default class MoodGraphWidget extends Component {
                         data={moodDataChart}
                         fromNumber={5}
                         fromZero={1}
-                        segments={4}
+                        segments={5}
                         width={Dimensions.get("window").width - 32} // from react-native
                         height={220}
                         yAxisInterval={1} // optional, defaults to 1
@@ -137,6 +137,7 @@ export default class MoodGraphWidget extends Component {
     
                     shadowOpacity: .22,
                     padding: 6,
+                    paddingBottom: 23,
                     backgroundColor: "white",
                     elevation: 8,
                     zIndex: 2,
