@@ -825,7 +825,7 @@ module.exports = class taskHandler {
      * @returns true if the task belong to the category
      */
     async taskHasCategory(taskId, category){
-        var q = new Query(1, "SELECT * FROM taskCategories WHERE taskId =? AND category = ?", [taskId, category]);
+        var q = new Query(1, "SELECT * FROM taskCategories WHERE taskId = ? AND category = ?", [taskId, category]);
         var oppId = DatabaseHandler.current.enqueueOperation(q);
         var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
         return result.length != 0;
@@ -899,6 +899,8 @@ module.exports = class taskHandler {
         return cats;
 
     }
+
+ 
 
     /**
      * 
