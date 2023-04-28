@@ -7,6 +7,7 @@ import {AgendaNav} from './customAgenda';
 
 import serverHandler from '../lib/server/serverHandler';
 import StylingConstants from './StylingConstants';
+import { tasksWithDate } from '../lib/server/tasks';
 
 const StackNavigator = createNativeStackNavigator();
 
@@ -26,7 +27,19 @@ function CalendarNav() {
   );
 }
 
+async function getMarkedDays (){
+   const datesFromServer = await tasksWithDate()
+  
+   try{
+     datesFromServer.forEach(function(date:any){
+        console.log(date.date)
+     })
+   }catch{
+     console.log("failed to get dates")
+   }
 
+}
+getMarkedDays()
 
 function CreateCalendar() {
 
@@ -91,6 +104,11 @@ function CreateCalendar() {
 
 function CalendarScreen() {
   const navigation = useNavigation();
+  async function getDates() {
+    const dates = await tasksWithDate()
+    console.log(dates)
+  }
+  
   return (
 
     <View style={{ flex: 0, position: 'relative' }}>

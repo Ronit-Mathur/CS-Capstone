@@ -449,11 +449,36 @@ function TaskWidget({ item }: any, Nav: any, isCompleted: boolean) {
     navPath = 'RankTask';
   }
 
+  const formatClientTime = (time:string) =>{
+    const [hr, min] = time.split(':')
+    
+    if(hr >= '12'){
+      var stringToNum = Number.parseInt(hr)
+      if(stringToNum > 12){
+          stringToNum -= 12
+      }
+        if(hr < '24'){
+          
+          return `${stringToNum}:${min} PM`
+      }
+      else{
+          return `${stringToNum}:${min} AM`
+      }
+    }
+    else{
+      if(hr < '10'){
+        return `${hr.substring(1)}:${min} AM`
+      }
+      return `${hr}:${min} AM`
+    }
+    
+ }
+
   return (<View style={{ marginLeft: "2%", marginRight: "2%", marginBottom: "1.5%", borderLeftWidth: 3, borderColor: StylingConstants.highlightColor, flexDirection: "row", justifyContent: "space-between", alignItems: "center",  }}>
     <View style={{ marginLeft: "2%" }}>
       <Text style={{ color: 'black', fontWeight: "bold", fontSize: StylingConstants.subFontSize }}>{helpers.toTitleCase(item.summary.substring(0, 25))} {bool ? '...' : ''}</Text>
-      <Text style={{ color: 'black', fontSize: StylingConstants.tinyFontSize }}>Start Time: {item.startTime}</Text>
-      <Text style={{ color: 'black', fontSize: StylingConstants.tinyFontSize }}>End Time: {item.endTime}</Text>
+      <Text style={{ color: 'black', fontSize: StylingConstants.tinyFontSize }}>Start Time: {formatClientTime(item.startTime)}</Text>
+      <Text style={{ color: 'black', fontSize: StylingConstants.tinyFontSize }}>End Time: {formatClientTime(item.endTime)}</Text>
       <Text style={{ color: 'black', fontSize: StylingConstants.tinyFontSize }}>Location: {item.location}</Text>
     </View>
     <MaterialCommunityIcons name='chevron-right' color="white" size={40} style={{
@@ -537,7 +562,7 @@ function Home({refresh}) {
   return (
     <SafeAreaView style={{
       flex: 1,
-
+      
     }}>
       <View style={{
         flex: 2,

@@ -1,24 +1,62 @@
-import { useState, useCallback } from 'react';
-import {View,Text, TextInput, Button, SafeAreaView} from 'react-native';
+import { useState, useCallback, Fragment} from 'react';
+import {View,Text, TextInput, Button, SafeAreaView, Pressable, Platform} from 'react-native';
 import * as Helpers from '../backend_server/lib/helpers';
-import{getTodaysActiveTasks, getTodaysFinishedTasks, updateTask, rateTask, getUnratedCompletedTasks} from '../lib/server/tasks';
+import{getTodaysActiveTasks, getTodaysFinishedTasks, updateTask, rateTask, getUnratedCompletedTasks, addTaskToCategory, getTaskCategories} from '../lib/server/tasks';
 import { useNavigation, useRoute} from '@react-navigation/native';
 import serverHandler from '../lib/server/serverHandler';
 import StylingConstants from './StylingConstants';
 import DropDownPicker from 'react-native-dropdown-picker'
+import RNDateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 
 function EditTask (task:any){
-    const timeString = 'April 07, 2001, ' + task.route.params.task.item.startTime + ':00'
-    const time = new Date(timeString)
-    console.log(time)
+
+    
 
    const navigation = useNavigation()
    const [sum, setSum] = useState(task.route.params.task.item.summary)
+   const [showStartTime, setShowStartTime] = useState(false)
    const [start, setStart] = useState(task.route.params.task.item.startTime)
+   const [startObject, setStartObject] = useState(new Date())
+   const [showEndTime, setShowEndTime] = useState(false)
    const [end, setEnd] = useState(task.route.params.task.item.endTime)
+   const [endObject, setEndObject] = useState(new Date())
    const [loc, setLoc] = useState(task.route.params.task.item.location)
    const id = task.route.params.task.item.taskId
    const user = serverHandler.current.userState.user
+    
+   const formatTime = (time:string) =>{
+        const [hour, min] = time.split(':')
+        const hourFormat = hour.padStart(2,'0')
+        const newTime = `${hourFormat}:${min}`
+        return (newTime)
+   }
+
+   const formatClientTime = (time:string) =>{
+      const [hr, min] = time.split(':')
+      
+      if(hr >= '12'){
+        var stringToNum = Number.parseInt(hr)
+        if(stringToNum > 12){
+            stringToNum -= 12
+        }
+          if(hr < '24'){
+            
+            return `${stringToNum}:${min} PM`
+        }
+        else{
+            return `${stringToNum}:${min} AM`
+        }
+      }
+      else{
+        if(hr < '10'){
+            return `${hr.substring(1)}:${min} AM`
+          }
+          return `${hr}:${min} AM`
+      }
+      
+   }
+
+ 
     
     return(
         <View style={{
@@ -40,124 +78,166 @@ function EditTask (task:any){
                 borderRadius:30, 
                 
             }}>
-                <View style={{
-                    flex:1,
-                    backgroundColor:StylingConstants.highlightColor,
-                    justifyContent:'center',
-                }} >
-
+              <View style={{
+                  backgroundColor:StylingConstants.highlightColor,
+                  height:'15%',
+                  justifyContent:'center',
+                  borderTopEndRadius:30,
+                  borderTopStartRadius:30
+              }}>
                 <Text style={{
                     fontSize:StylingConstants.hugeFontSize,
                     alignSelf:'center',
                     color:'white',
-                    fontFamily:StylingConstants.defaultFontBold
+                    fontFamily:StylingConstants.defaultFontBold,
+                
                     
                 }}
                     >Edit Task</Text>
 
-                </View>
-                <View style={{
-                    flex:1,
-                }}>
-                    <Text style={{
+              </View>
+               
+               {(!showStartTime && !showEndTime) ? (
+               <Fragment>
+               <Text style={{
                         alignSelf:'center',
-                        paddingTop:'3%',
+                        paddingTop:'8%',
                         fontFamily:StylingConstants.defaultFont,
-                        fontSize: StylingConstants.normalFontSize
+                        fontSize: StylingConstants.normalFontSize,
+                        paddingBottom:'3%'
+                        
                     }}
-                    >Title</Text>
+                    >Title</Text> 
+                    
                     <TextInput style={{
-                        flex:1,
+                       
                         borderWidth:1,
                         width:'75%',
                         alignSelf:'center',
-                        paddingLeft:'3%',
+                        paddingLeft:'5%',
+                        height: '8%'
+                        
                     }} 
                     placeholder={sum}
                     placeholderTextColor='black'
                     onChangeText={text => setSum(text)}
                     />
-                </View>
+                    </Fragment>) : null}
+                  
+                   
+                   
+                
 
-                <View style={{
-                    flex:1,
-                }}>
-                    <Text style={{
+                {!showEndTime ? (
+                    <Fragment>
+                        <Text style={{
                         alignSelf:'center',
                         paddingTop:'3%',
                         fontFamily:StylingConstants.defaultFont,
                         fontSize: StylingConstants.normalFontSize
                     }}
                     >Start Time</Text>
-                    <TextInput style={{
-                        flex:1,
-                        borderWidth:1,
-                        width:'75%',
-                        alignSelf:'center',
-                        paddingLeft:'3%',
-                    }} 
-                    placeholder={start}
-                    placeholderTextColor='black'
-                    onChangeText={text=>setStart(text)}
-                    />
-                </View>
-
-                <View style={{
-                    flex:1,
-                }}>
+                <Pressable onPress={() => (setShowStartTime(!showStartTime))} >
                     <Text style={{
+                        alignSelf:'center',
+                        fontFamily:StylingConstants.defaultFont,
+                        fontSize:StylingConstants.largeFontSize,
+                        color:StylingConstants.lighterHighlightColor,
+                    }}>{formatClientTime(start)}</Text>
+
+                </Pressable>
+                    </Fragment>
+                ) : null}
+                   
+
+                {showStartTime ? ( 
+                <RNDateTimePicker  value={startObject} onChange={(event:DateTimePickerEvent, day:Date) => {
+                    setStartObject(day)
+                    const time = formatTime(day.toLocaleTimeString('EN-en', {hourCycle:'h24'}).substring(0,5))
+                    setStart(time)
+                    if(Platform.OS != 'ios'){
+                        setShowStartTime(!showStartTime)  
+                    }
+                    
+                }} mode='time' display='spinner' textColor='black'/>) : null}
+               
+               
+               
+              
+                {(!showStartTime || showEndTime) ? (
+                    <Fragment>
+                          <Text style={{
                         alignSelf:'center',
                         paddingTop:'3%',
                         fontFamily:StylingConstants.defaultFont,
                         fontSize: StylingConstants.normalFontSize
                     }}
                     >End Time</Text>
-                    <TextInput style={{
-                        flex:1,
-                        borderWidth:1,
-                        width:'75%',
-                        alignSelf:'center',
-                        paddingLeft:'3%',
-                    }} 
-                    placeholder={end}
-                    placeholderTextColor='black'
-                    onChangeText={text=>setEnd(text)}
-                    />
-                </View>
-                
-                <View style={{
-                    flex:1,
-                    marginBottom:'5%'
-                }}>
+                     <Pressable onPress={() => (setShowEndTime(!showEndTime))} >
                     <Text style={{
                         alignSelf:'center',
-                        paddingTop:'3%',
                         fontFamily:StylingConstants.defaultFont,
-                        fontSize: StylingConstants.normalFontSize
-                    }}
-                    >Location</Text>
-                    <TextInput style={{
+                        fontSize:StylingConstants.largeFontSize,
+                        color:StylingConstants.lighterHighlightColor,
+                    }}>{formatClientTime(end)}</Text>
+
+                    </Pressable>
+                 
+                   
+                    </Fragment>
+                ) : null}
+
+                {showEndTime ? (
+                       <RNDateTimePicker  value={endObject} onChange={(event:DateTimePickerEvent, day:Date) => {
+                        setEndObject(day)
+                        const time = formatTime(day.toLocaleTimeString('EN-en', {hourCycle:'h24'}).substring(0,5))
+                        setEnd(time)
+                        if(Platform.OS != 'ios'){
+                            setShowStartTime(!showEndTime)  
+                        }
+                        
+                    }} mode='time' display='spinner' textColor='black'/>
+                ) : null}
+             
+            
+               
+                {(!showStartTime && !showEndTime) ? (
+                    <Fragment>
+                        <Text style={{
+                            alignSelf:'center',
+                            paddingTop:'3%',
+                            fontFamily:StylingConstants.defaultFont,
+                            fontSize: StylingConstants.normalFontSize,
+                            paddingBottom:'3%'
+                        }}
+                        >Location</Text>
+                        <TextInput style={{
+                            
+                            borderWidth:1,
+                            width:'75%',
+                            alignSelf:'center',
+                            paddingLeft:'5%',
+                            height:'8%',
+                        }} 
+                        placeholder={loc}
+                        placeholderTextColor='black'
+                        onChangeText={text=>setLoc(text)}
+                        />
+                
+                    <View  style={{
                         flex:1,
-                        borderWidth:1,
-                        width:'75%',
+                        flexDirection:'row',
                         alignSelf:'center',
-                        paddingLeft:'3%',
-                    }} 
-                    placeholder={loc}
-                    placeholderTextColor='black'
-                    onChangeText={text=>setLoc(text)}
-                    />
-                </View>
-                <View  style={{
-                    flex:1,
-                    flexDirection:'row',
-                    alignSelf:'center',
                 
                     
-                }}>
-                    <Button  title='Cancel'  onPress={()=> navigation.navigate('HomeScreen')}/>
-                    <Button title='Submit' onPress ={async()=> {updateT(sum, start, end, loc, id); navigation.navigate('HomeScreen')}} />
-                </View>
+                    }}>
+                        <Button  title='Cancel'  onPress={()=> navigation.navigate('HomeScreen')}/>
+                        <Button title='Submit' onPress ={async()=> {updateT(sum, start, end, loc, id); navigation.navigate('HomeScreen')}} />
+                    </View>
+                    </Fragment>
+                ) : null}
+               
+           
             
 
 
@@ -190,14 +270,25 @@ function RankTask (task:any){
       const[engagementValue, setEngagementValue] = useState(null)
       const[mentalDifficultyOpen, setMentalDifficultyOpen] = useState(false)
       const[mentalDifficultyValue, setMentalDifficultyValue] = useState(null)
+      const[categoryOpen,setCategoryOpen] = useState(false)
+      const [categoryValue, setCategoryValue] = useState(null)
+      const [categoryItems, setCategoryItems] = useState([
+         
+      ])
 
      
-    
+      async function testCat() {
+          const cats = await getTaskCategories(id)
+          
+      }
+
+      testCat()
 
       const onEnjoymentOpen = useCallback(() => {
         setPhysicalOpen(false);
         setEngagementOpen(false);
         setMentalDifficultyOpen(false);
+        setCategoryOpen(false);
         setEnjoymentOpen(!enjoymentOpen);
       }, [enjoymentOpen]);
       
@@ -207,7 +298,33 @@ function RankTask (task:any){
         setMentalDifficultyOpen(false);
         setEnjoymentOpen(false);
       }, [physicalOpen]);
+      
+      const onEngagementOpen = useCallback(() => {
+        setPhysicalOpen(false);
+        setEngagementOpen(!engagementOpen);
+        setMentalDifficultyOpen(false);
+        setEnjoymentOpen(false);
+        setCategoryOpen(false);
+      }, [engagementOpen]);
+      
+      const onMentalOpen = useCallback(() => {
+        setPhysicalOpen(false);
+        setEngagementOpen(false);
+        setMentalDifficultyOpen(!mentalDifficultyOpen);
+        setEnjoymentOpen(false);
+        setCategoryOpen(false);
+      }, [mentalDifficultyOpen]);
+      
+      const onCategoryOpen = useCallback(() => {
+        setPhysicalOpen(false);
+        setEngagementOpen(false);
+        setMentalDifficultyOpen(false);
+        setEnjoymentOpen(false);
+        setCategoryOpen(!categoryOpen)
+      }, [categoryOpen]);
+    
 
+    var catIndex = categoryOpen ? 4 : 0
     var random = Math.random()
     var navPath = 'HomeScreen'
   
@@ -231,7 +348,7 @@ function RankTask (task:any){
              <SafeAreaView style={{
                  flex:1,
                  borderWidth:0,
-                 height:'75%',
+                 height:'80%',
                  width:'80%',
                  alignSelf:'center',
                  position:'absolute',
@@ -243,7 +360,7 @@ function RankTask (task:any){
              }}>
 
                     <View style ={{
-                        flex:2,
+                        height:'15%',
                         backgroundColor: StylingConstants.highlightColor,
                         justifyContent: 'center',
                         borderTopEndRadius:30,
@@ -257,13 +374,19 @@ function RankTask (task:any){
                         }}>Rate Task</Text>
 
                     </View>
-               
+                    
+                <View style={{
+                    flex:1,
+                    marginBottom:'10%',
+                    zIndex:4
+                }}>
                     <Text style={{
                         
                         alignSelf:'center',
-                        padding:'5%',
+                        padding:'3%',
                         fontFamily: StylingConstants.defaultFont,
-                        fontSize: StylingConstants.subFontSize
+                        fontSize: StylingConstants.subFontSize,
+                        
                     }}
                     >Enjoyment</Text>
                        <DropDownPicker
@@ -277,18 +400,25 @@ function RankTask (task:any){
                                 width: '75%',
                                 alignSelf:'center'
                             }}
-                            zIndex={4000}
-                            zIndexInverse={1000}
+                          
+                            
                         />
                     
+                </View>
                
-               
+
+                <View style={{
+                    flex:1,
+                    marginBottom:'10%',
+                    zIndex:3
+                }}>
                     <Text style={{
                 
                         alignSelf:'center',
                         fontSize: StylingConstants.subFontSize,
-                        padding:'5%',
+                        padding:'3%',
                         fontFamily: StylingConstants.defaultFont,
+                        zIndex:3
                     }}
                     >Pysical Activity</Text>
                   <DropDownPicker
@@ -303,17 +433,23 @@ function RankTask (task:any){
                                 alignSelf:'center'
 
                             }}
-                            zIndex ={3000}
-                            zIndexInverse ={2000}
+                            zIndex ={3}
+                           
                         />
                     
-                
+                </View>
+
+                <View style ={{
+                    flex:1,
+                    marginBottom:'5%', 
+                   zIndex:2
+                }}>
 
                     <Text style={{
                        
                         alignSelf:'center',
                         fontFamily: StylingConstants.defaultFont,
-                        padding:'5%',
+                        padding:'3%',
                         fontSize: StylingConstants.subFontSize
                     }}
                     >Engagement</Text>
@@ -321,26 +457,34 @@ function RankTask (task:any){
                             open={engagementOpen}
                             value={engagementValue}
                             items={items}
-                            setOpen={setEngagementOpen}
+                            setOpen={onEngagementOpen}
                             setValue={setEngagementValue}
                             setItems={setItems}
                             containerStyle={{
                                 width:'75%',
                                 alignSelf:'center'
                             }}
-                            zIndex={2000}
-                            zIndexInverse={2000}
+                         
 
                         />
                 
+                    </View>
 
+                <View style={{
+                    flex:1,
+                    paddingBottom:'5%',
+                    zIndex:1
+                    
+                }}>
                 
                     <Text style={{
                       
                         alignSelf:'center',
                         fontFamily: StylingConstants.defaultFont,
                         fontSize:StylingConstants.subFontSize,
-                        padding:'5%',
+                        paddingBottom:'3%',
+                        paddingTop:'10%'
+                        
                     
                     }}
                     >Mental Difficulty</Text>
@@ -348,17 +492,50 @@ function RankTask (task:any){
                             open={mentalDifficultyOpen}
                             value={mentalDifficultyValue}
                             items={items}
-                            setOpen={setMentalDifficultyOpen}
+                            setOpen={onMentalOpen}
                             setValue={setMentalDifficultyValue}
                             setItems={setItems}
                             containerStyle ={{
                                 width: '75%',
+                                alignSelf:'center',
+                                
+                            }}
+                            
+                        
+                        />
+                </View>
+
+                <View style={{
+                    flex:1,
+                    paddingTop:'10%',
+                    paddingBottom:'15%',
+                    zIndex: catIndex
+                    
+                }}>
+                    <Text style={{
+                        alignSelf:'center',
+                        fontFamily:StylingConstants.defaultFont,
+                        fontSize:StylingConstants.subFontSize,
+                        padding:'3%',
+                    }}>Category</Text>
+                    <DropDownPicker
+                            open ={categoryOpen}
+                            setOpen ={onCategoryOpen}
+                            value ={categoryValue}
+                            items = {categoryItems}
+                            setValue ={setCategoryValue}
+                            setItems ={setCategoryItems}
+                            containerStyle={{
+                                width:'75%',
                                 alignSelf:'center'
                             }}
-                            zIndex={1000}
-                            zIndexInverse ={4000}
-                        />
+                            searchable={true}
+                            addCustomItem={true}
+                            searchPlaceholder='Search or Add Category'
+        
+                            />
                 
+                </View>
                 
                 <View  style={{
                     flex:1,
@@ -368,7 +545,7 @@ function RankTask (task:any){
                     
                 }}>
                     <Button  title='Cancel'  onPress={()=> navigation.goBack()}/>
-                    <Button title='Submit' onPress ={async()=> {rankT(id, enjoymentValue,physcialValue,engagementValue,mentalDifficultyValue); navigation.navigate(navPath, {random})}} />
+                    <Button title='Submit' onPress ={async()=> {rankT(id, enjoymentValue,physicalValue,engagementValue,mentalDifficultyValue); await addTaskToCategory(id,categoryValue); navigation.navigate(navPath, {random})}} />
                 </View>
             
              

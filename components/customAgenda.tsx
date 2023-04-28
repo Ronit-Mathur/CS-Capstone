@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {View, Text, RefreshControl} from 'react-native';
+import {View, Text, RefreshControl, SafeAreaView} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import StylingConstants from './StylingConstants';
 import { Agenda, DateData, } from 'react-native-calendars';
@@ -23,7 +23,7 @@ currentDay = day
     <stack.Navigator>
       <stack.Screen name='Agen' children={()=> <CustomAgenda refresh = {0} />} options={{headerShown:false}} />
       <stack.Screen name='EditAgen' component={HSH.EditTask} />
-      <stack.Screen name='RankAgen' component={HSH.RankTask}  options={{title:'Rank Task'}}/>
+      <stack.Screen name='RankAgen' component={HSH.RankTask}  options={{title:'Rank Task', presentation:'modal', headerShown:false, contentStyle:{backgroundColor:'transparent'}}} />
       <stack.Screen name = 'AddAgen' component={TaskCreation} />
 
 
@@ -62,7 +62,7 @@ const nav = useNavigation()
 
   
   return (
-    <View style ={{
+    <SafeAreaView style ={{
       flex: 1,
       
     }}>
@@ -107,7 +107,7 @@ const nav = useNavigation()
       />
       </View>
 
-    </View>
+    </SafeAreaView>
   ); 
 }
 
@@ -177,6 +177,30 @@ var navPath = 'EditAgen'
     navPath = 'RankAgen'
   }
   
+  const formatClientTime = (time:string) =>{
+    const [hr, min] = time.split(':')
+    
+    if(hr >= '12'){
+      var stringToNum = Number.parseInt(hr)
+      if(stringToNum > 12){
+          stringToNum -= 12
+      }
+        if(hr < '24'){
+          
+          return `${stringToNum}:${min} PM`
+      }
+      else{
+          return `${stringToNum}:${min} AM`
+      }
+    }
+    else{
+        if(hr < '10'){
+          return `${hr.substring(1)}:${min} AM`
+        }
+        return `${hr}:${min} AM`
+    }
+    
+ }
   
   return(
   <View style={{ marginLeft: "2%", marginRight: "2%", marginBottom: 5, borderLeftWidth: 3, borderColor: StylingConstants.highlightColor, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
@@ -185,8 +209,8 @@ var navPath = 'EditAgen'
       }} >
    
         <Text style={{color:'black', fontWeight:'bold'}}>Title: {item.summary.substring(0,18)} {bool ? '...' : ''}</Text>
-        <Text style={{color:'black'}}>Start Time: {item.startTime}</Text>
-        <Text style={{color:'black'}}>End Time: {item.endTime}</Text>
+        <Text style={{color:'black'}}>Start Time: {formatClientTime(item.startTime)}</Text>
+        <Text style={{color:'black'}}>End Time: {formatClientTime(item.endTime)}</Text>
         <Text style={{color:'black'}}>Location: {item.location}</Text>
       </View>
 

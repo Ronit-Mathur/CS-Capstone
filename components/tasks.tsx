@@ -46,6 +46,34 @@ function TaskCreation (){
         
     }
 
+    const formatClientTime = (time:string) =>{
+        const [hr, min] = time.split(':')
+        
+        if(hr >= '12'){
+          var stringToNum = Number.parseInt(hr)
+          if(stringToNum > 12){
+              stringToNum -= 12
+          }
+            if(hr < '24'){
+              
+              return `${stringToNum}:${min} PM`
+          }
+          else{
+              return `${stringToNum}:${min} AM`
+          }
+        }
+        else{
+          if(hr < '10'){
+            return `${hr.substring(1)}:${min} AM`
+          }else{
+
+            
+              return `${hr}:${min} AM`
+          }
+        }
+        
+     }
+
     const formatTime = (unformattedTime: String) => {
         
         const [hrStr, minStr] = unformattedTime.split(':');
@@ -113,7 +141,7 @@ function TaskCreation (){
                         
                     }}>{date.toLocaleDateString()}</Text>
                 </Pressable>
-                {showDate && ( 
+                {showDate ? ( 
                 <RNDateTimePicker value={date} mode="date" onChange={(event:DateTimePickerEvent, day:Date)=>{
                     setDate(day)
                     setShowDate(!showDate)
@@ -121,7 +149,7 @@ function TaskCreation (){
                 style={{
                     alignSelf:'center',
                     
-                }}/>)}
+                }}/>) : null }
 
                
                 
@@ -138,17 +166,17 @@ function TaskCreation (){
                         fontFamily:StylingConstants.defaultFont,
                         fontSize:StylingConstants.largeFontSize,
                         color:StylingConstants.lighterHighlightColor,
-                    }}>{startTime.toLocaleTimeString().substring(0,4) + startTime.toLocaleTimeString().substring(8,10)}</Text>
+                    }}>{formatClientTime(startTime.toLocaleTimeString('EN-en', {hourCycle:'h24'}).substring(0,5))}</Text>
 
                 </Pressable>
-                {showStartTime && ( 
+                {showStartTime ? ( 
                 <RNDateTimePicker  value={startTime} onChange={(event:DateTimePickerEvent, day:Date) => {
                     setStarttime(day)
                     if(Platform.OS != 'ios'){
                         setShowStartTime(!showStartTime)  
                     }
                     
-                }} mode='time' display='spinner' textColor='black'/>)}
+                }} mode='time' display='spinner' textColor='black'/>) : null}
                 
               
                 <Text style={{
@@ -166,9 +194,9 @@ function TaskCreation (){
                         color:StylingConstants.lighterHighlightColor,
                         alignSelf:'center',
                         marginBottom:'5%'
-                    }}>{endTime.toLocaleTimeString().substring(0,4) + endTime.toLocaleTimeString().substring(8,10)}</Text>
+                    }}>{formatClientTime(endTime.toLocaleTimeString('EN-en', {hourCycle:'h24'}).substring(0,5))}</Text>
                 </Pressable>
-                {showEndTime && ( 
+                {showEndTime ? ( 
                 <RNDateTimePicker  value={endTime}  onChange={(event:DateTimePickerEvent, day:Date) => {
                     setEndTime(day)
                     if(Platform.OS != 'ios'){
@@ -176,7 +204,7 @@ function TaskCreation (){
                     }
                 
                     
-                }} mode="time" display='spinner'/>)}
+                }} mode="time" display='spinner'/>) : null}
             <Text style={{
                 alignSelf:'center',
                 fontFamily:StylingConstants.defaultFont,
