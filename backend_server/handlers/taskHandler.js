@@ -131,6 +131,7 @@ module.exports = class taskHandler {
      */
     async addTask(username, summary, date, location, startTime, endTime, priority) {
         if (!await this._areTaskParametersValid(username, summary, date, location, startTime, endTime)) {
+           
             return -1;
         }
 
@@ -403,7 +404,9 @@ module.exports = class taskHandler {
      * @param {*} endTime 
      */
     async _areTaskParametersValid(username, summary, date, location, startTime, endTime) {
-        //verify that user exists. check date, endtime and starttime are all in the correct format. 
+        //verify that user exists. check date, endtime and starttime are all in the correct format.
+        console.log(summary);
+        console.log(location);
         return (await UserHandler.current.userExists(username)) && helpers.isDateFormat(date) && helpers.isTimeFormat(startTime) && helpers.isTimeFormat(endTime) && location && summary;
     }
 
@@ -822,7 +825,7 @@ module.exports = class taskHandler {
      * @returns true if the task belong to the category
      */
     async taskHasCategory(taskId, category){
-        var q = new Query(1, "SELECT * FROM taskCategories WHERE taskId =? AND category = ?", [taskId, category]);
+        var q = new Query(1, "SELECT * FROM taskCategories WHERE taskId = ? AND category = ?", [taskId, category]);
         var oppId = DatabaseHandler.current.enqueueOperation(q);
         var result = await DatabaseHandler.current.waitForOperationToFinish(oppId);
         return result.length != 0;
@@ -896,6 +899,8 @@ module.exports = class taskHandler {
         return cats;
 
     }
+
+ 
 
     /**
      * 

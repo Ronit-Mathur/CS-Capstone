@@ -420,7 +420,7 @@ function RankTask (task:any){
                         fontFamily: StylingConstants.defaultFont,
                         zIndex:3
                     }}
-                    >Pysical Activity</Text>
+                    >Physical Activity</Text>
                   <DropDownPicker
                             open={physicalOpen}
                             value={physicalValue}
@@ -545,7 +545,11 @@ function RankTask (task:any){
                     
                 }}>
                     <Button  title='Cancel'  onPress={()=> navigation.goBack()}/>
+<<<<<<< HEAD
                     <Button title='Submit' onPress ={async()=> {rankT(id, enjoymentValue,physicalValue,engagementValue,mentalDifficultyValue); await addTaskToCategory(id,categoryValue); navigation.navigate(navPath, {random})}} />
+=======
+                    <Button title='Submit' onPress ={async()=> {rankT(id, enjoymentValue,physicalValue,engagementValue,mentalDifficultyValue); navigation.navigate(navPath, {random})}} />
+>>>>>>> d95c0ff7fa32b3fe8a5777b29ba939271c2712b7
                 </View>
             
              
