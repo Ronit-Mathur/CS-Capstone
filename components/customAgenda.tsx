@@ -24,7 +24,7 @@ currentDay = day
       <stack.Screen name='Agen' children={()=> <CustomAgenda refresh = {0} />} options={{headerShown:false}} />
       <stack.Screen name='EditAgen' component={HSH.EditTask} />
       <stack.Screen name='RankAgen' component={HSH.RankTask}  options={{title:'Rank Task', presentation:'modal', headerShown:false, contentStyle:{backgroundColor:'transparent'}}} />
-      <stack.Screen name = 'AddAgen' component={TaskCreation} />
+      <stack.Screen name = 'AddAgen' component={TaskCreation} options={{headerShown:false}} />
 
 
     </stack.Navigator>

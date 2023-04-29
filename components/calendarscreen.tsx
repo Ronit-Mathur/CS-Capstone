@@ -1,13 +1,14 @@
 import * as React from 'react';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import {View} from 'react-native';
-import {CalendarList} from 'react-native-calendars'
+import {CalendarList, Calendar} from 'react-native-calendars'
 import { createNativeStackNavigator} from '@react-navigation/native-stack';
 import {AgendaNav} from './customAgenda';
 
 import serverHandler from '../lib/server/serverHandler';
 import StylingConstants from './StylingConstants';
 import { tasksWithDate } from '../lib/server/tasks';
+import { isEnabled } from 'react-native/Libraries/Performance/Systrace';
 
 const StackNavigator = createNativeStackNavigator();
 
@@ -27,26 +28,48 @@ function CalendarNav() {
   );
 }
 
-async function getMarkedDays (){
-   const datesFromServer = await tasksWithDate()
-  
-   try{
-     datesFromServer.forEach(function(date:any){
-        console.log(date.date)
-     })
-   }catch{
-     console.log("failed to get dates")
-   }
 
-}
-getMarkedDays()
+
+
 
 function CreateCalendar() {
+   
+    const[loading, setLoading] = React.useState(true)
+    const [markedDay, setMarkedDay] = React.useState({})
+    
+    async function getMarkedDays (){
+    const datesFromServer = await tasksWithDate()
+    var list:any  = {}
+    
+    try{
+      datesFromServer.forEach(function(d:any){
+         list[formatDate(d.date)] = {marked:true, dotColor: StylingConstants.lighterHighlightColor}
+    
+       
+      })
+    }catch{
+      console.log("failed to get dates")
+    }
+    if(formatDate(formatDates(new Date().toLocaleDateString().substring(0,10))) in list ){
+      list[formatDate(formatDates(new Date().toLocaleDateString().substring(0,10)))] = {marked:true, selected:true, selectedColor:StylingConstants.highlightColor}
+    }else{
+      list[formatDate(formatDates(new Date().toLocaleDateString().substring(0,10)))] = {selected:true, selectedColor: StylingConstants.highlightColor}
+    }
+    setMarkedDay(list)
+ }
+ useFocusEffect(React.useCallback(() => {
+  const check = async () => {
+  
+    setLoading(true)
+    getMarkedDays()
+  }
+  check()
+  setLoading(false)
+}, []))
+ 
 
-  var markedDay:any  = {}
-
-  const formatDate = () => {
-    const date = formatDates(new Date().toLocaleDateString().substring(0,10)).split('/')
+  const formatDate = (date:any) => {
+    date = date.split('/')
   
     const reformat = [date[2],date[0], date[1]]
     const combine = reformat.join('-')
@@ -62,56 +85,44 @@ function CreateCalendar() {
     day = day.length === 1 ? '0' + day : day;
     return `${month}/${day}/${year}`;
   }
-  markedDay[formatDate()] = {selected:true, selectedColor: StylingConstants.highlightColor}
-  console.log(markedDay)
+ 
   const navigation = useNavigation();
+
+  
   return (
-    <CalendarList
+  
 
-    style={{
-      borderTopRightRadius: 20,
-      borderTopLeftRadius: 20,
-      borderBottomLeftRadius: 20,
-      borderBottomRightRadius: 20,
+      <CalendarList
+      
+      style={{
+        borderTopRightRadius: 20,
+        borderTopLeftRadius: 20,
+        borderBottomLeftRadius: 20,
+        borderBottomRightRadius: 20,
+        
+  
+      }} 
+  
+        markedDates={markedDay}
+        displayLoadingIndicator={loading}
+        onDayPress={(day) => { navigation.navigate('CalAgenda', day )}}
+      />
+  
 
-    }} 
-
-      markedDates={markedDay}
+  
    
-      onDayPress={(day) => { navigation.navigate('CalAgenda', day )}}
-    />
-    // <Calendar  style={{
-    //   borderTopRightRadius:20,
-    //   borderTopLeftRadius:20, 
-    //   overflow:'hidden', 
-    //   borderBottomLeftRadius:20, 
-    //   borderBottomRightRadius:20, 
-
-    //  }} 
-    //  theme={{
-    //    'stylesheet.day.basic':{
-    //      base:{
-    //        width:32,
-    //        height:100
-    //      }
-    //    }
-    //  }}
-    //  onDayPress={ day =>{navigation.navigate('CalAgenda')}}
-
-    // />
   );
 }
 
+
+
 function CalendarScreen() {
   const navigation = useNavigation();
-  async function getDates() {
-    const dates = await tasksWithDate()
-    console.log(dates)
-  }
+  
   
   return (
 
-    <View style={{ flex: 0, position: 'relative' }}>
+    <View style={{  }}>
       <CreateCalendar />
     </View>
   );

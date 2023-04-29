@@ -169,19 +169,7 @@ function DailyMood() {
   const date = Helpers.getTodaysDate()
   const [dayAlreadyRated, SetDayAlreadyRated] = useState(false);
 
-  const message = 'Your mood for ' + date + ' has been recorded!'
-  const moodRated = () => {
-    Alert.alert('Daily Mood Recorded', message, [
-      {
-        text: 'Dismiss',
-        onPress: () => console.log('Dismissed'),
 
-      },
-
-    ]);
-
-    SetDayAlreadyRated(true);
-  }
 
   if (!dayAlreadyRated) {
     getDay(helpers.getTodaysDate()).then((rating) => {
@@ -209,27 +197,27 @@ function DailyMood() {
         <MaterialCommunityIcons name='emoticon-frown-outline' color="#f55a42" size={60} style={{
           flex: 1,
         }}
-          onPress={async () => { await Daily.rateDay(serverHandler.current.userState.username, 1); moodRated(); }}
+          onPress={async () => { await Daily.rateDay(serverHandler.current.userState.username, 1);  }}
         />
         <MaterialCommunityIcons name='emoticon-sad-outline' color="#f58a42" size={60} style={{
           flex: 1,
         }}
-          onPress={async () => { await Daily.rateDay(serverHandler.current.userState.username, 2); moodRated() }}
+          onPress={async () => { await Daily.rateDay(serverHandler.current.userState.username, 2);  }}
         />
         <MaterialCommunityIcons name='emoticon-neutral-outline' color="#f5e942" size={60} style={{
           flex: 1,
         }}
-          onPress={async () => { await Daily.rateDay(serverHandler.current.userState.username, 3); moodRated() }}
+          onPress={async () => { await Daily.rateDay(serverHandler.current.userState.username, 3);  }}
         />
         <MaterialCommunityIcons name='emoticon-happy-outline' color="#cfff30" size={60} style={{
           flex: 1,
         }}
-          onPress={async () => { await Daily.rateDay(serverHandler.current.userState.username, 4); moodRated() }}
+          onPress={async () => { await Daily.rateDay(serverHandler.current.userState.username, 4);  }}
         />
         <MaterialCommunityIcons name='emoticon-outline' color="#7ef763" size={60} style={{
           flex: 1,
         }}
-          onPress={async () => { await Daily.rateDay(serverHandler.current.userState.username, 5); moodRated() }}
+          onPress={async () => { await Daily.rateDay(serverHandler.current.userState.username, 5); }}
         />
       </View>
     </View>;
@@ -535,7 +523,6 @@ function Home({refresh}) {
   React.useEffect(() => {
     const check = async () => {
       const getBool = await checkUnrated()
-      console.log('Should alert: ' + getBool)
       setAlert(getBool)
     }
     check()

@@ -167,7 +167,7 @@ async function getMonthAvgRatings(month: any) {
         return dateRatings;
     } */
     
-    console.log(monthDaysRatings);
+    //console.log(monthDaysRatings);
     return monthDaysRatings;
 }
 

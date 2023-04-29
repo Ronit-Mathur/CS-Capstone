@@ -34,13 +34,13 @@ export default class MoodGraphWidget extends Component {
             try {
                 //moodDateList = await getMonthAvgRatings(tmpMonth);
                 var currMonth = Helpers.getTodaysMonth();
-                console.log(currMonth);
+                //console.log(currMonth);
                 var dataObject = await getMonthAvgRatings(currMonth);
                 var daysOfWeekRatings = await getWeeklyAvgs(dataObject);
-                console.log(dataObject);
+                //console.log(dataObject);
                 var labels = dataObject.days;
-                console.log("Labels:");
-                console.log(labels);
+                //console.log("Labels:");
+                //console.log(labels);
                 var moodData = dataObject.ratings;
                 this.setState({labels: labels, moodData: moodData, dataObject: dataObject, daysOfWeekRatings: daysOfWeekRatings});
             } catch(err) {

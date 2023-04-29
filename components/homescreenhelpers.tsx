@@ -277,12 +277,7 @@ function RankTask (task:any){
       ])
 
      
-      async function testCat() {
-          const cats = await getTaskCategories(id)
-          
-      }
-
-      testCat()
+  
 
       const onEnjoymentOpen = useCallback(() => {
         setPhysicalOpen(false);
@@ -345,7 +340,7 @@ function RankTask (task:any){
              
              
          }}>
-             <SafeAreaView style={{
+             <View style={{
                  flex:1,
                  borderWidth:0,
                  height:'80%',
@@ -545,21 +540,19 @@ function RankTask (task:any){
                     
                 }}>
                     <Button  title='Cancel'  onPress={()=> navigation.goBack()}/>
-<<<<<<< HEAD
+
                     <Button title='Submit' onPress ={async()=> {rankT(id, enjoymentValue,physicalValue,engagementValue,mentalDifficultyValue); await addTaskToCategory(id,categoryValue); navigation.navigate(navPath, {random})}} />
-=======
-                    <Button title='Submit' onPress ={async()=> {rankT(id, enjoymentValue,physicalValue,engagementValue,mentalDifficultyValue); navigation.navigate(navPath, {random})}} />
->>>>>>> d95c0ff7fa32b3fe8a5777b29ba939271c2712b7
-                </View>
+
             
              
  
  
-             </SafeAreaView>
+             </View>
+         </View>
          </View>
      );
- }
-
+ 
+}
 
  async function rankT (id:any, enjoyment:any, physcialActivity:any, engagement:any, mentalDifficulty:any){
     const numEnjoy = Number(enjoyment)
