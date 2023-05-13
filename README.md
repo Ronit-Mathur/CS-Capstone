@@ -6,10 +6,7 @@ Optimood had a client and a server. Instructions can be found below for how to i
 
 ### Client
 
-#### Option 1
-If you have an Android phone, you can download and install the apk from the releases section. 
 
-#### Option 2
 1. Install Node JS.
 2. Clone the Dev branch.
 3. Download the latest IOS and Android folders from the releases section. Place these in the root of the cloned directory.
