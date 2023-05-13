@@ -22,6 +22,8 @@ To start the remote server, clone the repository and in the root run:
 ```
 npm run start-server
 ```
+If you want to have this working with the app, the IP will need to be change in remoteServer.js and the fetch calls of the client. We do not reccomend this as some features will not work due to it not being linked to our domain.
+
 
 ## Developement Instructions
 Download, clone or pull the Dev Branch\
